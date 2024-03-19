@@ -13,9 +13,14 @@ The (second part of the course) has two blocks, each with two parts.
   2.1 Artificial neural networks
   2.2 Introduction to deep learning
 
-# Class meterial
+# Class material
 
 ## Decision Trees
+
+- [Slides](https://aspteaching.github.io/Introduction2StatisticalLearning/1.1-DecisionTrees-Slides.html)
+- [Notes](https://aspteaching.github.io/Introduction2StatisticalLearning/1.1-DecisionTrees.html)
+- [R-lab](https://aspteaching.github.io/Introduction2StatisticalLearning/labs/CART-Examples.html)
+- [Python-lab]()
 
 ## Ensemble methods
 
