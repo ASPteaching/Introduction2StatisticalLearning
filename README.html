@@ -352,15 +352,18 @@ display: none;
 </div>
 
 
-<div id="introduction-to-statistical-learning" class="section level1">
-<h1>Introduction to Statistical Learning</h1>
+<div id="statistical-learning" class="section level1">
+<h1>Statistical Learning</h1>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
 <p>This github repository is intended to provide materials (slides,
 scripts datasets etc) for the 2nd part of the Statistical Learning
 course at the <a href="https://mesioupcub.masters.upc.edu/en">UPC-UB MSc
 in Statistics and Operations Research (MESIO)</a>.</p>
-<p>A previous version of this repository can be found at <a href="https://github.com/ASPteaching/introstatlearning">https://github.com/ASPteaching/introstatlearning</a>,
-but I have decided to re-create it because the repository had become to
-heavy due to caches and git savings that I don’t know how to clean.</p>
+<p>A previous version of this repository can be found at <a href="https://github.com/ASPteaching/introstatlearning" class="uri">https://github.com/ASPteaching/introstatlearning</a>, but I
+have decided to re-create it because the repository had become to heavy
+due to caches and git savings that I don’t know how to clean.</p>
 <p>The (second part of the course) has two blocks, each with two
 parts.</p>
 <ol style="list-style-type: decimal">
@@ -374,12 +377,19 @@ parts.</p>
 </div>
 <div id="class-material" class="section level1">
 <h1>Class material</h1>
+<p>All class materials are available from the repository <a href="https://aspteaching.github.io/Introduction2StatisticalLearning/">https://aspteaching.github.io/Introduction2StatisticalLearning/</a>.</p>
+<p>In this page you will find links to the html version of the slides
+and other documents, as well as to datasets or references and resources
+documents</p>
 <ul>
 <li><a href="https://aspteaching.github.io/Introduction2StatisticalLearning/StatisticalLearning.PartII.html">Course
 presentation</a></li>
 </ul>
 <div id="decision-trees" class="section level2">
 <h2>Decision Trees</h2>
+<p>Decision trees are a type of non-parametric classifiers which have
+been Very successful because of their interpretability, flexibility and
+a very decent accuracy.</p>
 <ul>
 <li><a href="https://aspteaching.github.io/Introduction2StatisticalLearning/1.1-DecisionTrees-Slides.html">Slides</a></li>
 <li><a href="https://aspteaching.github.io/Introduction2StatisticalLearning/1.1-DecisionTrees.html">Notes</a></li>
@@ -395,12 +405,76 @@ Trees lab (from ISL. Ch 08)</a></li>
 </div>
 <div id="ensemble-methods" class="section level2">
 <h2>Ensemble methods</h2>
+<p>The term “Ensemble” (together in french) refers to distinct
+approaches to build predictiors by combining multiple models.</p>
+<p>They have proved to addres well some limitations of trees therefore
+improving accuracy and robustness as well as being able to reduce
+overfitting and capture complex relationships.</p>
 </div>
 <div id="artifical-neural-networks" class="section level2">
 <h2>Artifical Neural Networks</h2>
+<p>Thesea are raditional ML models, inspired in brain, that simulate
+neuron behavior, thata is they receive an input, which is processed and
+an output prediction is produced.</p>
+<p>For long their applicability has been relatively restricted to a few
+fields or problems due mainly to their “black box” functioning that made
+them hard to interpret.</p>
+<p>The scenario has now completely changed with the advent of deep
+neural networks which are in the basis of many powerful applications of
+artificial intelligence.</p>
 </div>
 <div id="deep-learning" class="section level2">
 <h2>Deep learning</h2>
+<p>Esssentially these are ANN with multiple hidden layers with allow
+overpassing many of their limitations. They can be tuned in a much more
+automatical way and have been applied to many complex tasks. such as
+Computer vision, Natural Language Processing or Recommender systems.</p>
+</div>
+</div>
+<div id="references-and-resources" class="section level1">
+<h1>References and resources</h1>
+<div id="references-for-tree-based-methods" class="section level2">
+<h2>References for Tree based methods</h2>
+<ul>
+<li><p>Breiman, L., Friedman, J., Stone, C. J., &amp; Olshen, R. A.
+(1984). Classification and regression trees. CRC press.</p></li>
+<li><p>Brandon M. Greenwell (202) Tree-Based Methods for Statistical
+Learning in R. 1st Edition. Chapman and Hall/CRC DOI: <a href="https://doi.org/10.1201/9781003089032" class="uri">https://doi.org/10.1201/9781003089032</a> Web site</p></li>
+<li><p>Efron, B., Hastie T. (2016) Computer Age Statistical Inference.
+Cambridge University Press. Web site</p></li>
+<li><p>Hastie, T., Tibshirani, R., &amp; Friedman, J. (2009). The
+elements of statistical learning: Data mining, inference, and
+prediction. Springer.</p></li>
+<li><p>James, G., Witten, D., Hastie, T., &amp; Tibshirani, R. (2013).
+An introduction to statistical learning (Vol. 112). Springer.</p></li>
+</ul>
+</div>
+<div id="references-for-deep-neural-networks" class="section level2">
+<h2>References for deep neural networks</h2>
+<ul>
+<li><p>Goodfellow, I., Bengio, Y., &amp; Courville, A. (2016). Deep
+learning (Vol. 1). MIT press. Web site</p></li>
+<li><p>LeCun, Y., Bengio, Y., &amp; Hinton, G. (2015). Deep learning.
+Nature, 521(7553), 436-444.</p></li>
+<li><p>Chollet, F. (2018). Deep learning with Python. Manning
+Publications.</p></li>
+<li><p>Chollet, F. (2023). Deep learning with R . 2nd edition. Manning
+Publications.</p></li>
+</ul>
+</div>
+<div id="some-interesting-online-resources" class="section level2">
+<h2>Some interesting online resources</h2>
+<ul>
+<li><p><a href="https://online.stat.psu.edu/stat508/">Applied Data
+Mining and Statistical Learning (Penn Statte-University)</a></p></li>
+<li><p><a href="https://daviddalpiaz.github.io/r4sl/">R for statistical
+learning</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf">An
+Introduction to Recursive Partitioning Using the RPART
+Routines</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf">Introduction
+to Artificial Neural Networks</a></p></li>
+</ul>
 </div>
 </div>
 
