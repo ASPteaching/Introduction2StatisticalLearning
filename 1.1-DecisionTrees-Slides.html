@@ -440,7 +440,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/decTree4Hypertension.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+<p><img data-src="images/decTree4HypertensionNew.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
 <figcaption>A doctor may classify patients at high or low cardiovascular risk using some type of decision tree</figcaption>
 </figure>
 </div>
@@ -483,15 +483,15 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <section id="more-about-context" class="slide level2">
 <h2>More about context</h2>
 <ul>
-<li>Decision trees are non parametric, data guided predictors, well suited in many situations such as:
+<li><p>Decision trees are non parametric, data guided predictors, well suited in many situations such as:</p>
 <ul>
 <li>Non-linear relationships.</li>
 <li>High-dimensional data.</li>
 <li>Interaction between variables exist.</li>
 <li>Mixed data types.</li>
 </ul></li>
-<li>They are not so appropriate for complex datasets, or complex problems, that require expert knowledge.</li>
-<li><em>Look for some examples of each situation!</em></li>
+<li><p>They are not so appropriate for complex datasets, or complex problems, that require expert knowledge.</p></li>
+<li><p><a href="https://g.co/gemini/share/781b7d88e03a">See here some examples of each situation!</a></p></li>
 </ul>
 </section>
 <section id="types-of-decision-trees" class="slide level2">
@@ -568,15 +568,6 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <p><br></p>
 <div class="font90">
 <table>
-<colgroup>
-<col style="width: 9%">
-<col style="width: 10%">
-<col style="width: 12%">
-<col style="width: 18%">
-<col style="width: 15%">
-<col style="width: 19%">
-<col style="width: 13%">
-</colgroup>
 <thead>
 <tr class="header">
 <th><strong>Package</strong></th>
@@ -590,7 +581,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong><code>rpart</code></strong></td>
+<td><a href="https://cran.r-project.org/web/packages/rpart/index.html"><strong><code>rpart</code></strong></a></td>
 <td>RPART</td>
 <td>Medium to large</td>
 <td>Poor</td>
@@ -599,7 +590,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <td>Simple</td>
 </tr>
 <tr class="even">
-<td><strong><code>caret</code></strong></td>
+<td><a href="https://topepo.github.io/caret/"><strong><code>caret</code></strong></a></td>
 <td>Various</td>
 <td>Various</td>
 <td>Depends on algorithm</td>
@@ -608,7 +599,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <td>Complex</td>
 </tr>
 <tr class="odd">
-<td><strong><code>tree</code></strong></td>
+<td><a href="https://cran.r-project.org/web/packages/tree/index.html"><strong><code>tree</code></strong></a></td>
 <td>CART</td>
 <td>Small to medium</td>
 <td>Poor</td>
@@ -747,23 +738,71 @@ age      21.000 24.00000  29.0000  41.00000  81.00 ▇▃▁▁▁</code></pre>
 <span id="cb4-2"><a href=""></a><span class="fu">text</span>(model1, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">cex=</span><span class="fl">0.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="a-simple-tree-to-predict-diabetes" class="slide level2">
-<h2>A simple tree to predict diabetes</h2>
+<section id="viewing-the-tree-as-text" class="slide level2">
+<h2>Viewing the tree as text</h2>
+<div class="font40">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 768 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+  1) root 768 268 neg (0.65104167 0.34895833)  
+    2) glucose&lt; 127.5 485  94 neg (0.80618557 0.19381443)  
+      4) age&lt; 28.5 271  23 neg (0.91512915 0.08487085) *
+      5) age&gt;=28.5 214  71 neg (0.66822430 0.33177570)  
+       10) insulin&lt; 142.5 164  48 neg (0.70731707 0.29268293)  
+         20) glucose&lt; 96.5 51   4 neg (0.92156863 0.07843137) *
+         21) glucose&gt;=96.5 113  44 neg (0.61061947 0.38938053)  
+           42) mass&lt; 26.35 19   0 neg (1.00000000 0.00000000) *
+           43) mass&gt;=26.35 94  44 neg (0.53191489 0.46808511)  
+             86) pregnant&lt; 5.5 49  15 neg (0.69387755 0.30612245)  
+              172) age&lt; 34.5 25   2 neg (0.92000000 0.08000000) *
+              173) age&gt;=34.5 24  11 pos (0.45833333 0.54166667)  
+                346) pressure&gt;=77 10   2 neg (0.80000000 0.20000000) *
+                347) pressure&lt; 77 14   3 pos (0.21428571 0.78571429) *
+             87) pregnant&gt;=5.5 45  16 pos (0.35555556 0.64444444) *
+       11) insulin&gt;=142.5 50  23 neg (0.54000000 0.46000000)  
+         22) age&gt;=56.5 12   1 neg (0.91666667 0.08333333) *
+         23) age&lt; 56.5 38  16 pos (0.42105263 0.57894737)  
+           46) age&gt;=33.5 29  14 neg (0.51724138 0.48275862)  
+             92) triceps&gt;=27 22   8 neg (0.63636364 0.36363636) *
+             93) triceps&lt; 27 7   1 pos (0.14285714 0.85714286) *
+           47) age&lt; 33.5 9   1 pos (0.11111111 0.88888889) *
+    3) glucose&gt;=127.5 283 109 pos (0.38515901 0.61484099)  
+      6) mass&lt; 29.95 75  24 neg (0.68000000 0.32000000) *
+      7) mass&gt;=29.95 208  58 pos (0.27884615 0.72115385)  
+       14) glucose&lt; 157.5 116  46 pos (0.39655172 0.60344828)  
+         28) age&lt; 30.5 50  23 neg (0.54000000 0.46000000)  
+           56) pressure&gt;=73 29  10 neg (0.65517241 0.34482759)  
+            112) mass&lt; 41.8 20   4 neg (0.80000000 0.20000000) *
+            113) mass&gt;=41.8 9   3 pos (0.33333333 0.66666667) *
+           57) pressure&lt; 73 21   8 pos (0.38095238 0.61904762) *
+         29) age&gt;=30.5 66  19 pos (0.28787879 0.71212121) *
+       15) glucose&gt;=157.5 92  12 pos (0.13043478 0.86956522) *</code></pre>
+</div>
+</div>
+</div>
+<p>This representation can be used to classify some values following the decisions from top to bottom.</p>
+</section>
+<section id="plotting-the-tree-1" class="slide level2">
+<h2>Plotting the tree (1)</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-6-1.png" style="height:10cm" width="960"></p>
+<p><img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-7-1.png" style="height:10cm" width="960"></p>
 <figcaption>Even without domain expertise the model seems <em>reasonable</em></figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="a-nicer-version" class="slide level2">
-<h2>A nicer version</h2>
+<section id="plotting-the-tree-nicer" class="slide level2">
+<h2>Plotting the tree (Nicer)</h2>
 
-<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
+<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
 <section id="individual-prediction" class="slide level2">
 <h2>Individual prediction</h2>
 <p>Consider individuals 521 and 562</p>
@@ -792,8 +831,8 @@ Levels: neg pos</code></pre>
 <li>It is straightforward to obtain a simple performance measure.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>predicted.classes<span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, PimaIndiansDiabetes2, <span class="st">"class"</span>)</span>
-<span id="cb7-2"><a href=""></a><span class="fu">mean</span>(predicted.classes <span class="sc">==</span> PimaIndiansDiabetes2<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>predicted.classes<span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, PimaIndiansDiabetes2, <span class="st">"class"</span>)</span>
+<span id="cb8-2"><a href=""></a><span class="fu">mean</span>(predicted.classes <span class="sc">==</span> PimaIndiansDiabetes2<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8294271</code></pre>
 </div>
@@ -1076,18 +1115,33 @@ Levels: neg pos</code></pre>
 </section>
 <section id="tb-1.2.5---some-impurity-functions" class="slide level2 scrollable">
 <h2>TB 1.2.5 - Some Impurity Functions</h2>
-<p>Commonly used impurity functions for classification trees:</p>
+<p>Common impurity functions for classification trees.</p>
+<p>For node <span class="math inline">\(t\)</span>, the node information function <span class="math inline">\(i(t)\)</span> may be defined by</p>
 <ol type="1">
-<li><strong>Entropy function</strong>: <span class="math inline">\(\sum_{j=1}^{K} p_{j} \log \frac{1}{p_{j}}=-\sum_{j=1}^{K} p_{j} \log p_{j}\)</span>.</li>
+<li><strong>Entropy function</strong>: <span class="math inline">\(-\sum_{i=1}^K p(k\vert t)\log p(k\vert t)\)</span>.</li>
 </ol>
 <p>If <span class="math inline">\(p_{j}=0\)</span>, use the limit <span class="math inline">\(\lim p_{j} \rightarrow \log p_{j}=0\)</span>.</p>
 <ol start="2" type="1">
-<li><p><strong>Misclassification rate</strong>: <span class="math inline">\(1-\max _{j} p_{j}\)</span>.</p></li>
-<li><p><strong>Gini index</strong>: <span class="math inline">\(\sum_{j=1}^{K} p_{j}\left(1-p_{j}\right)=1-\sum_{j=1}^{K} p_{j}^{2}\)</span>.</p></li>
+<li><p><strong>Misclassification rate</strong>: <span class="math inline">\(\sum_{i=1}^K p(k\vert t)(1-p(k\vert t)),\)</span></p></li>
+<li><p><strong>Gini index</strong>: <span class="math inline">\(1-\sum_{i=1}^K p(k\vert t)^2\)</span>.</p></li>
 </ol>
 </section>
-<section id="tb-1.2.6---impurity-measures-for-a-split" class="slide level2">
-<h2>TB 1.2.6 - Impurity measures for a split</h2>
+<section id="tb-1.2.5-impurity-functions-behavior" class="slide level2">
+<h2>TB 1.2.5 Impurity functions behavior</h2>
+<center>
+<img data-src="images/impurity.jpg" style="width:75.0%">
+</center>
+<div class="tiny">
+<p>Node impurity functions for the two-class case.</p>
+<ul>
+<li>The entropy function (rescaled) is the red curve,</li>
+<li>The Gini index is the green curve, and</li>
+<li>The resubstitution estimate of the misclassification rate is the blue curve.</li>
+</ul>
+</div>
+</section>
+<section id="tb-1.2.6---impurity-for-a-split" class="slide level2">
+<h2>TB 1.2.6 - Impurity for a split</h2>
 <ul>
 <li>Definition: Given an impurity function <span class="math inline">\(\Phi\)</span>, define the impurity measure, denoted as <span class="math inline">\(i(t)\)</span>, of a node <span class="math inline">\(t\)</span> as:</li>
 </ul>
@@ -1137,7 +1191,9 @@ i(t)=\phi(p(1 \mid t), p(2 \mid t), \ldots, p(K \mid t))
 <li>Define a criteria for stop splitting a tree (see below).</li>
 </ul></li>
 </ul>
-<p>##TB 1.2.10 - Entropy as an impurity measure</p>
+</section>
+<section id="tb-1.2.10---entropy-as-an-impurity-measure" class="slide level2">
+<h2>TB 1.2.10 - Entropy as an impurity measure</h2>
 <ul>
 <li>The entropy of a node, <span class="math inline">\(t\)</span>, that is split in <span class="math inline">\(n\)</span> child nodes <span class="math inline">\(t_1\)</span>, <span class="math inline">\(t_2\)</span>, …, <span class="math inline">\(t_n\)</span>, is:</li>
 </ul>
@@ -1403,15 +1459,15 @@ R_\alpha(T) =R(T)+\alpha|T|
 <section id="non-linear-relationships" class="slide level2 smaller">
 <h2>Non linear relationships!</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>aq <span class="ot">&lt;-</span> datasets<span class="sc">::</span>airquality</span>
-<span id="cb9-2"><a href=""></a>color <span class="ot">&lt;-</span> <span class="fu">adjustcolor</span>(<span class="st">"forestgreen"</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>)</span>
-<span id="cb9-3"><a href=""></a>ps <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, ...) {  <span class="co"># custom panel function</span></span>
-<span id="cb9-4"><a href=""></a>  <span class="fu">panel.smooth</span>(x, y, <span class="at">col =</span> color, <span class="at">col.smooth =</span> <span class="st">"black"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
-<span id="cb9-5"><a href=""></a>}</span>
-<span id="cb9-6"><a href=""></a><span class="fu">pairs</span>(aq, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">upper.panel =</span> ps, <span class="at">col =</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>aq <span class="ot">&lt;-</span> datasets<span class="sc">::</span>airquality</span>
+<span id="cb10-2"><a href=""></a>color <span class="ot">&lt;-</span> <span class="fu">adjustcolor</span>(<span class="st">"forestgreen"</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>)</span>
+<span id="cb10-3"><a href=""></a>ps <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, ...) {  <span class="co"># custom panel function</span></span>
+<span id="cb10-4"><a href=""></a>  <span class="fu">panel.smooth</span>(x, y, <span class="at">col =</span> color, <span class="at">col.smooth =</span> <span class="st">"black"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb10-5"><a href=""></a>}</span>
+<span id="cb10-6"><a href=""></a><span class="fu">pairs</span>(aq, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">upper.panel =</span> ps, <span class="at">col =</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
-<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
 <section id="building-the-tree-1-splitting" class="slide level2">
 <h2>Building the tree (1): Splitting</h2>
 <ul>
@@ -1465,13 +1521,13 @@ R_1(j, s)=\left\{X \mid X_j&lt;s\right\} \text { and } R_2(j, s)=\left\{X \mid X
 <section id="example-a-regression-tree" class="slide level2">
 <h2>Example: A regression tree</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb10-2"><a href=""></a>train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(aq), <span class="at">size =</span> <span class="fu">nrow</span>(aq)<span class="sc">*</span><span class="fl">0.7</span>)</span>
-<span id="cb10-3"><a href=""></a>aq_train <span class="ot">&lt;-</span> aq[train,]</span>
-<span id="cb10-4"><a href=""></a>aq_test  <span class="ot">&lt;-</span> aq[<span class="sc">-</span>train,]</span>
-<span id="cb10-5"><a href=""></a>aq_regresion <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">tree</span>(<span class="at">formula =</span> Ozone <span class="sc">~</span> ., </span>
-<span id="cb10-6"><a href=""></a>                           <span class="at">data =</span> aq_train, <span class="at">split =</span> <span class="st">"deviance"</span>)</span>
-<span id="cb10-7"><a href=""></a><span class="fu">summary</span>(aq_regresion)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb11-2"><a href=""></a>train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(aq), <span class="at">size =</span> <span class="fu">nrow</span>(aq)<span class="sc">*</span><span class="fl">0.7</span>)</span>
+<span id="cb11-3"><a href=""></a>aq_train <span class="ot">&lt;-</span> aq[train,]</span>
+<span id="cb11-4"><a href=""></a>aq_test  <span class="ot">&lt;-</span> aq[<span class="sc">-</span>train,]</span>
+<span id="cb11-5"><a href=""></a>aq_regresion <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">tree</span>(<span class="at">formula =</span> Ozone <span class="sc">~</span> ., </span>
+<span id="cb11-6"><a href=""></a>                           <span class="at">data =</span> aq_train, <span class="at">split =</span> <span class="st">"deviance"</span>)</span>
+<span id="cb11-7"><a href=""></a><span class="fu">summary</span>(aq_regresion)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Regression tree:
@@ -1489,7 +1545,7 @@ Distribution of residuals:
 <section id="example-plot-the-tree" class="slide level2">
 <h2>Example: Plot the tree</h2>
 
-<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section></section>
 <section>
 <section id="error-estimation-and-optimization-for-regression-trees" class="title-slide slide level1 center">
 <h1>Error estimation and optimization for regression trees</h1>
@@ -1535,13 +1591,13 @@ Distribution of residuals:
 <section id="example-prune-the-tree" class="slide level2">
 <h2>Example: Prune the tree</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>cv_aq <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">cv.tree</span>(aq_regresion, <span class="at">K =</span> <span class="dv">5</span>)</span>
-<span id="cb12-2"><a href=""></a>optimal_size <span class="ot">&lt;-</span>  <span class="fu">rev</span>(cv_aq<span class="sc">$</span>size)[<span class="fu">which.min</span>(<span class="fu">rev</span>(cv_aq<span class="sc">$</span>dev))]</span>
-<span id="cb12-3"><a href=""></a>aq_final_tree <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">prune.tree</span>(</span>
-<span id="cb12-4"><a href=""></a>                 <span class="at">tree =</span> aq_regresion,</span>
-<span id="cb12-5"><a href=""></a>                 <span class="at">best =</span> optimal_size</span>
-<span id="cb12-6"><a href=""></a>               )</span>
-<span id="cb12-7"><a href=""></a><span class="fu">summary</span>(aq_final_tree)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>cv_aq <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">cv.tree</span>(aq_regresion, <span class="at">K =</span> <span class="dv">5</span>)</span>
+<span id="cb13-2"><a href=""></a>optimal_size <span class="ot">&lt;-</span>  <span class="fu">rev</span>(cv_aq<span class="sc">$</span>size)[<span class="fu">which.min</span>(<span class="fu">rev</span>(cv_aq<span class="sc">$</span>dev))]</span>
+<span id="cb13-3"><a href=""></a>aq_final_tree <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">prune.tree</span>(</span>
+<span id="cb13-4"><a href=""></a>                 <span class="at">tree =</span> aq_regresion,</span>
+<span id="cb13-5"><a href=""></a>                 <span class="at">best =</span> optimal_size</span>
+<span id="cb13-6"><a href=""></a>               )</span>
+<span id="cb13-7"><a href=""></a><span class="fu">summary</span>(aq_final_tree)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Regression tree:

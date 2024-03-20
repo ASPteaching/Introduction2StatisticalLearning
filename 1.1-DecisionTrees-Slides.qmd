@@ -70,7 +70,7 @@ Decisions are often based on asking several questions on available information w
 ::: {.column width="60%"}
 
 ```{r fig.align='center', out.width="80%", fig.cap='A doctor may classify patients at high or low cardiovascular risk using some type of decision tree'}
-knitr::include_graphics("images/decTree4Hypertension.png")
+knitr::include_graphics("images/decTree4HypertensionNew.png")
 ```
 :::
 :::
@@ -119,7 +119,8 @@ knitr::include_graphics("images/decTree4Hypertension.png")
     -   Interaction between variables exist.
     -   Mixed data types.
 -   They are not so appropriate for complex datasets, or complex problems, that require expert knowledge.
-- *Look for some examples of each situation!*
+
+- [See here some examples of each situation!](https://g.co/gemini/share/781b7d88e03a)
 
 ## Types of decision trees
 
@@ -155,9 +156,9 @@ knitr::include_graphics("images/decTree4Hypertension.png")
 
 | **Package** | **Algorithm** | **Dataset size** | **Missing data handling** | **Ensemble methods** | **Visual repr** | **User interface** |
 |-------------|---------------|------------------|---------------------------|----------------------|----------------------------|--------------------|
-| **`rpart`** | RPART         | Medium to large  | Poor                      | No                   | Yes                        | Simple             |
-| **`caret`** | Various       | Various          | Depends on algorithm      | Yes                  | Depends on algorithm       | Complex            |
-| **`tree`**  | CART          | Small to medium  | Poor                      | No                   | Yes                        | Simple             |
+| [**`rpart`**](https://cran.r-project.org/web/packages/rpart/index.html) | RPART         | Medium to large  | Poor                      | No                   | Yes                        | Simple             |
+| [**`caret`**](https://topepo.github.io/caret/) | Various       | Various          | Depends on algorithm      | Yes                  | Depends on algorithm       | Complex            |
+| [**`tree`**](https://cran.r-project.org/web/packages/tree/index.html)  | CART          | Small to medium  | Poor                      | No                   | Yes                        | Simple             |
 
 :::
 
@@ -218,14 +219,23 @@ plot(model1)
 text(model1, digits = 3, cex=0.7)
 ```
 
-## A simple tree to predict diabetes
+## Viewing the tree as text
+
+:::{.font40}
+```{r}
+model1
+```
+:::
+This representation can be used to classify some values following the decisions from top to bottom.
+
+## Plotting the tree (1)
 
 ```{r fig.cap=" Even without domain expertise the model seems *reasonable*",out.height="10cm"}
 plot(model1)
 text(model1, digits = 3, cex=0.7)
 ```
 
-## A nicer version
+## Plotting the tree (Nicer)
 
 ```{r}
 require(rpart.plot)
@@ -537,18 +547,33 @@ Definition: An **impurity function** is a function $\Phi$ defined on the set of 
 
 ## TB 1.2.5 - Some Impurity Functions
 
-Commonly used impurity functions for classification trees:
+Common impurity functions for classification trees.
 
-1.  **Entropy function**: $\sum_{j=1}^{K} p_{j} \log \frac{1}{p_{j}}=-\sum_{j=1}^{K} p_{j} \log p_{j}$.
+ For node $t$, the node information function $i(t)$ may be defined by
+
+1.  **Entropy function**: $-\sum_{i=1}^K p(k\vert t)\log p(k\vert t)$.
 
 If $p_{j}=0$, use the limit $\lim p_{j} \rightarrow \log p_{j}=0$.
 
-2.  **Misclassification rate**: $1-\max _{j} p_{j}$.
+2.  **Misclassification rate**: $\sum_{i=1}^K p(k\vert t)(1-p(k\vert t)),$
 
-3.  **Gini index**: $\sum_{j=1}^{K} p_{j}\left(1-p_{j}\right)=1-\sum_{j=1}^{K} p_{j}^{2}$.
+3.  **Gini index**: $1-\sum_{i=1}^K p(k\vert t)^2$.
 
 
-## TB 1.2.6 - Impurity measures for a split
+## TB 1.2.5 Impurity functions behavior
+
+<center>
+![](images/impurity.jpg){width=75%}
+</center>
+
+:::{.tiny}
+Node impurity functions for the two-class case.
+
+- The entropy function (rescaled) is the red curve, 
+- The Gini index is the green curve, and
+- The resubstitution estimate of the misclassification rate is the blue curve.
+:::
+## TB 1.2.6 - Impurity for a split
 
 - Definition: Given an impurity function $\Phi$, define the impurity measure, denoted as $i(t)$, of a node $t$ as:
 
@@ -590,7 +615,7 @@ $$
   - Define a criteria for stop splitting a tree (see below).
 
 
-##TB 1.2.10 -  Entropy as an impurity measure
+## TB 1.2.10 -  Entropy as an impurity measure
 
 - The entropy of a node, $t$, that is split in $n$ child nodes $t_1$, $t_2$, ..., $t_n$, is: 
 

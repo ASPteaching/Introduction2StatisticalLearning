@@ -86,6 +86,8 @@ They can be tuned in a much more automatical way and have been applied to many c
 
 ## Some interesting online resources
 
+-[Decision Trees free course (9 videos). By Analytics Vidhya](https://www.youtube.com/playlist?list=PLdKd-j64gDcC5TCZEqODMZtAotCfm5Zkh)
+
 - [Applied Data Mining and Statistical Learning (Penn Statte-University)](https://online.stat.psu.edu/stat508/)
 
 - [R for statistical learning](https://daviddalpiaz.github.io/r4sl/)
