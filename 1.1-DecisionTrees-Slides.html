@@ -1217,14 +1217,12 @@ H(t)=-\sum_{i=1}^{n} P\left(t_{i}\right) \log _{2} P\left(t_{i}\right)
 <ul>
 <li>For a split <span class="math inline">\(s\)</span> and a set of observations (a node) <span class="math inline">\(t\)</span>, information gain is defined as:</li>
 </ul>
-<div class="font80">
 <p><span class="math display">\[
 \begin{aligned}
-&amp; IG(t, s)=\text { (original entropy) }-(\text { entropy after the split) } \\
+&amp; IG(t, s)=\text { (original entr.) }-(\text { entr. after split) } \\
 &amp; IG(t, s)=H(t)-\sum_{i=1}^{n} \frac{\left|t_{i}\right|}{t} H\left(x_{i}\right)
 \end{aligned}
 \]</span></p>
-</div>
 </section>
 <section id="example" class="slide level2 smaller">
 <h2>Example</h2>
@@ -1320,7 +1318,7 @@ H(t)=-\sum_{i=1}^{n} P\left(t_{i}\right) \log _{2} P\left(t_{i}\right)
 <h2>TB. 2.1 - When to stop growing</h2>
 <ul>
 <li><p>Maximizing information gain is one possible criteria to choose among splits.</p></li>
-<li><p>In order to avoid excessive complexity it is usually decided to stop splitting when “information gain does not compensate for increase in complexity”.</p></li>
+<li><p>In order to avoid excessive complexity it is usually decided to stop splitting when <em>information gain does not compensate for increase in complexity</em>.</p></li>
 </ul>
 </section>
 <section id="tb-2.2-stop-splitting-criteria" class="slide level2">
@@ -1339,8 +1337,9 @@ H(t)=-\sum_{i=1}^{n} P\left(t_{i}\right) \log _{2} P\left(t_{i}\right)
 <li><p>The decision tree classifies new data points as follows.</p>
 <ul>
 <li>We let a data point pass down the tree and see which leaf node it lands in.</li>
-<li>The class of the leaf node is assigned to the new data point. Basically, all the points that land in the same leaf node will be given the same class. This is similar to k-means or any prototype method.</li>
+<li>The class of the leaf node is assigned to the new data point. Basically, all the points that land in the same leaf node will be given the same class.</li>
 </ul></li>
+<li><p>This is similar to k-means or any prototype method.</p></li>
 </ul>
 </section>
 <section id="tb-3.1---class-assignment-rules" class="slide level2">

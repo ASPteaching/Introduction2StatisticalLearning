@@ -635,14 +635,15 @@ $$
 
 - For a split $s$ and a set of observations (a node) $t$, information gain is defined as:
 
-:::{.font80}
+
 $$
 \begin{aligned}
-& IG(t, s)=\text { (original entropy) }-(\text { entropy after the split) } \\
+& IG(t, s)=\text { (original entr.) }-(\text { entr. after split) } \\
 & IG(t, s)=H(t)-\sum_{i=1}^{n} \frac{\left|t_{i}\right|}{t} H\left(x_{i}\right)
 \end{aligned}
 $$
-:::
+
+
 ## Example {.smaller}
 
 ::: columns
@@ -686,7 +687,7 @@ knitr::include_graphics("images/Example2-IGCalculation.png")
 
 -   Maximizing information gain is one possible criteria to choose among splits.
 
--   In order to avoid excessive complexity it is usually decided to stop splitting when "information gain does not compensate for increase in complexity".
+-   In order to avoid excessive complexity it is usually decided to stop splitting when *information gain does not compensate for increase in complexity*.
 
 ## TB 2.2 Stop splitting criteria
 
@@ -704,7 +705,9 @@ Where:
 -   The decision tree classifies new data points as follows.
 
     -   We let a data point pass down the tree and see which leaf node it lands in.
-    -   The class of the leaf node is assigned to the new data point. Basically, all the points that land in the same leaf node will be given the same class. This is similar to k-means or any prototype method.
+    -   The class of the leaf node is assigned to the new data point. Basically, all the points that land in the same leaf node will be given the same class. 
+    
+  - This is similar to k-means or any prototype method.
 
 ## TB 3.1 - Class Assignment Rules
 
