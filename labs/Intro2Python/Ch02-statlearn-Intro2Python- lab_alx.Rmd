@@ -1,8 +1,11 @@
 ---
+title: "Introduction to Python - Lab"
+subtitle: "Adapted from the 'Introduction to Statistical Learning with Python. Chapter 02 lab'"
 jupyter:
   jupytext:
     cell_metadata_filter: -all
     formats: Rmd,ipynb
+    toc: true
     text_representation:
       extension: .Rmd
       format_name: rmarkdown
@@ -11,10 +14,11 @@ jupyter:
 ---
 
 
-# Chapter 2
-
 # Lab: Introduction to Python
 
+This lab has been directly adapted form ISLP chapter 2 lab on "Introduction to Python".
+
+The main difference with that one are changes added comments to make it work in my system as well as those explanations I thought it was worth adding at some points.
 
 
 
@@ -24,6 +28,7 @@ jupyter:
 To run the labs in this book, you will need two things:
 
 * An installation of `Python3`, which is the specific version of `Python`  used in the labs. 
+
 * Access to  `Jupyter`, a very popular `Python` interface that runs code through a file called a *notebook*. 
 
 
@@ -38,40 +43,77 @@ You can download and install  `Python3`   by following the instructions availabl
  
 Please see the `Python` resources page on the book website [statlearning.com](https://www.statlearning.com) for up-to-date information about getting `Python` and `Jupyter` working on your computer. 
 
+```
+pip install jupyter
+```
+
+
 You will need to install the `ISLP` package, which provides access to the datasets and custom-built functions that we provide.
 Inside a macOS or Linux terminal type `pip install ISLP`; this also installs most other packages needed in the labs. The `Python` resources page has a link to the `ISLP` documentation website.
 
+**Note** If you run the installer provided with the labs repository  
+
+```
+pip install -r requirements.txt 
+```
+
+This will install first the required packages and last the "ISLP" package.
+
 To run this lab, download the file `Ch2-statlearn-lab.ipynb` from the `Python` resources page. 
-Now run the following code at the command line: `jupyter lab Ch2-statlearn-lab.ipynb`.
+
+Now run the following code at the command line: 
+
+```
+jupyter lab Ch2-statlearn-lab.ipynb
+```
 
 If you're using Windows, you can use the `start menu` to access `anaconda`, and follow the links. For example, to install `ISLP` and run this lab, you can run the same code above in an `anaconda` shell.
 
+### Additional installs
+
+This lab uses some popular packages that you may want to install before you start.
+
+Thes pacakages provide functionalities for computation (`numpy`),  plotting (`matplotlib`), or data frame management (`pandas`) that are native in R.
+
+```
+pip install numpy
+pip install matplotlib
+pip install pandas
+```
+
+## Rendering an "Rmd" to "pnp"
+
+The current Rmarkdown document will generate, when properly rendered a Jupyter notebook.
+
+This notebook is different to the usual rendered document from Rmarkdown
+
+- In general, a rendered Rmarkdown document is a finished document which we do not interact with anymore.
+
+- In this case it creates aJupyter notebook, which, in spirit, **is more like an R notebook** that can be used to work interactively with the data.
+
+Notice that the .Rmd step is really not necessary as is not Rstudio either.
+
+Jupyter notebooks can be created from scratch using `JupyterLab`.
 
 
-## Basic Commands
-
-
+# Basic Commands
 
 In this lab, we will introduce some simple `Python` commands. 
  For more resources about `Python` in general, readers may want to consult the tutorial at [docs.python.org/3/tutorial/](https://docs.python.org/3/tutorial/). 
 
 
- 
-
-
 
 Like most programming languages, `Python` uses *functions*
-to perform operations.   To run a
-function called `fun`, we type
-`fun(input1,input2)`, where the inputs (or *arguments*)
-`input1` and `input2` tell
-`Python` how to run the function.  A function can have any number of
-inputs. For example, the
+to perform operations.   
+
+To run a function called `fun`, we type `fun(input1,input2)`, where the inputs (or *arguments*) `input1` and `input2` tell
+`Python` how to run the function.  
+
+A function can have any number of inputs. For example, the
 `print()`  function outputs a text representation of all of its arguments to the console.
 
 ```{python}
 print('fit a model with', 11, 'variables')
-
 ```
 
  The following command will provide information about the `print()` function.
@@ -90,8 +132,8 @@ Adding two integers in `Python` is pretty intuitive.
 
 In `Python`, textual data is handled using
 *strings*. For instance, `"hello"` and
-`'hello'`
-are strings. 
+`'hello'` are both strings. 
+
 We can concatenate them using the addition `+` symbol.
 
 ```{python}
@@ -143,7 +185,7 @@ See [docs.scipy.org/doc/numpy/user/quickstart.html](https://docs.scipy.org/doc/n
 
 
 
-## Introduction to Numerical Python
+# Introduction to Numerical Python
 
 As mentioned earlier, this book makes use of functionality   that is contained in the `numpy` 
  *library*, or *package*. A package is a collection of modules that are not necessarily included in 
@@ -322,10 +364,9 @@ Modifying `x_reshape` also modified `x` because the two objects occupy the same 
     
 
 
-We just saw that we can modify an element of an array. Can we also modify a tuple? It turns out that we cannot --- and trying to do so introduces
-an *exception*, or error.
+We just saw that we can modify an element of an array. Can we also modify a tuple? It turns out that we cannot --- and trying to do so introduces an *exception*, or error.
 
-```{python}
+```{python eval=FALSE}
 my_tuple = (3, 4, 5)
 my_tuple[0] = 2
 
@@ -478,7 +519,8 @@ X.mean(0)
     
 
 
-## Graphics
+# Graphics
+
 In `Python`, common practice is to use  the library
 `matplotlib` for graphics.
 However, since `Python` was not written with data analysis in mind,
@@ -557,11 +599,6 @@ In what follows, we will use
  trailing semicolons whenever the text that would be output is not
 germane to the discussion at hand.
 
-
-
-
-
-
 To label our plot, we  make use of the `set_xlabel()`,  `set_ylabel()`, and  `set_title()` methods
 of `ax`.
   
@@ -578,7 +615,7 @@ ax.set_title("Plot of X vs Y");
   the size from `(8, 8)` to `(12, 3)`.
 
 
-```{python}
+```{python eval=FALSE}
 fig.set_size_inches(12,3)
 fig
 ```
@@ -677,7 +714,7 @@ ax.imshow(f);
 ```
 
 
-## Sequences and Slice Notation
+# Sequences and Slice Notation
 
 
 As seen above, the
@@ -744,7 +781,7 @@ See the documentation `slice?` for useful options in creating slices.
 
 
 
-## Indexing Data
+# Indexing Data
 To begin, we  create a two-dimensional `numpy` array.
 
 ```{python}
@@ -764,7 +801,7 @@ A[1,2]
 The first number after the open-bracket symbol `[`
  refers to the row, and the second number refers to the column. 
 
-### Indexing Rows, Columns, and Submatrices
+##Indexing Rows, Columns, and Submatrices
  To select multiple rows at a time, we can pass in a list
   specifying our selection. For instance, `[1,3]` will retrieve the second and fourth rows:
 
@@ -800,7 +837,7 @@ np.array([A[1,0],A[3,2]])
 
  Similarly,  the following code fails to extract the submatrix comprised of the second and fourth rows and the first, third, and fourth columns:
 
-```{python}
+```{python eval=FALSE}
 A[[1,3],[0,2,3]]
 
 ```
@@ -859,7 +896,7 @@ Slices can be used to extract objects from arbitrary sequences, such as strings,
  
 
 
-### Boolean Indexing
+## Boolean Indexing
 In `numpy`, a *Boolean* is a type  that equals either   `True` or  `False` (also represented as $1$ and $0$, respectively).
 The next line creates a vector of $0$'s, represented as Booleans, of length equal to the first dimension of `A`. 
 
@@ -933,7 +970,7 @@ to the `numpy` tutorial mentioned earlier.
 
 
 
-## Loading Data
+# Loading Data
 
 Data sets often contain different types of data, and may have names associated with the rows or columns. 
 For these reasons, they typically are best accommodated using a
@@ -945,7 +982,7 @@ different arrays can be combined to form a row.
 library can be used to create and work with data frame objects.
 
 
-### Reading in a Data Set
+## Reading in a Data Set
 
 The first step of most analyses involves importing a data set into
 `Python`.  
@@ -1034,7 +1071,7 @@ Auto_new.shape
 ```
 
 
-### Basics of Selecting Rows and Columns
+# Basics of Selecting Rows and Columns
  
 We can use `Auto.columns`  to check the variable names.
 
@@ -1124,7 +1161,7 @@ Index entries need not be unique: there are several cars  in the data frame name
 Auto_re.loc['ford galaxie 500', ['mpg', 'origin']]
 
 ```
-### More on Selecting Rows and Columns
+## More on Selecting Rows and Columns
 Suppose now that we want to create a data frame consisting of the  `weight` and `origin`  of the subset of cars with 
 `year` greater than 80 --- i.e. those built after 1980.
 To do this, we first create a Boolean array that indexes the rows.
@@ -1175,7 +1212,7 @@ In summary, a powerful set of operations is available to index the rows and colu
 selections, use the `loc[]` method. For functional queries that filter rows, use the `loc[]` method
 with a function (typically a `lambda`) in the rows argument.
 
-## For Loops
+# For Loops
 A `for` loop is a standard tool in many languages that
 repeatedly evaluates some chunk of code while
 varying different values inside the code.
@@ -1280,11 +1317,11 @@ The reference
 includes many helpful and more complex examples.
 
 
-## Additional Graphical and Numerical Summaries
+# Additional Graphical and Numerical Summaries
 We can use the `ax.plot()` or  `ax.scatter()`  functions to display the quantitative variables. However, simply typing the variable names will produce an error message,
 because `Python` does not know to look in the  `Auto`  data set for those variables.
 
-```{python}
+```{python eval=FALSE}
 fig, ax = subplots(figsize=(8, 8))
 ax.plot(horsepower, mpg, 'o');
 ```

@@ -507,62 +507,6 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </ul></li>
 </ul>
 </section>
-<section id="classification-vs-regression-trees" class="slide level2">
-<h2>Classification vs Regression Trees</h2>
-<div class="font50">
-<table>
-<colgroup>
-<col style="width: 25%">
-<col style="width: 37%">
-<col style="width: 37%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;"><strong>Aspect</strong></th>
-<th style="text-align: left;"><strong>Regression Trees</strong></th>
-<th style="text-align: left;"><strong>Classification Trees</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Outcome var. type</td>
-<td style="text-align: left;">Continuous</td>
-<td style="text-align: left;">Categorical</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Goal</td>
-<td style="text-align: left;">To predict a numerical value</td>
-<td style="text-align: left;">To predict a class label</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Splitting criteria</td>
-<td style="text-align: left;">Mean Squared Error, Mean Abs. Error</td>
-<td style="text-align: left;">Gini Impurity, Entropy, etc.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Leaf node prediction</td>
-<td style="text-align: left;">Mean or median of the target variable in that region</td>
-<td style="text-align: left;">Mode or majority class of the target variable ...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Tree visualization</td>
-<td style="text-align: left;">Sequence of splits leading to a numerical prediction</td>
-<td style="text-align: left;">Sequence of splits leading to a categorical prediction</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Examples of use cases</td>
-<td style="text-align: left;">Predicting housing prices, predicting stock prices</td>
-<td style="text-align: left;">Predicting customer churn, predicting high/low risk in diease</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Evaluation metric</td>
-<td style="text-align: left;">Mean Squared Error, Mean Absolute Error, R-square</td>
-<td style="text-align: left;">Accuracy, Precision, Recall, F1-score, etc.</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
 <section id="tree-building-with-r" class="slide level2 smaller">
 <h2>Tree building with R</h2>
 <p><br></p>
@@ -784,7 +728,12 @@ node), split, n, loss, yval, (yprob)
 </div>
 </div>
 </div>
-<p>This representation can be used to classify some values following the decisions from top to bottom.</p>
+<div class="small">
+<ul>
+<li>This representation shows the variables and split values that have been selected by the algorithm.</li>
+<li>It can be used to classify (new) individuals following the decisions (splits) from top to bottom.</li>
+</ul>
+</div>
 </section>
 <section id="plotting-the-tree-1" class="slide level2">
 <h2>Plotting the tree (1)</h2>
@@ -802,7 +751,10 @@ node), split, n, loss, yval, (yprob)
 <section id="plotting-the-tree-nicer" class="slide level2">
 <h2>Plotting the tree (Nicer)</h2>
 
-<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
+<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch quarto-figure-center"><p class="caption">The tree plotted with the <code>rpart.plot</code> package.</p><div class="small">
+<p>Each node shows: (1) the predicted class (‘neg’ or ‘pos’), (2) the predicted probability, (3) the percentage of observations in the node.</p>
+</div>
+</section>
 <section id="individual-prediction" class="slide level2">
 <h2>Individual prediction</h2>
 <p>Consider individuals 521 and 562</p>
@@ -953,21 +905,10 @@ Levels: neg pos</code></pre>
 <li><p>The ultimate goal of the tree is to be able to use a combination of the splits to accomplish the learning task with as small an error as possible.</p></li>
 </ul>
 </section>
-<section id="different-splits-are-possible" class="slide level2">
-<h2>Different splits are possible</h2>
-<ul>
-<li>It is always possible to split a space in distinct ways</li>
-</ul>
-
-<img data-src="images/1.1-DecisionTrees-Slides_insertimage_3.png" class="quarto-figure quarto-figure-center r-stretch" width="400"><ul>
-<li><p>Some ways perform better than other for a given task, but rarely will they be perfect.</p></li>
-<li><p>So we aim at combining splits to find a better rule.</p></li>
-</ul>
-</section>
 <section id="trees-partition-the-space" class="slide level2">
 <h2>Trees partition the space</h2>
 <ul>
-<li><p><em>The tree represents the recursive splitting of the space</em>.</p>
+<li><p><em>A tree represents a recursive splitting of the space</em>.</p>
 <ul>
 <li>Every node of interest corresponds to one region in the original space.</li>
 <li>Two child nodes occupy two different regions.</li>
@@ -979,7 +920,7 @@ Levels: neg pos</code></pre>
 <section id="the-tree-represents-the-splitting" class="slide level2">
 <h2>The tree represents the splitting</h2>
 <div class="r-stack">
-<div class="fragment fade-in absolute" style="top: 100px; left: 250px; ">
+<div class="fragment fade-in absolute" style="top: 100px; left: 150px; ">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -990,7 +931,7 @@ Levels: neg pos</code></pre>
 </div>
 </div>
 </div>
-<div class="fragment fade-in absolute" style="top: 100px; left: 250px; ">
+<div class="fragment fade-in absolute" style="top: 100px; left: 150px; ">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1001,7 +942,7 @@ Levels: neg pos</code></pre>
 </div>
 </div>
 </div>
-<div class="fragment fade-in absolute" style="top: 100px; left: 250px; ">
+<div class="fragment fade-in absolute" style="top: 100px; left: 150px; ">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1013,8 +954,17 @@ Levels: neg pos</code></pre>
 </div>
 </div>
 </div>
+<!-- -   [Animation](https://youtu.be/1ow2tF9Ezgs) -->
+</section>
+<section id="different-splits-are-possible" class="slide level2">
+<h2>Different splits are possible</h2>
 <ul>
-<li><a href="https://youtu.be/1ow2tF9Ezgs">Animation</a></li>
+<li>It is always possible to split a space in distinct ways</li>
+</ul>
+
+<img data-src="images/1.1-DecisionTrees-Slides_insertimage_3.png" class="quarto-figure quarto-figure-center r-stretch" width="400"><ul>
+<li><p>Some ways perform better than other for a given task, but rarely will they be perfect.</p></li>
+<li><p>So we aim at combining splits to find a better rule.</p></li>
 </ul>
 </section>
 <section id="construction-of-a-tree" class="slide level2 scrollable">
@@ -1094,18 +1044,21 @@ Levels: neg pos</code></pre>
 <section id="tb-1.2.3---measuring-homogeneity" class="slide level2">
 <h2>TB 1.2.3 - Measuring homogeneity</h2>
 <ul>
-<li>In order to measure homogeneity of splits we introduce
+<li><p>In order to measure homogeneity,or as called here, <em>purity</em>, of splits we introduce</p>
 <ul>
 <li>Impurity functions</li>
 <li>Impurity measures</li>
 </ul></li>
-<li>Used to measure the extent of <em>purity</em> for a region containing data points from possibly different classes.</li>
+<li><p>Used to measure the extent of <em>purity</em> for a region containing data points from possibly different classes.</p></li>
 </ul>
 </section>
 <section id="tb-1.2.4---impurity-functions" class="slide level2 scrollable">
 <h2>TB 1.2.4 - Impurity functions</h2>
 <div class="font80">
-<p>Definition: An <strong>impurity function</strong> is a function <span class="math inline">\(\Phi\)</span> defined on the set of all <span class="math inline">\(K\)</span>-tuples of numbers <span class="math inline">\(\left(p_{1}, \cdots, p_{K}\right)\)</span> satisfying <span class="math inline">\(p_{j} \geq 0, \quad j=1, \cdots, K, \Sigma_{j} p_{j}=1\)</span> with the properties:</p>
+<p>An <strong>impurity function</strong> is a function <span class="math inline">\(\Phi\)</span> defined on the set of all <span class="math inline">\(K\)</span>-tuples of numbers <span class="math inline">\(\mathbf{p}= \left(p_{1}, \cdots, p_{K}\right)\)</span> s.t. <span class="math inline">\(p_{j} \geq 0, \,  \sum_{j=1}^K p_{j}=1\)</span>, <span class="math display">\[
+\Phi: \left(p_{1}, \cdots, p_{K}\right) \rightarrow [0,1]
+\]</span></p>
+<p>with the properties:</p>
 <ol type="1">
 <li><span class="math inline">\(\Phi\)</span> achieves maximum only for the uniform distribution, that is all the <span class="math inline">\(p_{j}\)</span> are equal.</li>
 <li><span class="math inline">\(\Phi\)</span> achieves minimum only at the points <span class="math inline">\((1,0, \ldots, 0)\)</span>,<span class="math inline">\((0,1,0, \ldots, 0)\)</span>, <span class="math inline">\(\ldots,(0,0, \ldots, 0,1)\)</span>, i.e., when the probability of being in a certain class is 1 and 0 for all the other classes.</li>
@@ -1113,52 +1066,45 @@ Levels: neg pos</code></pre>
 </ol>
 </div>
 </section>
-<section id="tb-1.2.5---some-impurity-functions" class="slide level2 scrollable">
+<section id="tb-1.2.5---some-impurity-functions" class="slide level2">
 <h2>TB 1.2.5 - Some Impurity Functions</h2>
-<p>Common impurity functions for classification trees.</p>
-<p>For node <span class="math inline">\(t\)</span>, the node information function <span class="math inline">\(i(t)\)</span> may be defined by</p>
-<ol type="1">
-<li><strong>Entropy function</strong>: <span class="math inline">\(-\sum_{i=1}^K p(k\vert t)\log p(k\vert t)\)</span>.</li>
-</ol>
-<p>If <span class="math inline">\(p_{j}=0\)</span>, use the limit <span class="math inline">\(\lim p_{j} \rightarrow \log p_{j}=0\)</span>.</p>
-<ol start="2" type="1">
-<li><p><strong>Misclassification rate</strong>: <span class="math inline">\(\sum_{i=1}^K p(k\vert t)(1-p(k\vert t)),\)</span></p></li>
-<li><p><strong>Gini index</strong>: <span class="math inline">\(1-\sum_{i=1}^K p(k\vert t)^2\)</span>.</p></li>
-</ol>
+<ul>
+<li>The functions below are commonly used to measure impurity.</li>
+</ul>
+<!-- - Let $t$ be a node and $p(k|t)$ the conditional probability of observing class $k$ at that node. The node information function $i(t)$ may be defined as: -->
+<div class="font80">
+<ul>
+<li><p><span class="math inline">\(\Phi_E (\mathbf{p}) = -\sum_{j=1}^K p_j\log (p_j)\)</span> (<strong>Entropy</strong>).</p></li>
+<li><p><span class="math inline">\(\Phi_G (\mathbf{p}) = 1-\sum_{j=1}^K p_j^2\)</span>. (<strong>Gini Index</strong>).</p></li>
+<li><p><span class="math inline">\(\Phi_M (\mathbf{p}) = \sum_{i=1}^K p_j(1-p_j)\)</span> (<strong>Misclassification rate</strong>).</p></li>
+</ul>
+</div>
+<ul>
+<li>In practice, for classification trees only the first two are recommended.</li>
+</ul>
 </section>
 <section id="tb-1.2.5-impurity-functions-behavior" class="slide level2">
 <h2>TB 1.2.5 Impurity functions behavior</h2>
 <center>
-<img data-src="images/impurity.jpg" style="width:75.0%">
+<img data-src="images/impurity.jpg" style="width:65.0%">
 </center>
 <div class="tiny">
-<p>Node impurity functions for the two-class case.</p>
-<ul>
-<li>The entropy function (rescaled) is the red curve,</li>
-<li>The Gini index is the green curve, and</li>
-<li>The resubstitution estimate of the misclassification rate is the blue curve.</li>
-</ul>
+<p>Node impurity functions for the two-class case. - The entropy function (rescaled) is the red curve, the Gini index is the green curve, and the resubstitution estimate of the misclassification rate is the blue curve.</p>
 </div>
 </section>
 <section id="tb-1.2.6---impurity-for-a-split" class="slide level2">
 <h2>TB 1.2.6 - Impurity for a split</h2>
 <ul>
-<li>Definition: Given an impurity function <span class="math inline">\(\Phi\)</span>, define the impurity measure, denoted as <span class="math inline">\(i(t)\)</span>, of a node <span class="math inline">\(t\)</span> as:</li>
+<li>Given an impurity function <span class="math inline">\(\Phi\)</span>, a node <span class="math inline">\(t\)</span>, and given <span class="math inline">\(p(j \mid t)\)</span>, the estimated posterior probability of class <span class="math inline">\(j\)</span> given node <span class="math inline">\(t\)</span>, the <em>impurity measure of <span class="math inline">\(t\)</span></em>, <span class="math inline">\(i(t)\)</span>, is defined as:</li>
 </ul>
 <p><span class="math display">\[
 i(t)=\phi(p(1 \mid t), p(2 \mid t), \ldots, p(K \mid t))
-\]</span></p>
-<ul>
-<li><p>where <span class="math inline">\(p(j \mid t)\)</span> is the estimated posterior probability of class <span class="math inline">\(j\)</span> given a point is in node <span class="math inline">\(t\)</span>.</p>
-<ul>
-<li>That is, the impurity measure is the impurity function when computed on probabilities associated (conditional) with a node.</li>
-</ul></li>
-</ul>
+\]</span> - That is, the <em>impurity measure</em> of a split (or a node) is the impurity function when computed on probabilities associated (conditional) with a node.</p>
 </section>
 <section id="tb-1.2.7---goodness-of-a-split" class="slide level2">
 <h2>TB 1.2.7 - Goodness of a split</h2>
 <ul>
-<li>Once we have <span class="math inline">\(i(t)\)</span>, we define the goodness of split <span class="math inline">\(s\)</span> for node <span class="math inline">\(t\)</span>, denoted by <span class="math inline">\(\Phi(s, t)\)</span> :</li>
+<li>Once we have defined <span class="math inline">\(i(t)\)</span>, we define the goodness of split <span class="math inline">\(s\)</span> for node <span class="math inline">\(t\)</span>, denoted by <span class="math inline">\(\Phi(s, t)\)</span> :</li>
 </ul>
 <p><span class="math display">\[
 \Phi(s, t)=\Delta i(s, t)=i(t)-p_{R} i\left(t_{R}\right)-p_{L} i\left(t_{L}\right)
@@ -1313,70 +1259,50 @@ H(t)=-\sum_{i=1}^{n} P\left(t_{i}\right) \log _{2} P\left(t_{i}\right)
 <section id="example.-information-gain" class="slide level2">
 <h2>Example. Information Gain</h2>
 
-<img data-src="images/Example2-IGCalculation.png" style="width:100.0%" class="r-stretch"></section>
-<section id="tb.-2.1---when-to-stop-growing" class="slide level2">
-<h2>TB. 2.1 - When to stop growing</h2>
-<ul>
-<li><p>Maximizing information gain is one possible criteria to choose among splits.</p></li>
-<li><p>In order to avoid excessive complexity it is usually decided to stop splitting when <em>information gain does not compensate for increase in complexity</em>.</p></li>
-</ul>
+<img data-src="images/Example2-IGCalculation.png" style="width:100.0%" class="r-stretch"></section></section>
+<section>
+<section id="prediction-with-trees" class="title-slide slide level1 center">
+<h1>Prediction with Trees</h1>
+
 </section>
-<section id="tb-2.2-stop-splitting-criteria" class="slide level2">
-<h2>TB 2.2 Stop splitting criteria</h2>
-<ul>
-<li>In practice, stop splitting is decided when: <span class="math display">\[
-\max _{s \in S} \Delta I(s, t)&lt;\beta
-\]</span> Where:</li>
-<li><span class="math inline">\(\Delta I\)</span> represents the information gain associated with an optimal split <span class="math inline">\(s\)</span> and a node <span class="math inline">\(t\)</span>,</li>
-<li>and <span class="math inline">\(\beta\)</span> is a pre-determined threshold.</li>
-</ul>
-</section>
-<section id="tb-3---class-assignment" class="slide level2">
-<h2>TB 3 - Class Assignment</h2>
+<section id="tb-2---class-assignment" class="slide level2">
+<h2>TB 2 - Class Assignment</h2>
 <ul>
 <li><p>The decision tree classifies new data points as follows.</p>
 <ul>
-<li>We let a data point pass down the tree and see which leaf node it lands in.</li>
-<li>The class of the leaf node is assigned to the new data point. Basically, all the points that land in the same leaf node will be given the same class.</li>
-</ul></li>
+<li><p>We let a data point pass down the tree and see which leaf node it lands in.</p></li>
+<li><p>The class of the leaf node is assigned to the new data point. Basically, all the points that land in the same leaf node will be given the same class.</p></li>
 <li><p>This is similar to k-means or any prototype method.</p></li>
+</ul></li>
 </ul>
 </section>
-<section id="tb-3.1---class-assignment-rules" class="slide level2">
-<h2>TB 3.1 - Class Assignment Rules</h2>
+<section id="tb-2.1---class-assignment-rules" class="slide level2">
+<h2>TB 2.1 - Class Assignment Rules</h2>
 <ul>
 <li>A class assignment rule assigns a class <span class="math inline">\(j=1, \cdots, K\)</span> to every terminal (leaf) node <span class="math inline">\(t \in \tilde{T}\)</span>.</li>
-<li>The class is assigned to node <span class="math inline">\(t . \tilde{T}\)</span> is denoted by <span class="math inline">\(\kappa(t)\)</span>,</li>
-<li>E.g., if <span class="math inline">\(\kappa(t)=2\)</span>, all the points in node <span class="math inline">\(t\)</span> would be assigned to class 2.</li>
-</ul>
-</section>
-<section id="tb-3.2---class-assignment-rules" class="slide level2">
-<h2>TB 3.2 - Class Assignment Rules</h2>
+<li>The class is assigned to node <span class="math inline">\(t\)</span> is denoted by <span class="math inline">\(\kappa(t)\)</span>,
 <ul>
-<li>If we use 0-1 loss, the class assignment rule is very similar to k-means (where we pick the majority class or the class with the maximum posterior probability):</li>
+<li>E.g., if <span class="math inline">\(\kappa(t)=2\)</span>, all the points in node <span class="math inline">\(t\)</span> would be assigned to class 2.</li>
+</ul></li>
+<li>If we use 0-1 loss, the class assignment rule picks the class with maximum posterior probability:</li>
 </ul>
 <p><span class="math display">\[
 \kappa(t)=\arg \max _{j} p(j \mid t)
 \]</span></p>
-</section></section>
-<section>
-<section id="error-estimation-and-optimization-for-classification-trees" class="title-slide slide level1 center">
-<h1>ERROR ESTIMATION AND OPTIMIZATION FOR CLASSIFICATION TREES</h1>
-
 </section>
-<section id="estimating-the-error-rate-1" class="slide level2">
-<h2>Estimating the error rate (1)</h2>
+<section id="tb-2.2.-estimating-the-error-rate-1" class="slide level2">
+<h2>TB 2.2. Estimating the error rate (1)</h2>
 <ul>
 <li><p>Let’s assume we have built a tree and have the classes assigned for the leaf nodes.</p></li>
 <li><p>Goal: estimate <em>the classification error rate</em> for this tree.</p></li>
-<li><p>We need to introduce the resubstitution estimate <span class="math inline">\(r(t)\)</span> for the probability of misclassification, given that a case falls into node <span class="math inline">\(t\)</span>. This is:</p></li>
+<li><p>We use the <em>resubstitution estimate <span class="math inline">\(r(t)\)</span> for the probability of misclassification, given that a case falls into node <span class="math inline">\(t\)</span></em>. This is:</p></li>
 </ul>
 <p><span class="math display">\[
 r(t)=1-\max _{j} p(j \mid t)=1-p(\kappa(t) \mid t)
 \]</span></p>
 </section>
-<section id="estimating-the-error-rate-2" class="slide level2">
-<h2>Estimating the error rate (2)</h2>
+<section id="tb-2.3.-estimating-the-error-rate-2" class="slide level2">
+<h2>TB 2.3. Estimating the error rate (2)</h2>
 <ul>
 <li><p>Denote <span class="math inline">\(R(t)=r(t) p(t)\)</span>, that is the miscclassification error rate weighted by the probability of the node.</p></li>
 <li><p>The resubstitution estimation for the overall misclassification rate <span class="math inline">\(R(T)\)</span> of the tree classifier <span class="math inline">\(T\)</span> is:</p></li>
@@ -1384,17 +1310,41 @@ r(t)=1-\max _{j} p(j \mid t)=1-p(\kappa(t) \mid t)
 <p><span class="math display">\[
 R(T)=\sum_{t \in \tilde{T}} R(t)
 \]</span></p>
+</section></section>
+<section>
+<section id="obtaining-best-trees" class="title-slide slide level1 center">
+<h1>Obtaining best trees</h1>
+
 </section>
-<section id="optimizing-the-tree" class="slide level2">
-<h2>Optimizing the Tree</h2>
+<section id="tb.-3.1---when-to-stop-growing" class="slide level2">
+<h2>TB. 3.1 - When to stop growing</h2>
 <ul>
-<li><p>Trees obtained by looking for optimal splits tend to overfit: good for the data in the tree, but generalize badly and tend to fail more in predictions.</p></li>
-<li><p>In order to reduce complexity and overfitting while keeping the tree as good as possible tree pruning may be applied.</p></li>
-<li><p>Essentially pruning works by removing branches that are unlikely to improve the accuracy of the model on new data.</p></li>
+<li><p>Maximizing information gain is one possible criteria to choose among splits.</p></li>
+<li><p>In order to avoid excessive complexity it is usually decided to stop splitting when <em>information gain does not compensate for increase in complexity</em>.</p></li>
 </ul>
 </section>
-<section id="pruning-methods" class="slide level2">
-<h2>Pruning methods</h2>
+<section id="tb-3.2-stop-splitting-criteria" class="slide level2">
+<h2>TB 3.2 Stop splitting criteria</h2>
+<ul>
+<li>In practice, stop splitting is decided when: <span class="math display">\[
+\max _{s \in S} \Delta I(s, t)&lt;\beta,
+\]</span>where:
+<ul>
+<li><span class="math inline">\(\Delta I\)</span> represents the information gain associated with an optimal split <span class="math inline">\(s\)</span> and a node <span class="math inline">\(t\)</span>,</li>
+<li>and <span class="math inline">\(\beta\)</span> is a pre-determined threshold.</li>
+</ul></li>
+</ul>
+</section>
+<section id="tb-3.3-optimizing-the-tree" class="slide level2">
+<h2>TB 3.3 Optimizing the Tree</h2>
+<ul>
+<li><p>Trees obtained by looking for optimal splits tend to overfit: good for the data in the tree, but generalize badly and tend to fail more in predictions.</p></li>
+<li><p>In order to reduce complexity and overfitting,<br> while keeping the tree as good as possible, tree <em>pruning</em> may be applied.</p></li>
+<li><p>Pruning works <em>removing branches that are unlikely to improve the accuracy</em> of the model on new data.</p></li>
+</ul>
+</section>
+<section id="tb-3.4-pruning-methods" class="slide level2">
+<h2>TB 3.4 Pruning methods</h2>
 <ul>
 <li>There are different pruning methods, but the most common one is the <em>cost-complexity</em> pruning algorithm, also known as the <em>weakest link pruning</em>.</li>
 <li>The algorithm works by adding a penalty term to the misclassification rate of the terminal nodes:</li>
@@ -1403,8 +1353,8 @@ R(T)=\sum_{t \in \tilde{T}} R(t)
 R_\alpha(T) =R(T)+\alpha|T|
 \]</span> where <span class="math inline">\(\alpha\)</span> is the parameter that controls the trade-off between tree complexity and accuracy.</p>
 </section>
-<section id="cost-complexity-pruning" class="slide level2">
-<h2>Cost complexity pruning</h2>
+<section id="tb-3.5-cost-complexity-pruning" class="slide level2">
+<h2>TB 3.5 Cost complexity pruning</h2>
 <ul>
 <li><p>Start by building a large tree that overfits the data.</p></li>
 <li><p>Then, use cross-validation to estimate the optimal value of alpha that minimizes the generalization error.</p></li>
@@ -1413,8 +1363,8 @@ R_\alpha(T) =R(T)+\alpha|T|
 </ul>
 </section></section>
 <section>
-<section id="building-regression-trees" class="title-slide slide level1 center">
-<h1>Building Regression Trees</h1>
+<section id="regression-trees" class="title-slide slide level1 center">
+<h1>Regression Trees</h1>
 
 </section>
 <section id="regression-modelling-with-trees" class="slide level2">
@@ -1430,16 +1380,56 @@ R_\alpha(T) =R(T)+\alpha|T|
 </ul></li>
 </ul>
 </section>
-<section id="regression-vs-classification-trees" class="slide level2">
-<h2>Regression vs classification trees</h2>
-<ul>
-<li>Some differences with classification trees:
-<ul>
-<li>Splitting criteria based on mean squared error or mean absolute error.</li>
-<li>Leaf node prediction based on mean/median of the target variable.</li>
-<li>Evaluation metrics based on measures of the difference between the predicted and actual values.</li>
-</ul></li>
-</ul>
+<section id="classification-vs-regression-trees" class="slide level2">
+<h2>Classification vs Regression Trees</h2>
+<div class="font50">
+<table>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 37%">
+<col style="width: 37%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Aspect</strong></th>
+<th style="text-align: left;"><strong>Regression Trees</strong></th>
+<th style="text-align: left;"><strong>Classification Trees</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Outcome var. type</td>
+<td style="text-align: left;">Continuous</td>
+<td style="text-align: left;">Categorical</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Goal</td>
+<td style="text-align: left;">To predict a numerical value</td>
+<td style="text-align: left;">To predict a class label</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Splitting criteria</td>
+<td style="text-align: left;">Mean Squared Error, Mean Abs. Error</td>
+<td style="text-align: left;">Gini Impurity, Entropy, etc.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Leaf node prediction</td>
+<td style="text-align: left;">Mean or median of the target variable in that region</td>
+<td style="text-align: left;">Mode or majority class of the target variable ...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Examples of use cases</td>
+<td style="text-align: left;">Predicting housing prices, predicting stock prices</td>
+<td style="text-align: left;">Predicting customer churn, predicting high/low risk in diease</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Evaluation metric</td>
+<td style="text-align: left;">Mean Squared Error, Mean Absolute Error, R-square</td>
+<td style="text-align: left;">Accuracy, Precision, Recall, F1-score, etc.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="regression-tree-example" class="slide level2">
 <h2>Regression tree example</h2>
@@ -1469,29 +1459,35 @@ R_\alpha(T) =R(T)+\alpha|T|
 <img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
 <section id="building-the-tree-1-splitting" class="slide level2">
 <h2>Building the tree (1): Splitting</h2>
+<div class="font80">
 <ul>
 <li>Consider:
 <ul>
 <li>all predictors <span class="math inline">\(X_1, \dots, X_n\)</span>, and</li>
 <li>all values of cutpoint <span class="math inline">\(s\)</span> for each predictor and</li>
 </ul></li>
-<li>For each predictor find boxes <span class="math inline">\(R_1, \ldots, R_J\)</span> that minimize the RSS, given by <small> <span class="math display">\[
-\sum_{j=1}^J \sum_{i \in R_j}\left(y_i-\hat{y}_{R_j}\right)^2
-\]</span> </small></li>
+<li>For each predictor find boxes <span class="math inline">\(R_1, \ldots, R_J\)</span> that minimize the RSS, given by:</li>
 </ul>
+<p><span class="math display">\[
+\sum_{j=1}^J \sum_{i \in R_j}\left(y_i-\hat{y}_{R_j}\right)^2
+\]</span></p>
 <p>where <span class="math inline">\(\hat{y}_{R_j}\)</span> is the mean response for the training observations within the <span class="math inline">\(j\)</span> th box.</p>
+</div>
 </section>
 <section id="building-the-tree-2-splitting" class="slide level2">
 <h2>Building the tree (2): Splitting</h2>
+<div class="font80">
 <ul>
-<li>To do this, define the pair of half-planes <small> <span class="math display">\[
-R_1(j, s)=\left\{X \mid X_j&lt;s\right\} \text { and } R_2(j, s)=\left\{X \mid X_j \geq s\right\}
-\]</span> </small></li>
+<li>To do this, define the pair of half-planes</li>
 </ul>
+<p><span class="math display">\[
+R_1(j, s)=\left\{X \mid X_j&lt;s\right\} \text { and } R_2(j, s)=\left\{X \mid X_j \geq s\right\}
+\]</span></p>
 <p>and seek the value of <span class="math inline">\(j\)</span> and <span class="math inline">\(s\)</span> that minimize the equation:</p>
-<p><small> <span class="math display">\[
+<p><span class="math display">\[
 \sum_{i: x_i \in R_1(j, s)}\left(y_i-\hat{y}_{R_1}\right)^2+\sum_{i: x_i \in R_2(j, s)}\left(y_i-\hat{y}_{R_2}\right)^2.
-\]</span> </small></p>
+\]</span></p>
+</div>
 </section>
 <section id="building-the-tree-3-prediction" class="slide level2 smaller">
 <h2>Building the tree (3): Prediction</h2>
@@ -1502,7 +1498,7 @@ R_1(j, s)=\left\{X \mid X_j&lt;s\right\} \text { and } R_2(j, s)=\left\{X \mid X
 <li><p>In the example, for an observation belonging to the shaded region, the prediction would be:</p></li>
 </ul>
 <p><span class="math display">\[
-\hat (y) =\frac{1}{4}(y_2+y_3+y_5+y_9)
+\hat{y} =\frac{1}{4}(y_2+y_3+y_5+y_9)
 \]</span></p>
 </div><div class="column" style="width:60%;">
 <div class="cell" data-layout-align="center">
@@ -1554,11 +1550,17 @@ Distribution of residuals:
 <h2>Prunning the tree (1)</h2>
 <ul>
 <li>As before, <em>cost-complexity prunning</em> can be applied</li>
-<li>We consider a sequence of trees indexed by a nonnegative tuning parampter <span class="math inline">\(\alpha\)</span>.</li>
-<li>For each value of <span class="math inline">\(\alpha\)</span> there corresponds a subtree <span class="math inline">\(T \subset T_0\)</span> such that: <small> <span class="math display">\[\begin{equation}\label{prunning}
-\sum_{m=1}^{|T|} \sum_{i:}\left(y_i \in R_m-\hat{y}_{R_m}\right)^2+\alpha|T|\quad (*)
-\end{equation}\]</span> </small></li>
+<li>We consider a sequence of trees indexed by a nonnegative tuning parameter <span class="math inline">\(\alpha\)</span>.</li>
+<li>For each value of <span class="math inline">\(\alpha\)</span> there corresponds a subtree <span class="math inline">\(T \subset T_0\)</span> such that:</li>
 </ul>
+<div class="font80">
+<p><span class="math display">\[
+\sum_{m=1}^{|T|} \sum_{y_i \in R_m}
+\left(y_i -\hat{y}_{R_m}\right)^2+
+\alpha|T|\quad (*)
+\label{prunning}
+\]</span></p>
+</div>
 <p>is as small as possible.</p>
 </section>
 <section id="tuning-parameter-alpha" class="slide level2">
