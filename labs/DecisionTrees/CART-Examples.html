@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-03-18">
+<meta name="dcterms.date" content="2024-04-03">
 
 <title>Decision Trees Lab 1</title>
 <style>
@@ -132,9 +132,9 @@ window.Quarto = {
   <li><a href="#introductory-example" id="toc-introductory-example" class="nav-link active" data-scroll-target="#introductory-example">Introductory example</a>
   <ul class="collapse">
   <li><a href="#the-pima-indians-dataset" id="toc-the-pima-indians-dataset" class="nav-link" data-scroll-target="#the-pima-indians-dataset">The Pima Indians dataset</a></li>
-  <li><a href="#building-a-classification-tree-with-rpart" id="toc-building-a-classification-tree-with-rpart" class="nav-link" data-scroll-target="#building-a-classification-tree-with-rpart">Building a classification tree with `rpart``</a></li>
+  <li><a href="#building-a-classification-tree" id="toc-building-a-classification-tree" class="nav-link" data-scroll-target="#building-a-classification-tree">Building a classification tree</a></li>
   </ul></li>
-  <li><a href="#a-classification-tree" id="toc-a-classification-tree" class="nav-link" data-scroll-target="#a-classification-tree">A classification tree</a>
+  <li><a href="#predicting-car-sales-i" id="toc-predicting-car-sales-i" class="nav-link" data-scroll-target="#predicting-car-sales-i">Predicting car sales (I)</a>
   <ul class="collapse">
   <li><a href="#data-description" id="toc-data-description" class="nav-link" data-scroll-target="#data-description">Data description</a>
   <ul class="collapse">
@@ -187,7 +187,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 18, 2024</p>
+      <p class="date">April 3, 2024</p>
     </div>
   </div>
   
@@ -199,17 +199,6 @@ window.Quarto = {
 </header>
 
 
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This chunk is used to do the assignment of values to R variables</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This code must be adapted to any change of datasets or </span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>myDescription <span class="ot">&lt;-</span> <span class="st">"The data are a simulated data set containing sales of child car seats at different stores [@james2013introduction]"</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>mydataset <span class="ot">&lt;-</span> Carseats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(mydataset)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(mydataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <section id="introductory-example" class="level1">
 <h1>Introductory example</h1>
 <section id="the-pima-indians-dataset" class="level2">
@@ -230,233 +219,469 @@ window.Quarto = {
 <p>A typical classification/prediction problem is to build a model that can distinguish and predict diabetes using some or all the variables in the dataset.</p>
 <p>A quick exploration can be done wirh the <code>swirl</code> package:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"PimaIndiansDiabetes2"</span>, <span class="at">package =</span> <span class="st">"mlbench"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(PimaIndiansDiabetes2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"PimaIndiansDiabetes2"</span>, <span class="at">package =</span> <span class="st">"mlbench"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(PimaIndiansDiabetes2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
-<caption>Data summary</caption>
+<table style="width: auto;" class="table table-condensed">
+<caption>
+Data summary
+</caption>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Name</td>
-<td style="text-align: left;">PimaIndiansDiabetes2</td>
+<tr>
+<td style="text-align:left;">
+Name
+</td>
+<td style="text-align:left;">
+PimaIndiansDiabetes2
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">Number of rows</td>
-<td style="text-align: left;">768</td>
+<tr>
+<td style="text-align:left;">
+Number of rows
+</td>
+<td style="text-align:left;">
+768
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">9</td>
+<tr>
+<td style="text-align:left;">
+Number of columns
+</td>
+<td style="text-align:left;">
+9
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">_______________________</td>
-<td style="text-align: left;"></td>
+<tr>
+<td style="text-align:left;">
+_______________________
+</td>
+<td style="text-align:left;">
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Column type frequency:</td>
-<td style="text-align: left;"></td>
+<tr>
+<td style="text-align:left;">
+Column type frequency:
+</td>
+<td style="text-align:left;">
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">factor</td>
-<td style="text-align: left;">1</td>
+<tr>
+<td style="text-align:left;">
+factor
+</td>
+<td style="text-align:left;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">8</td>
+<tr>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+8
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">________________________</td>
-<td style="text-align: left;"></td>
+<tr>
+<td style="text-align:left;">
+________________________
+</td>
+<td style="text-align:left;">
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Group variables</td>
-<td style="text-align: left;">None</td>
+<tr>
+<td style="text-align:left;">
+Group variables
+</td>
+<td style="text-align:left;">
+None
+</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Variable type: factor</strong></p>
-<table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 18%">
-<col style="width: 13%">
-<col style="width: 18%">
-<col style="width: 10%">
-<col style="width: 12%">
-<col style="width: 25%">
-</colgroup>
+<table>
 <thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: left;">ordered</th>
-<th style="text-align: right;">n_unique</th>
-<th style="text-align: left;">top_counts</th>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:left;">
+ordered
+</th>
+<th style="text-align:right;">
+n_unique
+</th>
+<th style="text-align:left;">
+top_counts
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">diabetes</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">neg: 500, pos: 268</td>
+<tr>
+<td style="text-align:left;">
+diabetes
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+neg: 500, pos: 268
+</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
-<table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 15%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 6%">
-<col style="width: 6%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 6%">
-</colgroup>
+<table>
 <thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: right;">mean</th>
-<th style="text-align: right;">sd</th>
-<th style="text-align: right;">p0</th>
-<th style="text-align: right;">p25</th>
-<th style="text-align: right;">p50</th>
-<th style="text-align: right;">p75</th>
-<th style="text-align: right;">p100</th>
-<th style="text-align: left;">hist</th>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
+<th style="text-align:right;">
+p0
+</th>
+<th style="text-align:right;">
+p25
+</th>
+<th style="text-align:right;">
+p50
+</th>
+<th style="text-align:right;">
+p75
+</th>
+<th style="text-align:right;">
+p100
+</th>
+<th style="text-align:left;">
+hist
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">pregnant</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.85</td>
-<td style="text-align: right;">3.37</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.00</td>
-<td style="text-align: right;">6.00</td>
-<td style="text-align: right;">17.00</td>
-<td style="text-align: left;">▇▃▂▁▁</td>
+<tr>
+<td style="text-align:left;">
+pregnant
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+3.85
+</td>
+<td style="text-align:right;">
+3.37
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:right;">
+6.00
+</td>
+<td style="text-align:right;">
+17.00
+</td>
+<td style="text-align:left;">
+▇▃▂▁▁
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">glucose</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0.99</td>
-<td style="text-align: right;">121.69</td>
-<td style="text-align: right;">30.54</td>
-<td style="text-align: right;">44.00</td>
-<td style="text-align: right;">99.00</td>
-<td style="text-align: right;">117.00</td>
-<td style="text-align: right;">141.00</td>
-<td style="text-align: right;">199.00</td>
-<td style="text-align: left;">▁▇▇▃▂</td>
+<tr>
+<td style="text-align:left;">
+glucose
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0.99
+</td>
+<td style="text-align:right;">
+121.69
+</td>
+<td style="text-align:right;">
+30.54
+</td>
+<td style="text-align:right;">
+44.00
+</td>
+<td style="text-align:right;">
+99.00
+</td>
+<td style="text-align:right;">
+117.00
+</td>
+<td style="text-align:right;">
+141.00
+</td>
+<td style="text-align:right;">
+199.00
+</td>
+<td style="text-align:left;">
+▁▇▇▃▂
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">pressure</td>
-<td style="text-align: right;">35</td>
-<td style="text-align: right;">0.95</td>
-<td style="text-align: right;">72.41</td>
-<td style="text-align: right;">12.38</td>
-<td style="text-align: right;">24.00</td>
-<td style="text-align: right;">64.00</td>
-<td style="text-align: right;">72.00</td>
-<td style="text-align: right;">80.00</td>
-<td style="text-align: right;">122.00</td>
-<td style="text-align: left;">▁▃▇▂▁</td>
+<tr>
+<td style="text-align:left;">
+pressure
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+72.41
+</td>
+<td style="text-align:right;">
+12.38
+</td>
+<td style="text-align:right;">
+24.00
+</td>
+<td style="text-align:right;">
+64.00
+</td>
+<td style="text-align:right;">
+72.00
+</td>
+<td style="text-align:right;">
+80.00
+</td>
+<td style="text-align:right;">
+122.00
+</td>
+<td style="text-align:left;">
+▁▃▇▂▁
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">triceps</td>
-<td style="text-align: right;">227</td>
-<td style="text-align: right;">0.70</td>
-<td style="text-align: right;">29.15</td>
-<td style="text-align: right;">10.48</td>
-<td style="text-align: right;">7.00</td>
-<td style="text-align: right;">22.00</td>
-<td style="text-align: right;">29.00</td>
-<td style="text-align: right;">36.00</td>
-<td style="text-align: right;">99.00</td>
-<td style="text-align: left;">▆▇▁▁▁</td>
+<tr>
+<td style="text-align:left;">
+triceps
+</td>
+<td style="text-align:right;">
+227
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+<td style="text-align:right;">
+29.15
+</td>
+<td style="text-align:right;">
+10.48
+</td>
+<td style="text-align:right;">
+7.00
+</td>
+<td style="text-align:right;">
+22.00
+</td>
+<td style="text-align:right;">
+29.00
+</td>
+<td style="text-align:right;">
+36.00
+</td>
+<td style="text-align:right;">
+99.00
+</td>
+<td style="text-align:left;">
+▆▇▁▁▁
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">insulin</td>
-<td style="text-align: right;">374</td>
-<td style="text-align: right;">0.51</td>
-<td style="text-align: right;">155.55</td>
-<td style="text-align: right;">118.78</td>
-<td style="text-align: right;">14.00</td>
-<td style="text-align: right;">76.25</td>
-<td style="text-align: right;">125.00</td>
-<td style="text-align: right;">190.00</td>
-<td style="text-align: right;">846.00</td>
-<td style="text-align: left;">▇▂▁▁▁</td>
+<tr>
+<td style="text-align:left;">
+insulin
+</td>
+<td style="text-align:right;">
+374
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+<td style="text-align:right;">
+155.55
+</td>
+<td style="text-align:right;">
+118.78
+</td>
+<td style="text-align:right;">
+14.00
+</td>
+<td style="text-align:right;">
+76.25
+</td>
+<td style="text-align:right;">
+125.00
+</td>
+<td style="text-align:right;">
+190.00
+</td>
+<td style="text-align:right;">
+846.00
+</td>
+<td style="text-align:left;">
+▇▂▁▁▁
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">mass</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">0.99</td>
-<td style="text-align: right;">32.46</td>
-<td style="text-align: right;">6.92</td>
-<td style="text-align: right;">18.20</td>
-<td style="text-align: right;">27.50</td>
-<td style="text-align: right;">32.30</td>
-<td style="text-align: right;">36.60</td>
-<td style="text-align: right;">67.10</td>
-<td style="text-align: left;">▅▇▃▁▁</td>
+<tr>
+<td style="text-align:left;">
+mass
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+0.99
+</td>
+<td style="text-align:right;">
+32.46
+</td>
+<td style="text-align:right;">
+6.92
+</td>
+<td style="text-align:right;">
+18.20
+</td>
+<td style="text-align:right;">
+27.50
+</td>
+<td style="text-align:right;">
+32.30
+</td>
+<td style="text-align:right;">
+36.60
+</td>
+<td style="text-align:right;">
+67.10
+</td>
+<td style="text-align:left;">
+▅▇▃▁▁
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">pedigree</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">0.47</td>
-<td style="text-align: right;">0.33</td>
-<td style="text-align: right;">0.08</td>
-<td style="text-align: right;">0.24</td>
-<td style="text-align: right;">0.37</td>
-<td style="text-align: right;">0.63</td>
-<td style="text-align: right;">2.42</td>
-<td style="text-align: left;">▇▃▁▁▁</td>
+<tr>
+<td style="text-align:left;">
+pedigree
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+<td style="text-align:right;">
+0.33
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+0.24
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+<td style="text-align:right;">
+0.63
+</td>
+<td style="text-align:right;">
+2.42
+</td>
+<td style="text-align:left;">
+▇▃▁▁▁
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">age</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">33.24</td>
-<td style="text-align: right;">11.76</td>
-<td style="text-align: right;">21.00</td>
-<td style="text-align: right;">24.00</td>
-<td style="text-align: right;">29.00</td>
-<td style="text-align: right;">41.00</td>
-<td style="text-align: right;">81.00</td>
-<td style="text-align: left;">▇▃▁▁▁</td>
+<tr>
+<td style="text-align:left;">
+age
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+33.24
+</td>
+<td style="text-align:right;">
+11.76
+</td>
+<td style="text-align:right;">
+21.00
+</td>
+<td style="text-align:right;">
+24.00
+</td>
+<td style="text-align:right;">
+29.00
+</td>
+<td style="text-align:right;">
+41.00
+</td>
+<td style="text-align:right;">
+81.00
+</td>
+<td style="text-align:left;">
+▇▃▁▁▁
+</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 </section>
-<section id="building-a-classification-tree-with-rpart" class="level2">
-<h2 class="anchored" data-anchor-id="building-a-classification-tree-with-rpart">Building a classification tree with `rpart``</h2>
+<section id="building-a-classification-tree" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-classification-tree">Building a classification tree</h2>
 <p>Start building a simple tree with default parameters</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span>., <span class="at">data =</span> PimaIndiansDiabetes2)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># par(xpd = NA) # otherwise on some devices the text is clipped</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span>., <span class="at">data =</span> PimaIndiansDiabetes2)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># par(xpd = NA) # otherwise on some devices the text is clipped</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This builds a model consisting of a series of nested decision rules.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>n= 768 
 
@@ -500,51 +725,51 @@ node), split, n, loss, yval, (yprob)
 </div>
 <p>The model can be visualized using a tree:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(model1, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">cex=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(model1, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">cex=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/PIMAPlot1-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>A nicer plot can be obtained using the <code>rpart.plot</code> function from the <code>rpart.plot</code> package. This function allows for multiple tunings, but the default values may already yield a nice informative plot.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(model1, <span class="at">cex=</span>.<span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(model1, <span class="at">cex=</span>.<span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/PIMAPlotNice1-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">detach</span>(package<span class="sc">:</span>rpart.plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">detach</span>(package<span class="sc">:</span>rpart.plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If we believed the model was ready for use we could use it to predict diabetes for new subject.</p>
 <p><strong>Imagine we kow nothing about overfitting</strong>. We may want to check the accuracy of the model on the dataset we have used to build it.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>predicted.classes<span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, PimaIndiansDiabetes2, <span class="st">"class"</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(predicted.classes <span class="sc">==</span> PimaIndiansDiabetes2<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>predicted.classes<span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, PimaIndiansDiabetes2, <span class="st">"class"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(predicted.classes <span class="sc">==</span> PimaIndiansDiabetes2<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8294271</code></pre>
 </div>
 </div>
 <p>A better strategy is to use train dataset to build the model and a test dataset to check how it works.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ssize <span class="ot">&lt;-</span> <span class="fu">nrow</span>(PimaIndiansDiabetes2)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>propTrain <span class="ot">&lt;-</span> <span class="fl">0.8</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>training.indices <span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>ssize, <span class="fu">floor</span>(ssize<span class="sc">*</span>propTrain))</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>train.data  <span class="ot">&lt;-</span> PimaIndiansDiabetes2[training.indices, ]</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>test.data <span class="ot">&lt;-</span> PimaIndiansDiabetes2[<span class="sc">-</span>training.indices, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ssize <span class="ot">&lt;-</span> <span class="fu">nrow</span>(PimaIndiansDiabetes2)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>propTrain <span class="ot">&lt;-</span> <span class="fl">0.8</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>training.indices <span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>ssize, <span class="fu">floor</span>(ssize<span class="sc">*</span>propTrain))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>train.data  <span class="ot">&lt;-</span> PimaIndiansDiabetes2[training.indices, ]</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>test.data <span class="ot">&lt;-</span> PimaIndiansDiabetes2[<span class="sc">-</span>training.indices, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we build the model on the train data and check its accuracy on the test data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span>., <span class="at">data =</span> train.data)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>predicted.classes.test<span class="ot">&lt;-</span> <span class="fu">predict</span>(model2, test.data, <span class="st">"class"</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(predicted.classes.test <span class="sc">==</span> test.data<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span>., <span class="at">data =</span> train.data)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>predicted.classes.test<span class="ot">&lt;-</span> <span class="fu">predict</span>(model2, test.data, <span class="st">"class"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(predicted.classes.test <span class="sc">==</span> test.data<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.7272727</code></pre>
 </div>
@@ -552,15 +777,25 @@ node), split, n, loss, yval, (yprob)
 <p>The accuracy is good, but smaller, as expected.</p>
 </section>
 </section>
-<section id="a-classification-tree" class="level1">
-<h1>A classification tree</h1>
+<section id="predicting-car-sales-i" class="level1">
+<h1>Predicting car sales (I)</h1>
+<p>In the following two examples we use the <code>carseats</code>datasets to predict the value of <code>sales</code></p>
+<p>In this section we tart with the value seen as categorical.</p>
 <section id="data-description" class="level2">
 <h2 class="anchored" data-anchor-id="data-description">Data description</h2>
-<hr>
-<p><em>In this section, you should provide a short explanation about problem and the data set.</em></p>
-<hr>
-<p>The data are a simulated data set containing sales of child car seats at different stores <span class="citation" data-cites="james2013introduction">(<a href="#ref-james2013introduction" role="doc-biblioref">James et al. 2013</a>)</span>.</p>
-<p>The data set has <strong>400</strong> observations on <strong>11</strong> variables. The variable names are: <em>Sales, CompPrice, Income, Advertising, Population, Price, ShelveLoc, Age, Education, Urban, US</em>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This chunk is used to do the assignment of values to R variables</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This allows the code to be more easily adapted to any change of datasets or variables</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(ISLR)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>myDescription <span class="ot">&lt;-</span> <span class="st">"The data are a simulated data set containing sales of child car seats at different stores [@james2013introduction]"</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"Carseats"</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>mydataset <span class="ot">&lt;-</span> Carseats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(mydataset)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(mydataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>We start categorizing the variable <code>Sales</code> creating a new variable, <code>High</code>, which takes on a value of <code>Yes</code> if the <code>Sales</code> variable exceeds 8, and a value of <code>No</code> otherwise.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># as.factor() changes the type of variable to factor</span></span>
@@ -570,12 +805,12 @@ node), split, n, loss, yval, (yprob)
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">table</span>(mydataset<span class="sc">$</span>High), <span class="at">caption=</span> <span class="st">"Number of observations for each class"</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">'High'</span>,<span class="st">'Freq'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
 <caption>Number of observations for each class</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;">High</th>
-<th style="text-align: right;">Freq</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">High</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Freq</th>
 </tr>
 </thead>
 <tbody>
@@ -589,6 +824,8 @@ node), split, n, loss, yval, (yprob)
 </tr>
 </tbody>
 </table>
+
+
 </div>
 </div>
 <p>The aim is of this study is to predict the categorical values of sales (<code>High</code>) using all variables but <code>Sales</code>.</p>
@@ -626,236 +863,508 @@ node), split, n, loss, yval, (yprob)
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>skimr<span class="sc">::</span><span class="fu">skim</span>(mydataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
-<caption>Data summary</caption>
+<table style="width: auto;" class="table table-condensed">
+<caption>
+Data summary
+</caption>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Name</td>
-<td style="text-align: left;">mydataset</td>
+<tr>
+<td style="text-align:left;">
+Name
+</td>
+<td style="text-align:left;">
+mydataset
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">Number of rows</td>
-<td style="text-align: left;">400</td>
+<tr>
+<td style="text-align:left;">
+Number of rows
+</td>
+<td style="text-align:left;">
+400
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">12</td>
+<tr>
+<td style="text-align:left;">
+Number of columns
+</td>
+<td style="text-align:left;">
+12
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">_______________________</td>
-<td style="text-align: left;"></td>
+<tr>
+<td style="text-align:left;">
+_______________________
+</td>
+<td style="text-align:left;">
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Column type frequency:</td>
-<td style="text-align: left;"></td>
+<tr>
+<td style="text-align:left;">
+Column type frequency:
+</td>
+<td style="text-align:left;">
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">factor</td>
-<td style="text-align: left;">4</td>
+<tr>
+<td style="text-align:left;">
+factor
+</td>
+<td style="text-align:left;">
+4
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">8</td>
+<tr>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+8
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">________________________</td>
-<td style="text-align: left;"></td>
+<tr>
+<td style="text-align:left;">
+________________________
+</td>
+<td style="text-align:left;">
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Group variables</td>
-<td style="text-align: left;">None</td>
+<tr>
+<td style="text-align:left;">
+Group variables
+</td>
+<td style="text-align:left;">
+None
+</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Variable type: factor</strong></p>
-<table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 9%">
-<col style="width: 10%">
-<col style="width: 32%">
-</colgroup>
+<table>
 <thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: left;">ordered</th>
-<th style="text-align: right;">n_unique</th>
-<th style="text-align: left;">top_counts</th>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:left;">
+ordered
+</th>
+<th style="text-align:right;">
+n_unique
+</th>
+<th style="text-align:left;">
+top_counts
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">ShelveLoc</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">Med: 219, Bad: 96, Goo: 85</td>
+<tr>
+<td style="text-align:left;">
+ShelveLoc
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+Med: 219, Bad: 96, Goo: 85
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">Urban</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 282, No: 118</td>
+<tr>
+<td style="text-align:left;">
+Urban
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+Yes: 282, No: 118
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">US</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 258, No: 142</td>
+<tr>
+<td style="text-align:left;">
+US
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+Yes: 258, No: 142
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">High</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">No: 236, Yes: 164</td>
+<tr>
+<td style="text-align:left;">
+High
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+No: 236, Yes: 164
+</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
-<table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 11%">
-<col style="width: 15%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 3%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 6%">
-</colgroup>
+<table>
 <thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: right;">mean</th>
-<th style="text-align: right;">sd</th>
-<th style="text-align: right;">p0</th>
-<th style="text-align: right;">p25</th>
-<th style="text-align: right;">p50</th>
-<th style="text-align: right;">p75</th>
-<th style="text-align: right;">p100</th>
-<th style="text-align: left;">hist</th>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
+<th style="text-align:right;">
+p0
+</th>
+<th style="text-align:right;">
+p25
+</th>
+<th style="text-align:right;">
+p50
+</th>
+<th style="text-align:right;">
+p75
+</th>
+<th style="text-align:right;">
+p100
+</th>
+<th style="text-align:left;">
+hist
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">Sales</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">7.50</td>
-<td style="text-align: right;">2.82</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">5.39</td>
-<td style="text-align: right;">7.49</td>
-<td style="text-align: right;">9.32</td>
-<td style="text-align: right;">16.27</td>
-<td style="text-align: left;">▁▆▇▃▁</td>
+<tr>
+<td style="text-align:left;">
+Sales
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+7.50
+</td>
+<td style="text-align:right;">
+2.82
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+5.39
+</td>
+<td style="text-align:right;">
+7.49
+</td>
+<td style="text-align:right;">
+9.32
+</td>
+<td style="text-align:right;">
+16.27
+</td>
+<td style="text-align:left;">
+▁▆▇▃▁
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">CompPrice</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">124.97</td>
-<td style="text-align: right;">15.33</td>
-<td style="text-align: right;">77</td>
-<td style="text-align: right;">115.00</td>
-<td style="text-align: right;">125.00</td>
-<td style="text-align: right;">135.00</td>
-<td style="text-align: right;">175.00</td>
-<td style="text-align: left;">▁▅▇▃▁</td>
+<tr>
+<td style="text-align:left;">
+CompPrice
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+124.97
+</td>
+<td style="text-align:right;">
+15.33
+</td>
+<td style="text-align:right;">
+77
+</td>
+<td style="text-align:right;">
+115.00
+</td>
+<td style="text-align:right;">
+125.00
+</td>
+<td style="text-align:right;">
+135.00
+</td>
+<td style="text-align:right;">
+175.00
+</td>
+<td style="text-align:left;">
+▁▅▇▃▁
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Income</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">68.66</td>
-<td style="text-align: right;">27.99</td>
-<td style="text-align: right;">21</td>
-<td style="text-align: right;">42.75</td>
-<td style="text-align: right;">69.00</td>
-<td style="text-align: right;">91.00</td>
-<td style="text-align: right;">120.00</td>
-<td style="text-align: left;">▇▆▇▆▅</td>
+<tr>
+<td style="text-align:left;">
+Income
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+68.66
+</td>
+<td style="text-align:right;">
+27.99
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+42.75
+</td>
+<td style="text-align:right;">
+69.00
+</td>
+<td style="text-align:right;">
+91.00
+</td>
+<td style="text-align:right;">
+120.00
+</td>
+<td style="text-align:left;">
+▇▆▇▆▅
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">Advertising</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">6.64</td>
-<td style="text-align: right;">6.65</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">5.00</td>
-<td style="text-align: right;">12.00</td>
-<td style="text-align: right;">29.00</td>
-<td style="text-align: left;">▇▃▃▁▁</td>
+<tr>
+<td style="text-align:left;">
+Advertising
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+6.64
+</td>
+<td style="text-align:right;">
+6.65
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:right;">
+12.00
+</td>
+<td style="text-align:right;">
+29.00
+</td>
+<td style="text-align:left;">
+▇▃▃▁▁
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Population</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">264.84</td>
-<td style="text-align: right;">147.38</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">139.00</td>
-<td style="text-align: right;">272.00</td>
-<td style="text-align: right;">398.50</td>
-<td style="text-align: right;">509.00</td>
-<td style="text-align: left;">▇▇▇▇▇</td>
+<tr>
+<td style="text-align:left;">
+Population
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+264.84
+</td>
+<td style="text-align:right;">
+147.38
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+139.00
+</td>
+<td style="text-align:right;">
+272.00
+</td>
+<td style="text-align:right;">
+398.50
+</td>
+<td style="text-align:right;">
+509.00
+</td>
+<td style="text-align:left;">
+▇▇▇▇▇
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">Price</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">115.80</td>
-<td style="text-align: right;">23.68</td>
-<td style="text-align: right;">24</td>
-<td style="text-align: right;">100.00</td>
-<td style="text-align: right;">117.00</td>
-<td style="text-align: right;">131.00</td>
-<td style="text-align: right;">191.00</td>
-<td style="text-align: left;">▁▂▇▆▁</td>
+<tr>
+<td style="text-align:left;">
+Price
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+115.80
+</td>
+<td style="text-align:right;">
+23.68
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+100.00
+</td>
+<td style="text-align:right;">
+117.00
+</td>
+<td style="text-align:right;">
+131.00
+</td>
+<td style="text-align:right;">
+191.00
+</td>
+<td style="text-align:left;">
+▁▂▇▆▁
+</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Age</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">53.32</td>
-<td style="text-align: right;">16.20</td>
-<td style="text-align: right;">25</td>
-<td style="text-align: right;">39.75</td>
-<td style="text-align: right;">54.50</td>
-<td style="text-align: right;">66.00</td>
-<td style="text-align: right;">80.00</td>
-<td style="text-align: left;">▇▆▇▇▇</td>
+<tr>
+<td style="text-align:left;">
+Age
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+53.32
+</td>
+<td style="text-align:right;">
+16.20
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+39.75
+</td>
+<td style="text-align:right;">
+54.50
+</td>
+<td style="text-align:right;">
+66.00
+</td>
+<td style="text-align:right;">
+80.00
+</td>
+<td style="text-align:left;">
+▇▆▇▇▇
+</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">Education</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">13.90</td>
-<td style="text-align: right;">2.62</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">12.00</td>
-<td style="text-align: right;">14.00</td>
-<td style="text-align: right;">16.00</td>
-<td style="text-align: right;">18.00</td>
-<td style="text-align: left;">▇▇▃▇▇</td>
+<tr>
+<td style="text-align:left;">
+Education
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+13.90
+</td>
+<td style="text-align:right;">
+2.62
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+12.00
+</td>
+<td style="text-align:right;">
+14.00
+</td>
+<td style="text-align:right;">
+16.00
+</td>
+<td style="text-align:right;">
+18.00
+</td>
+<td style="text-align:left;">
+▇▇▃▇▇
+</td>
 </tr>
 </tbody>
 </table>
@@ -865,9 +1374,7 @@ node), split, n, loss, yval, (yprob)
 </section>
 <section id="preprocess" class="level2">
 <h2 class="anchored" data-anchor-id="preprocess">Preprocess</h2>
-<hr>
 <p><em>It is very common that the data need to be preprocessed before training the model</em></p>
-<hr>
 <p>In this case, no cleaning or preprocessing are required.</p>
 </section>
 <section id="traintest-partition-of-data" class="level2">
@@ -889,15 +1396,15 @@ node), split, n, loss, yval, (yprob)
 <p>The train and tets set have 200 200 observations respectively.</p>
 <p>In train data, the number of observations for each class is:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">table</span>(mydataset[train,<span class="st">"High"</span>]), <span class="at">caption=</span> <span class="st">"Train data: number of observations for each class"</span>,</span>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>kableExtra<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">table</span>(mydataset[train,<span class="st">"High"</span>]), <span class="at">caption=</span> <span class="st">"Train data: number of observations for each class"</span>,</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">'High'</span>,<span class="st">'Freq'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
 <caption>Train data: number of observations for each class</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;">High</th>
-<th style="text-align: right;">Freq</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">High</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Freq</th>
 </tr>
 </thead>
 <tbody>
@@ -911,6 +1418,8 @@ node), split, n, loss, yval, (yprob)
 </tr>
 </tbody>
 </table>
+
+
 </div>
 </div>
 </section>
@@ -918,14 +1427,18 @@ node), split, n, loss, yval, (yprob)
 <h2 class="anchored" data-anchor-id="train-model">Train model</h2>
 <p>We now use the <code>tree()</code> function to fit a classification tree in order to predict <code>High</code> using all variables but <code>Sales</code> using only de train set.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>tree.mydataset<span class="ot">=</span><span class="fu">tree</span>(High<span class="sc">~</span>.<span class="sc">-</span>Sales, mydataset,</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subset=</span>train, <span class="at">split=</span><span class="st">"deviance"</span>)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>tree.mydataset2<span class="ot">=</span><span class="fu">rpart</span>(High<span class="sc">~</span>.<span class="sc">-</span>Sales, mydataset,</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subset=</span>train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tree)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>tree.mydataset<span class="ot">=</span><span class="fu">tree</span>(High<span class="sc">~</span>.<span class="sc">-</span>Sales, mydataset,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subset=</span>train, </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">split=</span><span class="st">"deviance"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We might have also used <code>rpart</code> to build the tree</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>tree.mydataset2<span class="ot">=</span>rpart<span class="sc">::</span><span class="fu">rpart</span>(High<span class="sc">~</span>.<span class="sc">-</span>Sales, mydataset, <span class="at">subset=</span>train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>summary()</code> function lists the variables that are used as internal nodes in the tree, the number of terminal nodes, and the <strong>training</strong> error rate</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tree.mydataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tree.mydataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Classification tree:
@@ -938,7 +1451,7 @@ Number of terminal nodes:  21
 Residual mean deviance:  0.5543 = 99.22 / 179 
 Misclassification error rate: 0.115 = 23 / 200 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(tree.mydataset2)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(tree.mydataset2)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can thus define the deviance of a tree (roughly equivalent to the concept of impurity) as the sum over all leaves of:</p>
 <p><span class="math display">\[
@@ -950,14 +1463,32 @@ Misclassification error rate: 0.115 = 23 / 200 </code></pre>
 <h2 class="anchored" data-anchor-id="plot-the-tree">Plot the Tree</h2>
 <p>The next step is display the tree graphically. We use the <code>plot()</code> function to display the tree structure, and the <code>text()</code>function to display the node labels.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(tree.mydataset)</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># require(rpart.plot)</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rpart.plot(tree.mydataset2)</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># text(tree.mydataset,pretty=0)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tree.mydataset)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(tree.mydataset,<span class="at">pretty=</span><span class="dv">0</span>, <span class="at">cex=</span><span class="fl">0.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="CART-Examples_files/figure-html/fig.DT1-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Classification tree</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rpart.plot)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(tree.mydataset2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="CART-Examples_files/figure-html/fig.DT1bis-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Classification tree</figcaption>
+</figure>
+</div>
+</div>
 </div>
 <p>It is also possible to show a <code>R</code> print output corresponding to each branch of the tree.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tree.mydataset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tree.mydataset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>node), split, n, deviance, yval, (yprob)
       * denotes terminal node
@@ -1010,16 +1541,16 @@ Misclassification error rate: 0.115 = 23 / 200 </code></pre>
 <h2 class="anchored" data-anchor-id="prediction">Prediction</h2>
 <p>We now evaluate the performance of the classification tree on the test data. The <code>predict()</code> function can be used for this purpose.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tree.pred<span class="ot">=</span><span class="fu">predict</span>(tree.mydataset,mydataset.test,<span class="at">type=</span><span class="st">"class"</span>)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">table</span>(tree.pred,High.test)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>tree.pred<span class="ot">=</span><span class="fu">predict</span>(tree.mydataset,mydataset.test,<span class="at">type=</span><span class="st">"class"</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">table</span>(tree.pred,High.test)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         High.test
 tree.pred  No Yes
       No  104  31
       Yes  13  52</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>accrcy <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">diag</span>(res)<span class="sc">/</span><span class="fu">sum</span>(res))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>accrcy <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">diag</span>(res)<span class="sc">/</span><span class="fu">sum</span>(res))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The accuracy is <strong>0.78</strong> or misclassification error rate is <strong>0.22</strong>.</p>
 </section>
@@ -1027,13 +1558,13 @@ tree.pred  No Yes
 <h2 class="anchored" data-anchor-id="prune-the-tree-tunning-model">Prune the tree (Tunning model)</h2>
 <p>We consider whether pruning the tree could lead to improved results.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>cv.mydataset<span class="ot">=</span><span class="fu">cv.tree</span>(tree.mydataset,<span class="at">FUN=</span>prune.misclass)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cv.mydataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>cv.mydataset<span class="ot">=</span><span class="fu">cv.tree</span>(tree.mydataset,<span class="at">FUN=</span>prune.misclass)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cv.mydataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "size"   "dev"    "k"      "method"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>cv.mydataset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>cv.mydataset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$size
 [1] 21 19 14  9  8  5  3  2  1
@@ -1054,24 +1585,24 @@ attr(,"class")
 <p>Note that, despite the name, <code>dev</code> corresponds to the cross-validation error rate in this instance.</p>
 <p>We plot the error rate as a function of both <code>size</code>and <code>k</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv.mydataset<span class="sc">$</span>size,cv.mydataset<span class="sc">$</span>dev,<span class="at">type=</span><span class="st">"b"</span>)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv.mydataset<span class="sc">$</span>k,cv.mydataset<span class="sc">$</span>dev,<span class="at">type=</span><span class="st">"b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv.mydataset<span class="sc">$</span>size,cv.mydataset<span class="sc">$</span>dev,<span class="at">type=</span><span class="st">"b"</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv.mydataset<span class="sc">$</span>k,cv.mydataset<span class="sc">$</span>dev,<span class="at">type=</span><span class="st">"b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We now apply the <code>prune.misclass()</code> function in order to prune the tree to obtain a “best tree”. The best tree is the tree with …</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>prune.mydataset<span class="ot">=</span><span class="fu">prune.misclass</span>(tree.mydataset,</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">best=</span>cv.mydataset<span class="sc">$</span>size[<span class="fu">which.min</span>(cv.mydataset<span class="sc">$</span>dev)])</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prune.mydataset)</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(prune.mydataset,<span class="at">pretty=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>prune.mydataset<span class="ot">=</span><span class="fu">prune.misclass</span>(tree.mydataset,</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">best=</span>cv.mydataset<span class="sc">$</span>size[<span class="fu">which.min</span>(cv.mydataset<span class="sc">$</span>dev)])</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prune.mydataset)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(prune.mydataset,<span class="at">pretty=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1083,24 +1614,24 @@ attr(,"class")
 </div>
 <p>How well does this pruned tree perform on the test data set?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>tree.pred<span class="ot">=</span><span class="fu">predict</span>(prune.mydataset,mydataset.test,<span class="at">type=</span><span class="st">"class"</span>)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">table</span>(tree.pred,High.test)</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>tree.pred<span class="ot">=</span><span class="fu">predict</span>(prune.mydataset,mydataset.test,<span class="at">type=</span><span class="st">"class"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">table</span>(tree.pred,High.test)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         High.test
 tree.pred  No Yes
       No  104  32
       Yes  13  51</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>accrcy <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">diag</span>(res)<span class="sc">/</span><span class="fu">sum</span>(res))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>accrcy <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">diag</span>(res)<span class="sc">/</span><span class="fu">sum</span>(res))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The accuracy is <strong>0.775</strong>.</p>
 <p>If we increase the value of <code>best</code>, for example 21 terminal nodes, we obtain a larger pruned tree with lower classification accuracy:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>prune.mydataset<span class="ot">=</span><span class="fu">prune.misclass</span>(tree.mydataset, </span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">best =</span> cv.mydataset<span class="sc">$</span>size[<span class="dv">1</span>])</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prune.mydataset)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(prune.mydataset, <span class="at">pretty=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>prune.mydataset<span class="ot">=</span><span class="fu">prune.misclass</span>(tree.mydataset, </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">best =</span> cv.mydataset<span class="sc">$</span>size[<span class="dv">1</span>])</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prune.mydataset)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(prune.mydataset, <span class="at">pretty=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1111,16 +1642,16 @@ tree.pred  No Yes
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>tree.pred<span class="ot">=</span><span class="fu">predict</span>(prune.mydataset, mydataset.test, <span class="at">type=</span><span class="st">"class"</span>)</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">table</span>(tree.pred, High.test)</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>tree.pred<span class="ot">=</span><span class="fu">predict</span>(prune.mydataset, mydataset.test, <span class="at">type=</span><span class="st">"class"</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">table</span>(tree.pred, High.test)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         High.test
 tree.pred  No Yes
       No  105  31
       Yes  12  52</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>accrcy <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">diag</span>(res)<span class="sc">/</span><span class="fu">sum</span>(res))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>accrcy <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">diag</span>(res)<span class="sc">/</span><span class="fu">sum</span>(res))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The accuracy is <strong>0.785</strong>.</p>
 </section>
@@ -1130,10 +1661,10 @@ tree.pred  No Yes
 <p>This example is borrowed from <span class="citation" data-cites="amat2017">(<a href="#ref-amat2017" role="doc-biblioref">Rodrigo 2017</a>)</span>.</p>
 <p>The Boston dataset available in the MASS package contains housing prices for the city of Boston, as well as socioeconomic information for the neighborhood in which they are located.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"Boston"</span>)</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> Boston</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"Boston"</span>)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> Boston</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     crim zn indus chas   nox    rm  age    dis rad tax ptratio  black lstat
 1 0.00632 18  2.31    0 0.538 6.575 65.2 4.0900   1 296    15.3 396.90  4.98
@@ -1147,24 +1678,24 @@ tree.pred  No Yes
 </div>
 <p>Our goal is to fit a regression model that allows predicting the average price of a home (medv) based on the available variables.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>color <span class="ot">&lt;-</span> <span class="fu">adjustcolor</span>(<span class="st">"forestgreen"</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, ...) {  <span class="co"># custom panel function</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">panel.smooth</span>(x, y, <span class="at">col =</span> color, <span class="at">col.smooth =</span> <span class="st">"black"</span>, </span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(datos[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,<span class="dv">14</span>)], <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">upper.panel =</span> ps, <span class="at">col =</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>color <span class="ot">&lt;-</span> <span class="fu">adjustcolor</span>(<span class="st">"forestgreen"</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, ...) {  <span class="co"># custom panel function</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">panel.smooth</span>(x, y, <span class="at">col =</span> color, <span class="at">col.smooth =</span> <span class="st">"black"</span>, </span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(datos[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,<span class="dv">14</span>)], <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">upper.panel =</span> ps, <span class="at">col =</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(datos[,<span class="fu">c</span>(<span class="dv">7</span><span class="sc">:</span><span class="dv">14</span>)], <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">upper.panel =</span> ps, <span class="at">col =</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(datos[,<span class="fu">c</span>(<span class="dv">7</span><span class="sc">:</span><span class="dv">14</span>)], <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">upper.panel =</span> ps, <span class="at">col =</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-23-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1173,10 +1704,10 @@ tree.pred  No Yes
 <h2 class="anchored" data-anchor-id="model-fitting">Model fitting</h2>
 <p>Create a train and test sets</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(datos), <span class="at">size =</span> <span class="fu">nrow</span>(datos)<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>datos_train <span class="ot">&lt;-</span> datos[train,]</span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>datos_test  <span class="ot">&lt;-</span> datos[<span class="sc">-</span>train,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(datos), <span class="at">size =</span> <span class="fu">nrow</span>(datos)<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>datos_train <span class="ot">&lt;-</span> datos[train,]</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>datos_test  <span class="ot">&lt;-</span> datos[<span class="sc">-</span>train,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We use the <code>tree</code> function of the <code>tree</code> package to build the model. This function grows the tree until it meets a stop condition. By default, these conditions are:</p>
 <ul>
@@ -1184,15 +1715,15 @@ tree.pred  No Yes
 <li><code>minsize</code>: minimum number of observations a node must have in order for it to be split.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>arbol_regresion <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">tree</span>(</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">formula =</span> medv <span class="sc">~</span> .,</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data    =</span> datos_train,</span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">split   =</span> <span class="st">"deviance"</span>,</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mincut  =</span> <span class="dv">20</span>,</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">minsize =</span> <span class="dv">50</span></span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>                  )</span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(arbol_regresion)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>arbol_regresion <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">tree</span>(</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">formula =</span> medv <span class="sc">~</span> .,</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data    =</span> datos_train,</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">split   =</span> <span class="st">"deviance"</span>,</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mincut  =</span> <span class="dv">20</span>,</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">minsize =</span> <span class="dv">50</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>                  )</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(arbol_regresion)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Regression tree:
@@ -1211,13 +1742,13 @@ Distribution of residuals:
 <p>In the context of regression trees, the <code>Residual mean deviance</code> term is the residual sum of squares divided by (number of observations - number of terminal nodes). The smaller the deviation, the better the fit of the tree to the training observations.</p>
 <p>The tree can be visualized:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> arbol_regresion, <span class="at">type =</span> <span class="st">"proportional"</span>)</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x =</span> arbol_regresion, <span class="at">splits =</span> <span class="cn">TRUE</span>, <span class="at">pretty =</span> <span class="dv">0</span>, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> arbol_regresion, <span class="at">type =</span> <span class="st">"proportional"</span>)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x =</span> arbol_regresion, <span class="at">splits =</span> <span class="cn">TRUE</span>, <span class="at">pretty =</span> <span class="dv">0</span>, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1228,18 +1759,18 @@ Distribution of residuals:
 <p>We use the <code>cv.tree</code> function that uses cross validation to identify the optimal penalty value. By default, this function relies on the <em>deviance</em> to guide the pruning process.</p>
 <p>We <strong>grow the tree again</strong> so we have a big tree to prune:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>arbol_regresion <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">tree</span>(</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">formula =</span> medv <span class="sc">~</span> .,</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data    =</span> datos_train,</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">split   =</span> <span class="st">"deviance"</span>,</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mincut  =</span> <span class="dv">1</span>,</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">minsize =</span> <span class="dv">2</span>,</span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mindev  =</span> <span class="dv">0</span></span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>                  )</span>
-<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimization</span></span>
-<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>cv_arbol <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">cv.tree</span>(arbol_regresion, <span class="at">K =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>arbol_regresion <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">tree</span>(</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">formula =</span> medv <span class="sc">~</span> .,</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data    =</span> datos_train,</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">split   =</span> <span class="st">"deviance"</span>,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mincut  =</span> <span class="dv">1</span>,</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">minsize =</span> <span class="dv">2</span>,</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mindev  =</span> <span class="dv">0</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>                  )</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimization</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>cv_arbol <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">cv.tree</span>(arbol_regresion, <span class="at">K =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The function returns an object <code>cv_arbol</code> containing:</p>
 <ul>
@@ -1250,59 +1781,59 @@ Distribution of residuals:
 </ul>
 <p>These can be used to visualize and understand the optimization performed.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>size_optimo <span class="ot">&lt;-</span> <span class="fu">rev</span>(cv_arbol<span class="sc">$</span>size)[<span class="fu">which.min</span>(<span class="fu">rev</span>(cv_arbol<span class="sc">$</span>dev))]</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Optimal size obtained is:"</span>, size_optimo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>size_optimo <span class="ot">&lt;-</span> <span class="fu">rev</span>(cv_arbol<span class="sc">$</span>size)[<span class="fu">which.min</span>(<span class="fu">rev</span>(cv_arbol<span class="sc">$</span>dev))]</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Optimal size obtained is:"</span>, size_optimo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Optimal size obtained is: 10"</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>resultados_cv <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n_nodes  =</span> cv_arbol<span class="sc">$</span>size,</span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">deviance =</span> cv_arbol<span class="sc">$</span>dev,</span>
-<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">alpha    =</span> cv_arbol<span class="sc">$</span>k</span>
-<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>                 )</span>
-<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> resultados_cv, <span class="fu">aes</span>(<span class="at">x =</span> n_nodes, <span class="at">y =</span> deviance)) <span class="sc">+</span></span>
-<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
-<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> size_optimo, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Error vs tree size"</span>) <span class="sc">+</span></span>
-<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_bw</span>() </span>
-<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> resultados_cv, <span class="fu">aes</span>(<span class="at">x =</span> alpha, <span class="at">y =</span> deviance)) <span class="sc">+</span></span>
-<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
-<span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb57-21"><a href="#cb57-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Error vs penalization (alpha)"</span>) <span class="sc">+</span></span>
-<span id="cb57-22"><a href="#cb57-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_bw</span>() </span>
-<span id="cb57-23"><a href="#cb57-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-24"><a href="#cb57-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>resultados_cv <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n_nodes  =</span> cv_arbol<span class="sc">$</span>size,</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">deviance =</span> cv_arbol<span class="sc">$</span>dev,</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">alpha    =</span> cv_arbol<span class="sc">$</span>k</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>                 )</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> resultados_cv, <span class="fu">aes</span>(<span class="at">x =</span> n_nodes, <span class="at">y =</span> deviance)) <span class="sc">+</span></span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> size_optimo, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Error vs tree size"</span>) <span class="sc">+</span></span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_bw</span>() </span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> resultados_cv, <span class="fu">aes</span>(<span class="at">x =</span> alpha, <span class="at">y =</span> deviance)) <span class="sc">+</span></span>
+<span id="cb59-19"><a href="#cb59-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb59-20"><a href="#cb59-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb59-21"><a href="#cb59-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Error vs penalization (alpha)"</span>) <span class="sc">+</span></span>
+<span id="cb59-22"><a href="#cb59-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_bw</span>() </span>
+<span id="cb59-23"><a href="#cb59-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-24"><a href="#cb59-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Once the optimal value identified, the final pruning is applied with the <code>prune.tree</code> function. This function also accepts the optimal value of <span class="math inline">\(\alpha\)</span> instead of size.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>arbol_final <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">prune.tree</span>(</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">tree =</span> arbol_regresion,</span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">best =</span> size_optimo</span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>               )</span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> arbol_final, <span class="at">type =</span> <span class="st">"proportional"</span>)</span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x =</span> arbol_final, <span class="at">splits =</span> <span class="cn">TRUE</span>, <span class="at">pretty =</span> <span class="dv">0</span>, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>arbol_final <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">prune.tree</span>(</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">tree =</span> arbol_regresion,</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">best =</span> size_optimo</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>               )</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> arbol_final, <span class="at">type =</span> <span class="st">"proportional"</span>)</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x =</span> arbol_final, <span class="at">splits =</span> <span class="cn">TRUE</span>, <span class="at">pretty =</span> <span class="dv">0</span>, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1314,18 +1845,18 @@ Distribution of residuals:
 <p>The quality of the prediction is based in the Root Mean Square.</p>
 <p>For the original tree one has:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>predicciones <span class="ot">&lt;-</span> <span class="fu">predict</span>(arbol_regresion, <span class="at">newdata =</span> datos_test)</span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>test_rmse    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((predicciones <span class="sc">-</span> datos_test<span class="sc">$</span>medv)<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error de test (rmse) del árbol inicial:"</span>, <span class="fu">round</span>(test_rmse,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>predicciones <span class="ot">&lt;-</span> <span class="fu">predict</span>(arbol_regresion, <span class="at">newdata =</span> datos_test)</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>test_rmse    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((predicciones <span class="sc">-</span> datos_test<span class="sc">$</span>medv)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error de test (rmse) del árbol inicial:"</span>, <span class="fu">round</span>(test_rmse,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Error de test (rmse) del árbol inicial: 5.43"</code></pre>
 </div>
 </div>
 <p>And for the final tree:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>predicciones_finales <span class="ot">&lt;-</span> <span class="fu">predict</span>(arbol_final, <span class="at">newdata =</span> datos_test)</span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>test_rmse    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((predicciones <span class="sc">-</span> datos_test<span class="sc">$</span>medv)<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error de test (rmse) del árbol final:"</span>, <span class="fu">round</span>(test_rmse,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>predicciones_finales <span class="ot">&lt;-</span> <span class="fu">predict</span>(arbol_final, <span class="at">newdata =</span> datos_test)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>test_rmse    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((predicciones <span class="sc">-</span> datos_test<span class="sc">$</span>medv)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error de test (rmse) del árbol final:"</span>, <span class="fu">round</span>(test_rmse,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Error de test (rmse) del árbol final: 5.43"</code></pre>
 </div>
@@ -1448,37 +1979,37 @@ Distribution of residuals:
 <h1>A case for improvement</h1>
 <p>This example relies on the <code>AmesHousing</code> dataset on house prices in Ames, IA.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(AmesHousing))</span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"AmesHousing"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>ames <span class="ot">&lt;-</span> AmesHousing<span class="sc">::</span><span class="fu">make_ames</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(AmesHousing))</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"AmesHousing"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>ames <span class="ot">&lt;-</span> AmesHousing<span class="sc">::</span><span class="fu">make_ames</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(rsample))</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"rsample"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified sampling with the rsample package</span></span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">initial_split</span>(ames, <span class="at">prop =</span> <span class="fl">0.7</span>, </span>
-<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">strata =</span> <span class="st">"Sale_Price"</span>)</span>
-<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>ames_train  <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
-<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>ames_test   <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(rsample))</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"rsample"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified sampling with the rsample package</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">initial_split</span>(ames, <span class="at">prop =</span> <span class="fl">0.7</span>, </span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">strata =</span> <span class="st">"Sale_Price"</span>)</span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>ames_train  <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>ames_test   <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We use the <code>rpart</code>package to fit a regression tree to predict the <code>Sales_price</code> variable.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rpart)</span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>ames_dt1 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(</span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> ames_train</span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># method  = "anova"</span></span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rpart)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>ames_dt1 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> ames_train</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># method  = "anova"</span></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can visualize the tree with <code>rpart.plot()</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rpart.plot)</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(ames_dt1, <span class="at">cex=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rpart.plot)</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(ames_dt1, <span class="at">cex=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1486,7 +2017,7 @@ Distribution of residuals:
 <p><code>rpart()</code> automatically applies a range of cost complexity (<span class="math inline">\(\alpha\)</span> values to prune the tree).</p>
 <p>To compare the error for each <span class="math inline">\(\alpha\)</span> value, <code>rpart()</code> performs a 10-fold CV (by default).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">printcp</span>(ames_dt1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">printcp</span>(ames_dt1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Regression tree:
@@ -1515,11 +2046,11 @@ n= 2049
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotcp</span>(ames_dt1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotcp</span>(ames_dt1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1529,15 +2060,15 @@ n= 2049
 <h2 class="anchored" data-anchor-id="feature-importance">Feature importance</h2>
 <p>The <code>vip</code> function from the <code>vip</code> package allows computing variable importance from a built predictor object.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(vip))</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"vip"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(vip)</span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ? vip</span></span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a><span class="fu">vip</span>(ames_dt1, <span class="at">num_features =</span> <span class="dv">40</span>, <span class="at">bar =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(vip))</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"vip"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(vip)</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ? vip</span></span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a><span class="fu">vip</span>(ames_dt1, <span class="at">num_features =</span> <span class="dv">40</span>, <span class="at">bar =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="CART-Examples_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="CART-Examples_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1569,9 +2100,6 @@ n= 2049
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-james2013introduction" class="csl-entry" role="listitem">
-James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2013. <em>An Introduction to Statistical Learning</em>. Vol. 112. Springer.
-</div>
 <div id="ref-amat2017" class="csl-entry" role="listitem">
 Rodrigo, Joaquín Amat. 2017. <span>“Arboles de Decision, Random Forest, Gradient Boosting y C5.0.”</span> <a href="https://www.cienciadedatos.net/documentos/33_arboles_de_prediccion_bagging_random_forest_boosting#Introducci%C3%B3n">https://www.cienciadedatos.net/documentos/33_arboles_de_prediccion_bagging_random_forest_boosting#Introducci%C3%B3n</a>.
 </div>

@@ -28,7 +28,7 @@ execute:
     echo: true
     message: false
     warning: false
-bibliography: "../StatisticalLearning.bib"
+bibliography: "../../StatisticalLearning.bib"
 editor_options: 
   chunk_output_type: console
 ---
@@ -40,20 +40,8 @@ if(!require("ISLR")) install.packages("ISLR")
 if(!require("rsample")) install.packages("rsample")
 if(!require("rpart.plot")) install.packages("rpart.plot")
 if(!require("skimr")) install.packages("skimr")
+if(!require("kableExtra")) install.packages("kableExtra")
 
-```
-
-```{r assignments}
-# This chunk is used to do the assignment of values to R variables
-# This code must be adapted to any change of datasets or 
-
-myDescription <- "The data are a simulated data set containing sales of child car seats at different stores [@james2013introduction]"
-mydataset <- Carseats
-```
-
-```{r, dataDescription}
-n <- nrow(mydataset)
-p <- ncol(mydataset)
 ```
 
 # Introductory example
@@ -78,17 +66,17 @@ A typical classification/prediction problem is to build a model that can disting
 
 A quick exploration can be done wirh the `swirl` package:
 
-```{r}
+```{r PIMAdescription}
 library(skimr)
 data("PimaIndiansDiabetes2", package = "mlbench")
 skim(PimaIndiansDiabetes2)
 ```
 
-## Building a classification tree with `rpart`
+## Building a classification tree
 
 Start building a simple tree with default parameters
 
-```{r}
+```{r PIMAbuildTree}
 library(rpart)
 model1 <- rpart(diabetes ~., data = PimaIndiansDiabetes2)
 # par(xpd = NA) # otherwise on some devices the text is clipped
@@ -96,20 +84,20 @@ model1 <- rpart(diabetes ~., data = PimaIndiansDiabetes2)
 
 This builds a model consisting of a series of nested decision rules.
 
-```{r}
+```{r PIMATree1}
 print(model1)
 ```
 
 The model can be visualized using a tree:
 
-```{r}
+```{r PIMAPlot1}
 plot(model1)
 text(model1, digits = 3, cex=0.8)
 ```
 
 A nicer plot can be obtained using the `rpart.plot` function from the `rpart.plot` package. This function allows for multiple tunings, but the default values may already yield a nice informative plot.
 
-```{r}
+```{r PIMAPlotNice1}
 rpart.plot(model1, cex=.7)
 detach(package:rpart.plot)
 ```
@@ -118,14 +106,14 @@ If we believed the model was ready for use we could use it to predict diabetes f
 
 **Imagine we kow nothing about overfitting**. We may want to check the accuracy of the model on the dataset we have used to build it.
 
-```{r}
+```{r PIMAaccuracy1}
 predicted.classes<- predict(model1, PimaIndiansDiabetes2, "class")
 mean(predicted.classes == PimaIndiansDiabetes2$diabetes)
 ```
 
 A better strategy is to use train dataset to build the model and a test dataset to check how it works.
 
-```{r}
+```{r PIMATestTrain1}
 set.seed(123)
 ssize <- nrow(PimaIndiansDiabetes2)
 propTrain <- 0.8
@@ -136,7 +124,7 @@ test.data <- PimaIndiansDiabetes2[-training.indices, ]
 
 Now we build the model on the train data and check its accuracy on the test data.
 
-```{r}
+```{r PIMAtestTrain2}
 model2 <- rpart(diabetes ~., data = train.data)
 predicted.classes.test<- predict(model2, test.data, "class")
 mean(predicted.classes.test == test.data$diabetes)
@@ -144,19 +132,29 @@ mean(predicted.classes.test == test.data$diabetes)
 
 The accuracy is good, but smaller, as expected.
 
-# A classification tree
+# Predicting car sales (I)
+
+In the following two examples we use the `carseats`datasets to predict the value of `sales`
+
+In this section we tart with the value seen as categorical.
 
 ## Data description
 
-------------------------------------------------------------------------
+```{r assignments}
+# This chunk is used to do the assignment of values to R variables
+# This allows the code to be more easily adapted to any change of datasets or variables
 
-*In this section, you should provide a short explanation about problem and the data set.*
+require(ISLR)
+myDescription <- "The data are a simulated data set containing sales of child car seats at different stores [@james2013introduction]"
+data("Carseats")
+mydataset <- Carseats
+```
 
-------------------------------------------------------------------------
+```{r, dataDescription}
+n <- nrow(mydataset)
+p <- ncol(mydataset)
+```
 
-`r myDescription`.
-
-The data set has **`r n`** observations on **`r p`** variables. The variable names are: *`r toString(names(mydataset))`*.
 
 We start categorizing the variable `Sales` creating a new variable, `High`, which takes on a value of `Yes` if the `Sales` variable exceeds 8, and a value of `No` otherwise.
 
@@ -191,11 +189,9 @@ skimr::skim(mydataset)
 
 ## Preprocess
 
-------------------------------------------------------------------------
 
 *It is very common that the data need to be preprocessed before training the model*
 
-------------------------------------------------------------------------
 
 In this case, no cleaning or preprocessing are required.
 
@@ -222,7 +218,7 @@ The train and tets set have `r length(train)` `r nrow(mydataset) - length(train)
 In train data, the number of observations for each class is:
 
 ```{r}
-kable(table(mydataset[train,"High"]), caption= "Train data: number of observations for each class",
+kableExtra::kable(table(mydataset[train,"High"]), caption= "Train data: number of observations for each class",
       col.names = c('High','Freq'))
 ```
 
@@ -231,10 +227,16 @@ kable(table(mydataset[train,"High"]), caption= "Train data: number of observatio
 We now use the `tree()` function to fit a classification tree in order to predict `High` using all variables but `Sales` using only de train set.
 
 ```{r}
+library(tree)
 tree.mydataset=tree(High~.-Sales, mydataset,
-                    subset=train, split="deviance")
-tree.mydataset2=rpart(High~.-Sales, mydataset,
-                    subset=train)
+                    subset=train, 
+                    split="deviance")
+```
+
+We might have also used `rpart` to build the tree
+
+```{r}
+tree.mydataset2=rpart::rpart(High~.-Sales, mydataset, subset=train)
 ```
 
 The `summary()` function lists the variables that are used as internal nodes in the tree, the number of terminal nodes, and the **training** error rate
@@ -257,10 +259,14 @@ where $n_{mk}$ is the number of observations in the `m`th terminal node that bel
 The next step is display the tree graphically. We use the `plot()` function to display the tree structure, and the `text()`function to display the node labels.
 
 ```{r fig.DT1, fig.cap="Classification tree", fig.height=10, fig.width=12}
-# plot(tree.mydataset)
-# require(rpart.plot)
-# rpart.plot(tree.mydataset2)
-# text(tree.mydataset,pretty=0)
+plot(tree.mydataset)
+text(tree.mydataset,pretty=0, cex=0.6)
+```
+
+
+```{r fig.DT1bis, fig.cap="Classification tree", fig.height=10, fig.width=12}
+require(rpart.plot)
+rpart.plot(tree.mydataset2)
 ```
 
 It is also possible to show a `R` print output corresponding to each branch of the tree.
