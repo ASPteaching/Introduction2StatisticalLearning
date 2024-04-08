@@ -573,7 +573,7 @@ And for the final tree:
 
 ```{r}
 predicciones_finales <- predict(arbol_final, newdata = datos_test)
-test_rmse    <- sqrt(mean((predicciones - datos_test$medv)^2))
+test_rmse    <- sqrt(mean((predicciones_finales - datos_test$medv)^2))
 paste("Error de test (rmse) del árbol final:", round(test_rmse,2))
 ```
 

@@ -1,0 +1,745 @@
+---
+title: "Ensemble Methods"
+#subtitle: 'Improving predictors by aggregation'
+author: "A. Sanchez, F. Reverter and E. Vegas"
+format:
+  revealjs: 
+    incremental: false  
+    transition: slide
+    background-transition: fade
+    transition-speed: slow
+    scrollable: true
+    menu:
+      side: left
+      width: half
+      numbers: true
+    slide-number: c/t
+    show-slide-number: all
+    progress: true
+    css: "css4CU.css"
+    theme: sky
+    self-contained: true
+#    embed-resources: true
+    self-contained-math: true
+#    suppress-bibliography: true
+bibliography: "StatisticalLearning.bib"
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction to Ensembles
+
+## Some problems of *weak* learners.
+
+- Decision trees have many good properties but some important drawbacks:
+  - Smaller accuracy than competing alternatives
+  - Very sensitive to small changes in data
+  - Overall it makes the highly variable predictors
+- Tree are not the only classifiers to suffer from such problems.
+
+
+## Ensembles
+
+- A common strategy to deal with these issues is to build repeated (weak learners) models on the same data and combine them to form a single result.
+
+- These are called *ensemble* or consensus estimators/predictors.
+
+- As a general rule, ensemble learners tend to improve the results obtained with the weak learners they are made of.
+
+
+## Ensemble methods
+
+- Ensemble can be built on different learners but we will focus on those built on trees:
+
+  - Bagging, 
+  - Random Forests, 
+  - Boosting, 
+  - Bayesian Trees.
+  
+# Bagging: Aggregating predictors
+
+## Bagging: bootstrap aggregation
+
+- Decision trees suffer from high variance when compared with other methods such as linear regression, especially when $n/p$ is moderately large.
+  - *NOTE: Write a small script to check this assertion*
+  
+- Given that high variance is intrinsic to the trees a possibility, suggested by Breimann [@Breiman1996], is to build multiple trees derived from the same dataset and, somehow, average them.
+
+## Averaging decreases variance
+
+- Bagging relies, informally, on the idea that:
+  - given $X\sim F()$, s.t. $Var_F(X)=\sigma^2$, 
+  - given a s.r.s. $X_1, ..., X_n$ from $F$ then 
+  - if $\overline{X}=\frac{1}{N}\sum_{i=1}^n X_i$ then $var_F(\overline{X})=\sigma^2/n$.
+  
+- That is, *relying on the sample mean instead of on simple observations decreases variance by a factor of $n$*.
+
+## Averaging trees ...
+
+Two questions arise here:
+
+1. How to go from $X$ to $X_1, ..., X_n$?
+  - This will be done using *bootstrap resampling*.
+
+2. What means "averaging" in this context.
+  - Depending on the type of tree:
+    - Average predictions for regression trees.
+    - Majority voting for classification trees.
+
+## The bootstrap
+
+- *Bootstrap* methods were introduced by Bradley Efron in 1979 [@Efron79] to estimate the standard error of a statistic.
+- The success of the idea lied in that the procedure was presented as ``automatic'', that is:
+  - instead of having to do complex calculations,
+  - it allowed to approximate them using computer simulation.
+
+- Some people  called it ``the end of mathematical statistics''.
+
+## Bootstrap Applications 
+
+- The bootstrap has been applied to almost any problem in Statistics.
+
+  - Computing standard errors,
+  - Bias estimation and adjustment,
+  - Confidence intervals,
+  - Significance tests, ...
+
+- We begin with the easiest and best known case: *estimating the standard error (that is the square root of the variance) of an estimator*.
+
+## Precision of an estimate (1)
+
+- Assume we want to estimate some parameter $\theta$,
+that can be expressed as $\theta (F)$, where $F$ is the distribution function of each
+$X_i$ in $(X_1,X_2,...,X_n)$. 
+- For example:
+
+:::{.font90}
+\begin{eqnarray*}
+\theta &=& E_F(X)=\theta (F) \\
+\theta &=& Med(X)=\{m:P_F(X\leq m)=1/2\}=
+\theta (F).
+\end{eqnarray*}
+:::
+
+## Plug-in estimates
+
+-  To estimate $\theta(F)$ we usually rely on *plug-in estimators*: $\hat{\theta}=\theta (F_n)$:
+
+:::{.font90}
+\begin{eqnarray*}
+\hat{\theta}&=&\overline{X}=\int XdF_n(x)=\frac
+1n\sum_{i=1}^nx_i=\theta (F_n)
+\\
+\hat{\theta}&=&\widehat{Med}(X)=\{m:\frac{\#x_i\leq m}n=1/2\}=\theta
+(F_n)
+\end{eqnarray*}
+:::
+
+## Precision of an estimate (1)
+
+- An important when computing an estimator $\hat \theta$ of a parameter $\theta$ is *how precise is $\hat \theta$ as an estimator of $\theta$*?
+
+  - With the sample mean, $\overline{X}$, the standard error estimation is immediate because the expression of the variance estimator is known: 
+$
+\sigma _{\overline{X}}=\frac{\sigma (X)}{\sqrt{n}}
+$
+  - So, a natural estimator of the standard error of $\overline{X}$ is: $\hat\sigma_\overline{X}=\frac{\hat{\sigma}(X)}{\sqrt{n}}$
+
+## Precision of an estimate (2) {.smaller}
+
+-  If, as in this case, the variance of $X$ (and, here, that of $\overline{X}$) is a functional of $F$:
+
+:::{.font90}
+$$
+\sigma _{\overline{X}}=\frac{\sigma (X)}{\sqrt{n}}=\frac{\sqrt{\int
+[x-\int x\,dF(x)]\sp 2dF(x)}}{\sqrt{n}}=\sigma _{\overline{X}}(F)
+$$
+:::
+
+then, the standard error estimator is the same functional applied on $F_n$, that is:
+
+:::{.font90}
+$$
+\hat{\sigma}_{\overline{X}}=\frac{\hat{\sigma}(X)}{\sqrt{n}}=\frac{\sqrt{1/n\sum_{i=1}^n(x_i-\overline{x})^2}}{\sqrt{n}}=\sigma
+_{\overline{X}}(F_n).
+$$
+:::
+
+## Standard error estimation
+
+- Thus, a way to obtain a standard error estimator $\widehat{\sigma}_{\widehat{\theta}}$  of an estimator $\widehat{\theta}$ consists on replacing  $F$ with $F_n$ in the ``population'' standard error expression  of $\hat \theta$, $\displaystyle{\sigma_{\hat
+\theta}= \sigma_{\hat \theta}(F)}$, **whenever it is known**.
+- In a schematic form:
+$$
+\sigma_{\hat \theta}= \sigma_{\hat \theta}(F) \Longrightarrow
+\sigma_{\hat \theta}(F_n)= \widehat{\sigma}_{\hat \theta}.
+$$
+That is, *the process consists of "plugging-in" $F_n$ in the (known) functional form, $\sigma_{\hat \theta}(F)$ that defines $\sigma_{\hat \theta}$}*.
+
+## The bootstrap (1)
+
+- The previous approach, $F\simeq F_n \Longrightarrow \sigma_{\hat \theta}(F) \simeq \sigma_{\hat \theta}(F_n)$ 
+presents the obvious drawback that, when the functional form $\sigma _{\hat{\theta}}(F)$ is
+ unknown, it is not possible to carry out the substitution of $F$ by $F_n$.
+- This is, for example, the case of standard error of the median or [that of the correlation coefficient](http://artent.net/2012/07/31/standard-deviation-of-sample-median/).
+
+
+## The bootstrap (2)
+
+- The  *bootstrap* method makes it possible to do the desired approximation:
+$$\hat{\sigma}_{\hat\theta} \simeq \sigma _{\hat\theta}(F_n)$$
+*without having to to know the form of* $\sigma_{\hat\theta}(F)$.
+
+- To do this,*the bootstrap estimates, or directly approaches* $\sigma_{\hat{\theta}}(F_n)$ *over the sample*.
+
+
+## Bootstrap sampling (*resampling*)
+
+- The *bootstrap* allows to estimate the standard error from samples of  $F_n$, that is, 
+
+- Substituting $F_n$ by $F$ carried out in the *sampling step*.
+
+:::{.font80}
+
+\begin{eqnarray*}
+&&\mbox{Instead of: } \\
+&& \quad F\stackrel{s.r.s}{\longrightarrow }{\bf X} = 
+(X_1,X_2,\dots, X_n) \, \quad (\hat \sigma_{\hat\theta} =\underbrace{\sigma_\theta(F_n)}_{unknown}) 
+\\
+&& \mbox{It is done: } \\
+&& \quad F_n\stackrel{s.r.s}{\longrightarrow }\quad {\bf X^{*}}=(X_1^{*},X_2^{*},
+\dots ,X_n^{*}) \quad (\hat \sigma_{\hat\theta}= \hat \sigma_{\hat \theta}^* \simeq \sigma_{\hat \theta}^*).
+
+\end{eqnarray*}
+:::
+  
+## Bootstrap resampling (2)
+
+- Here,   $\sigma_{\hat \theta}^*$ is the bootstrap standard error of $\hat \theta$ and 
+- $\hat \sigma_{\hat \theta}^*$ the bootstrap estimate of the standard error of $\hat \theta$.
+
+- That is, the new (re-)sampling process consists of *extracting samples of size $n$ of $F_n$*: <br>
+${\bf X^{*}}=(X_1^{*},X_2^{*},\dots ,X_n^{*})$ is a random sample of size $n$ obtained *with replacement* from the original sample $(X_1,X_2,\dots ,X_n)$.
+
+- Samples ${\bf X^*}$, obtained through this procedure are called *bootstrap*\ samples or *re-samples*.
+
+
+## The bootstrap distribution
+
+- The distribution of a statistic computed from re-samples is called the *bootstrap distribution*,
+
+:::{.font90}
+\begin{eqnarray*}
+\mathcal {L}(\hat \theta)&\simeq& P_F(\hat\theta \leq t): \mbox{Sampling distribution of } \hat \theta,\\
+\mathcal {L}(\hat \theta^*)&\simeq& P_{F_n}(\hat\theta^* \leq t): \mbox{Bootstrap distribution of } \hat \theta,
+\end{eqnarray*}
+:::
+
+- This distribution is usually not known.
+
+- However the sampling process and the calculation of the statistics can be approximated using a Monte Carlo Algorithm.
+
+## Bootstrap Monte Carlo Algorithm
+
+:::{.font90}
+1.  Draw a bootstrap sample, ${\bf x}_1^{*}$ from $F_n$ and compute $\hat{\theta}({\bf x}_1^{*})$.
+2.  Repeat (1) $B$ times yielding $\hat{\theta}({\bf x}_2^{*})$, $\dots$, $\hat{\theta}({\bf x}_B^{*})$ estimates.
+3. Compute:
+\begin{equation*}
+\hat{\sigma}_B (\hat\theta)= \sqrt{
+	\frac{
+		\sum_{b=1}^B\left( \hat{\theta}(%
+		{\bf x^{*}_i})-\overline{\hat{\theta}^*}\right) ^2
+		}{
+		(B-1)	
+		}
+	}, \quad \overline{\hat{\theta}^*}\equiv \frac 1B\sum_{b=1}^B\hat{\theta}\left( {\bf x}%
+_b^{*}\right)
+\end{equation*}
+:::
+
+
+## Bootstrap Estimates of SE 
+
+- Main idea is that the  *bootstrap* standard error of $\hat\theta$, $\sigma_B(\hat\theta)$ can be *approximated* by $\hat{\sigma}_B (\hat\theta)$.
+
+:::{.font90} 
+$$
+\mbox{if }B\rightarrow\infty \mbox{ then } \hat{\sigma}_B (\hat\theta) \rightarrow \hat\sigma_{\infty} (\hat\theta) =\sigma_B(\hat\theta)=\sigma_{\hat\theta}(F_n).
+$$
+:::
+
+The bootstrap approximation, $\hat{\sigma}_B(\hat\theta)$, to the bootstrap SE, $\sigma_B(\hat\theta)$,  provides an estimate of $\sigma_{\hat\theta}(F_n)$:
+
+$$
+\hat{\sigma}_B(\hat\theta)(\simeq \sigma_B(\hat\theta)=\sigma_{\hat\theta}(F_n))\simeq\hat \sigma_{\hat\theta}(F_n).
+$$
+
+
+## Summary
+
+From real world to  *bootstrap* world:
+
+```{r, fig.align='center', out.width="100%"}
+knitr::include_graphics("images/fromRealWorld2BootstrapWorld.png")
+```
+
+## Back to bagging
+
+- Breiman [@Breiman1996] combined the ideas of:
+  - Averaging provides decreased variance estimates,
+  - Bootstrap provides multiple (re)samples.
+- He suggested: **b**ootstrap **agg**regat**ing** :
+  - Take resamples  from the original training dataset
+  - Learn the model on each bootstrapped training set to get a prediction $\hat f^{*b}(x)$.
+  - Use the boostrap estimates to obtain improved prediction/classification.
+
+
+## Bagging prediction/classifier
+
+- For regression (trees) the **bagged estimate** is the average prediction at $x$ from these $B$ trees.
+
+:::{.font90}
+$$\hat f_{bag}(x)=\frac 1B \sum_{b=1}^B \hat f^{*b}(x) $$
+:::
+
+- For classification (trees) the 
+**bagged classifier** selects the class with the most “votes” from the $B$ trees:
+
+:::{.font90}
+$$
+\hat G_{bag}(x) = \arg \max_k \hat f_{bag}(x).
+$$
+:::
+
+## Out-Of-Bag observations
+
+- Every time a resample is taken *with replacement*, some observations are omitted, due to the multiple occurring of others.
+
+
+```{r, fig.align='center', out.width="100%"}
+knitr::include_graphics("images/oobErrorEstimation.jpg")
+```
+
+- These *out-of-bag* (OOB) observations can be used to build an estimate of prediction error.
+
+
+## Out-Of-Bag error estimates
+
+Since each out-of-bag set is not used to train the model, it can be used to evaluate performance.
+
+1. Find all trees that are not trained by the OOB instance.
+2. Take the majority vote of these trees for the OOB instance, compared to the true value of the OOB instance.
+3. Compile OOB error for all instances in the OOB dataset.
+
+<!-- - For every observation $i=1, ...n$ response can be predicted using each of the trees in which that observation was OOB.  -->
+<!-- - This a variable number (around B/3) of predictions for the ith observation which can be averaged. -->
+<!-- - If $B$ is large this is essentially the LOO cross-validation error. -->
+
+## Illustration of OOB EE
+
+```{r, fig.align='center', out.width="100%"}
+knitr::include_graphics("images/oobErrorEstimation.png")
+```
+[Source: https://www.baeldung.com/cs/random-forests-out-of-bag-error](https://www.baeldung.com/cs/random-forests-out-of-bag-error)
+
+
+## Bagging in R (1.1)
+
+- This example relies on the well-known `AmesHousing` dataset on house prices in Ames, IA.
+
+- We use libraries:
+  - `rpart` for stratified resampling
+  - `ipred` for bagging.
+
+```{r echo=TRUE}
+# Prepare "clean" dataset from raw data
+ames <- AmesHousing::make_ames()
+
+# Split in test/training
+set.seed(123)
+split <- rsample::initial_split(ames, prop = 0.7, 
+                       strata = "Sale_Price")
+ames_train  <- rsample::training(split)
+ames_test   <- rsample::testing(split)
+```
+
+## Bagging in R (1.2)
+
+
+```{r eval=FALSE, echo=TRUE}
+system.time(
+ames_bag1 <- ipred::bagging(
+  formula = Sale_Price ~ .,
+  data = ames_train,
+  nbagg = 100,  coob = TRUE,
+  control = rpart::rpart.control(minsplit = 2, cp = 0)
+)
+)
+#   user  system elapsed 
+#  40.16    0.15   40.34
+```
+
+<br>
+
+```{r eval=FALSE, echo=TRUE}
+show(ames_bag1)
+# Bagging regression trees with 100 bootstrap replications 
+# 
+# Call: bagging.data.frame(formula = Sale_Price ~ ., data = ames_train, 
+#     nbagg = 100, coob = TRUE, control = rpart.control(minsplit = 2, 
+#         cp = 0))
+# 
+# Out-of-bag estimate of root mean squared error:  26350.91 
+```
+
+## Interpetability: The "achiles heel"
+
+- Trees may have a straightforward interpretation,
+  - Plotting the tree provides information about
+    - which variables are important
+    - how they act on the prediction
+- Ensembles are less intuitive because 
+  - there is no consensus tree.
+  - not clear which variables are most important
+
+
+## Variable importance
+
+- A complementary way to interpret a tree is by quantifying how *important* is each feature.
+
+- Done measuring the total reduction in loss function associated with each variable across all splits.
+
+- This measure can be extended to an ensemble simply by adding up variable importance over all trees built.
+
+## Variable importance example
+:::: {.columns}
+
+::: {.column width='40%'}
+- If bagging is performed with `caret`
+- the `vip` function from the `vip` package can be used (see lab examples).
+:::
+
+::: {.column width='60%'}
+```{r, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/ames2VIP.png")
+```
+:::
+
+::::
+
+
+
+
+
+
+
+# Random Forests
+
+## Random forests: decorrelating predictors
+
+- Bagged trees, based on re-samples (of the same sample) tend to be highly correlated. 
+- To get away from this Breimann introduced Random forests, that use a "clever trick" that decorrelates trees:
+  - When growing a tree from one bootstrap sample, 
+  - At each split use only a randomly selected *subset of predictors*.
+
+## Random forests
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/RandomForests1.png")
+```
+
+## How many variables per split?
+
+- The usual recommendation for random selection of variables at each split has been studied by simulation:
+  - For regression default value is $m=p/3$
+  - For classification default value is $m=\sqrt{p}$.
+- Alternatively the number $m$ can be chosen using cross-validation.
+
+## Random forest algorithm
+
+```{r, out.width="100%", fig.cap="Random Forests Algorithm, from chapter 17 in [@Hastie2016]"}
+knitr::include_graphics("images/RandomForestsAlgorithm.png")
+```
+
+## Out-of-the box performance
+
+- Random forests have become popular because they tend to provide very good out-of-the-box performance, that is:
+  - Although they have several hyperparameters that can be tuned, 
+  - the default values tend to produce good results. 
+- Moreover, among the more popular machine learning algorithms, random forests have the least variability in their prediction accuracy when tuning [@Probst2019].
+
+## Out of the box performance
+
+- Training a random forest model with all hyperparameters set to their default values, we get an OOB RMSE that is better than many other classifiers, with or without tuning.
+- This combined with good stability and ease-of-use has made it the option of choice for many problems
+
+## Out of the box performance example
+
+```{r eval=FALSE, echo=TRUE}
+# number of features
+n_features <- length(setdiff(names(ames_train), "Sale_Price"))
+
+# train a default random forest model
+ames_rf1 <- ranger(
+  Sale_Price ~ ., 
+  data = ames_train,
+  mtry = floor(n_features / 3),
+  respect.unordered.factors = "order",
+  seed = 123
+)
+
+# get OOB RMSE
+(default_rmse <- sqrt(ames_rf1$prediction.error))
+## [1] 24859.27
+```
+
+## Tuning hyperparameters
+
+There are several parameters that, appropriately tuned, can improve RF performance.
+
+1. The number of trees in the forest.
+2. The number of features to consider at any given split ($m_{try}$).
+3. The complexity of each tree.
+4. The sampling scheme.
+5. The splitting rule to use during tree construction.
+
+1 and 2 tend to have the largest impact on predictive accuracy.
+
+
+## Random forests in bioinformatics
+
+- Random forests have been thoroughly used in Bioinformatics. See [@Boulesteix2012].
+- Bioinformatics data are often high dimensional with 
+  - dozens or (less often) hundreds of samples/individuals
+  - thousands (or hundreds of thousands) of variables.
+
+## Application of Random forests
+
+- Random forests provide robust classifiers for instance for
+  - Distinguishing cancer from non cancer
+  - Predicting tumor type in cancer of unknown origin
+  - Selecting variables (SNPs) in Genome Wide Association Studies
+- Some variation of Random forests are used only for variable selection
+
+# Boosting
+
+## Another ensemble approach
+
+- The idea of *improving weak learners by aggregation* has moved historically along two distinct lines:
+
+  - Build many similar learners (trees) on resamples obtained from the original sample and, somehow, average their predictions.
+    - This entails *Bagging* and *Random Forests*
+  - Build a learner (tree) progressively, improving it at every step using weak learners, until the desired /maximal possible quality is obtained.
+    - This is what *Boosting* is about.
+
+## Bagging vs Boosting
+
+:::: {.columns}
+
+::: {.column width='50%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/baggingVsboosting1.png")
+```
+
+:::
+
+::: {.fragment}
+::: {.column width='50%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/baggingVsboosting2.png")
+```
+
+:::
+:::
+
+::::
+
+## So what is Boosting
+
+<!-- - Boosting is an ensemble learning technique used in ML for improving the accuracy of *weak learners*. -->
+
+- Idea: create a model that is better than any of its individual components by combining their strengths and compensating for their weaknesses.
+
+- For this, multiple weak models are *trained sequentially*, and each new model is trained to improve the errors made by the previous model. 
+
+- The final model is a weighted combination of all the models, and the weights are determined by the accuracy of each model. 
+
+<!-- - Boosting can be applied to various machine learning algorithms, including decision trees, neural networks, and support vector machines. -->
+
+## Historical background
+
+- Introduced by Robert Schapire [@Schapire89] and Yoav Freund in the 1990s . 
+- AdaBoost algorithm became the first widely-used Boosting algorithm
+- It achieved significant success in various applications, including *face detection* and *handwriting recognition*. 
+- Since then, several other Boosting algorithms have been developed, including: *Gradient Boosting*, *XGBoost*, and *LightGBM*. 
+
+## Advantages of Boosting
+
+- Boosting, like other Ensemble methods, improves the accuracy of weak learners and achieve better predictive performance than individual models.
+
+- Boosting also reduces overfitting by improving the generalization ability of models. 
+
+- Available in many flavors, 
+
+- Can be parallelized
+
+- Strong experience in Real world applications and industry.
+
+## Limitations of Boosting
+
+- Can be computationally expensive, especially when dealing with large datasets and complex models. 
+
+- Can be sensitive to noisy data and outliers, 
+
+- May not work well with certain types of data distributions. 
+
+- Not so good as "out-of-the-box": Requires careful tuning of hyperparameters to achieve optimal performance, which can be time-consuming and challenging.
+
+## Adaboost
+
+- AdaBoost (Adaptive Boosting) combines multiple weak classifiers into a strong classifier. 
+- It does so by, at each iteration:
+  - Train weak classifiers on the dataset and
+  - Assign higher weights to misclassified samples.
+- This way, subsequent classifiers focus more on  samples that were previously miss-classified, and
+- The accuracy of the ensemble classifier will increase. 
+
+::: {.notes}
+- AdaBoost implements a vector of weights to penalize those samples that were incorrectly inferred (by increasing the weight) and reward those that were correctly inferred (by decreasing the weight). 
+  - Updating this weight vector will generate a distribution where it will be more likely to extract those samples with higher weight (that is, *those that were incorrectly inferred*), 
+  - This sample will be introduced to the next base learner in the sequence and 
+  - This will be repeated until a stop criterion is met. 
+  - Likewise, each base learner in the sequence will have assigned a weight, the higher the performance, the higher the weight and the greater the impact of this base learner for the final decision. 
+  - Finally, to make a prediction, 
+      - each base learner in the sequence will be fed with the test data, 
+      - each of the predictions of each model will be voted (for the classification case) or averaged (for the regression case)
+:::
+
+## Adaboost Architecture
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/adaboost.png")
+```
+
+## Adaboost pseudo-code{.smaller}
+
+1. Initialize the sample weights: $w_i = 1/N$, where $N$ is the number of training samples.
+2. For each iteration $t=1,2,\dots,T$ do:
+
+  a. Train a weak classifier $h_t(x)$ on the training set weighted by $w_i$.
+  b. Compute the weighted error rate: $\epsilon_t = \sum_{i=1}^N w_i I(y_i \neq h_t(x_i))$, where $I$ is the indicator function.
+  c. Compute the classifier weight: $\alpha_t = \frac{1}{2}\log\frac{1-\epsilon_t}{\epsilon_t}$.
+  d. Update the sample weights: $w_i \leftarrow w_i \exp(-\alpha_t y_i h_t(x_i))$.
+  e. Normalize the sample weights: $w_i \leftarrow \frac{w_i}{\sum_{j=1}^N w_j}$.
+  
+3. Output the final classifier: $H(x) = \text{sign}\left(\sum_{t=1}^T \alpha_t h_t(x)\right)$.
+
+
+## Adaboost applications
+
+- AdaBoost was sucessfully used in face recognition. 
+- Here, the task is to identify whether an image contains a face or not. 
+- AdaBoost can be used to train a classifier on a set of face images and a set of non-face images. 
+- The weak classifier can be a decision stump that checks whether a specific feature is present in the image or not. 
+- AdaBoost will then iteratively train weak classifiers and assign higher weights to misclassified samples, leading to a stronger ensemble classifier. 
+- The resulting classifier can then be used to detect faces in new images with high accuracy.
+
+## Adaboost has limitations
+
+- Adaboost was a breakthrough algorithm that significantly improved the accuracy of ML models. 
+- However, Adaboost has its limitations. 
+  - It does not handle continuous variables very well. 
+  - Can be sensitive to noisy data and outliers,
+  - May not perform well with complex datasets. Moreover, 
+  - Its performance can plateau, meaning it will no longer improve after a certain number of iterations.
+
+
+## Gradient Boosting
+
+- Developed to overcome the limitations of Adaboost.
+- Takes a different approach that can be linked with Optimization by Gradient Descent.
+- Several advantages over Adaboost
+  - Can handle continuous variables much better,
+  - It is more robust to noisy data and outliers.
+  - Can handle complex datasets and 
+  - Can continue to improve its accuracy even after Adaboost's performance has "plateaued".
+  
+## Gradient boosting algorithm
+
+The main steps in Gradient Boosting are:
+
+1. Initialize the model with a single leaf
+2. Train a new weak model (e.g. decision tree) on the *residual errors* of the previous model
+3. Add the new model to the ensemble by weighting it with a learning rate (a value between 0 and 1)
+
+Repeat steps 2-3 for a specified number of iterations or until convergence.
+
+## Gradient boosting architechture
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/gradientboosting.png")
+```
+  
+## Gradient Boosting pseudo-code{.smaller}
+
+1. Initialize the model with a constant value:
+    $f_0(x) = \frac{1}{n} \sum\limits_{i=1}^{n} y_i$
+2. For $t = 1$ to $T$:
+    a. Compute the negative gradient of the loss function at the current fit:
+        $r_{ti} = -\frac{\partial L(y_i, f_{t-1}(x_i))}{\partial f_{t-1}(x_i)}$
+    b. Train a new model to predict the negative gradient values:
+        $h(x; \theta_t) = \arg\min\limits_{h} \sum\limits_{i=1}^{n} (r_{ti} - h(x_i; \theta))^2$
+    c. Compute the optimal step size:
+        $\gamma_t = \arg\min\limits_{\gamma} \sum\limits_{i=1}^{n} L(y_i, f_{t-1}(x_i) + \gamma h(x_i; \theta_t))$
+    d. Update the model:
+        $f_t(x) = f_{t-1}(x) + \gamma_t h(x; \theta_t)$
+3. Output the final model:
+    $F(x) = f_T(x)$
+    
+## Relation with *Gradient Descent*
+
+- Gradient Boosting can be seen as an extension of Gradient Descent, a popular optimization algorithm used to find the minimum of a function. 
+  - In Gradient Descent, the weights of the model are updated in the opposite direction of the gradient of the cost function. 
+  - In Gradient Boosting, the new model is trained on the negative gradient of the loss function, which is equivalent to minimizing the loss function in the direction of steepest descent.
+
+## Gradient Descent Variations
+
+- Multiple extensions from Gradient Boosting.
+
+- **XGBoost**
+  - Optimized implementation that uses regularization to control overfitting and provide better accuracy.
+  - Won many competitions.
+
+- **LightGBM**
+  - Relies on a technique to reduce the number of samples used in each iteration.
+  - Faster training, good for large datasets.
+
+## Boosting applications
+
+- Fraud Detection
+
+- Image and Speech Recognition
+
+- Anomaly Detection
+
+- Medical Diagnosis
+
+- Amazon's recommendation engine
+
+- Models that predict protein structures from amino acid sequences
+
+- Pattern identification in fMRI brain scans. 
+
+## Boosting application with R
+
+- Many packages implement the many variations of boosting:
+  - [ada](https://cran.r-project.org/web/packages/ada), [adabag](https://cran.r-project.org/web/packages/ada), [mboost](https://cran.r-project.org/web/packages/mboost), [gbm](https://cran.r-project.org/web/packages/gbm), [xgboost](https://github.com/dmlc/xgboost/tree/master/R-package)
+
+- An interesting option is to rely on the [caret](https://cran.r-project.org/web/packages/caret/index.html) package which allows to run the distinct methods with a common interface.
+
+
+  
+## References

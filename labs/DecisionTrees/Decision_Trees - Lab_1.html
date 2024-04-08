@@ -1623,11 +1623,11 @@ Distribution of residuals:
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>predicciones_finales <span class="ot">&lt;-</span> <span class="fu">predict</span>(arbol_final, <span class="at">newdata =</span> datos_test)</span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>test_rmse    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((predicciones <span class="sc">-</span> datos_test<span class="sc">$</span>medv)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>test_rmse    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((predicciones_finales <span class="sc">-</span> datos_test<span class="sc">$</span>medv)<span class="sc">^</span><span class="dv">2</span>))</span>
 <span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error de test (rmse) del árbol final:"</span>, <span class="fu">round</span>(test_rmse,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Error de test (rmse) del árbol final: 5.43"</code></pre>
+<pre><code>[1] "Error de test (rmse) del árbol final: 5.13"</code></pre>
 </div>
 </div>
 </section>

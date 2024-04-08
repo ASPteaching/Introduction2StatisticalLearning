@@ -15,8 +15,6 @@ jupyter:
 # Chapter 8
 
 
-
-
 # Lab: Tree-Based Methods
 We import some of our usual libraries at this top
 level.

@@ -51,7 +51,7 @@ pip install jupyter
 You will need to install the `ISLP` package, which provides access to the datasets and custom-built functions that we provide.
 Inside a macOS or Linux terminal type `pip install ISLP`; this also installs most other packages needed in the labs. The `Python` resources page has a link to the `ISLP` documentation website.
 
-**Note** If you run the installer provided with the labs repository  
+**Note** This can be done by running the installer provided with the labs repository  
 
 ```
 pip install -r requirements.txt 
@@ -59,8 +59,9 @@ pip install -r requirements.txt
 
 This will install first the required packages and last the "ISLP" package.
 
-To run this lab, download the file `Ch2-statlearn-lab.ipynb` from the `Python` resources page. 
+You may need to install some other libraries separately:
 
+This lab can be run form the Rmarkdown file or dirctly in the Jupyter notebook by `Ch2-statlearn-lab.ipynb` available from the repository or from the resources page. 
 Now run the following code at the command line: 
 
 ```
@@ -83,24 +84,18 @@ pip install pandas
 
 ## Rendering an "Rmd" to "pnp"
 
-The current Rmarkdown document will generate, when properly rendered a Jupyter notebook.
+The current Rmarkdown document will run the python code inside chunks and it will generate the html output.
 
-This notebook is different to the usual rendered document from Rmarkdown
+It is not the best way to run python code (or is it?) but may be a smoother approach for those unfamiliar with the language and its environments.
 
-- In general, a rendered Rmarkdown document is a finished document which we do not interact with anymore.
-
-- In this case it creates aJupyter notebook, which, in spirit, **is more like an R notebook** that can be used to work interactively with the data.
-
-Notice that the .Rmd step is really not necessary as is not Rstudio either.
-
-Jupyter notebooks can be created from scratch using `JupyterLab`.
+A more natural alternative is to work with Jupyter notebooks that can also be downloaded from the site or  created from scratch using `JupyterLab`.
 
 
 # Basic Commands
 
 In this lab, we will introduce some simple `Python` commands. 
- For more resources about `Python` in general, readers may want to consult the tutorial at [docs.python.org/3/tutorial/](https://docs.python.org/3/tutorial/). 
 
+ For more resources about `Python` in general, readers may want to consult the tutorial at [docs.python.org/3/tutorial/](https://docs.python.org/3/tutorial/). 
 
 
 Like most programming languages, `Python` uses *functions*
