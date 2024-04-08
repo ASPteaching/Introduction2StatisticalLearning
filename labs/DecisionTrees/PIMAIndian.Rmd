@@ -1,0 +1,135 @@
+---
+title: "Decision Trees Lab 0"
+subtitle: "PIMA indians example"
+authors:
+- Adapted by EVL, FRC and ASP
+date: "`r Sys.Date()`"
+format:
+    html: 
+      toc: true
+      toc-depth: 3
+      code-fold: show
+      fig-width: 8
+      fig-height: 6
+    pdf: default
+knit:
+  quarto:
+    chunk_options:
+      echo: true
+      cache: false
+      prompt: false
+      tidy: true
+      comment: NA
+      message: false
+      warning: false
+    knit_options:
+      width: 75
+reference-location: margin
+execute:
+    echo: true
+    message: false
+    warning: false
+bibliography: "../../StatisticalLearning.bib"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages, include=FALSE}
+# If the package is not installed then it will be installed
+
+if(!require("ISLR")) install.packages("ISLR")
+if(!require("rsample")) install.packages("rsample")
+if(!require("rpart.plot")) install.packages("rpart.plot")
+if(!require("skimr")) install.packages("skimr")
+if(!require("kableExtra")) install.packages("kableExtra")
+
+```
+
+
+# Introductory example
+
+## The Pima Indians dataset
+
+The Pima Indian Diabetes data set (`PimaIndiansDiabetes2`) is available in the `mlbench` package.
+
+The data contains 768 individuals (female) and 9 clinical variables for predicting the probability of individuals in being diabete-positive or negative:
+
+-   pregnant: number of times pregnant
+-   glucose: plasma glucose concentration
+-   pressure: diastolic blood pressure (mm Hg)
+-   triceps: triceps skin fold thickness (mm)
+-   insulin: 2-Hour serum insulin (mu U/ml)
+-   mass: body mass index (weight in kg/(height in m)\^2)
+-   pedigree: diabetes pedigree function
+-   age: age (years)
+-   diabetes: class variable
+
+A typical classification/prediction problem is to build a model that can distinguish and predict diabetes using some or all the variables in the dataset.
+
+A quick exploration can be done wirh the `skimr` package:
+
+```{r PIMAdescription}
+library(skimr)
+data("PimaIndiansDiabetes2", package = "mlbench")
+skim(PimaIndiansDiabetes2)
+```
+
+## Building a classification tree
+
+Start building a simple tree with default parameters
+
+```{r PIMAbuildTree}
+library(rpart)
+model1 <- rpart(diabetes ~., data = PimaIndiansDiabetes2)
+# par(xpd = NA) # otherwise on some devices the text is clipped
+```
+
+This builds a model consisting of a series of nested decision rules.
+
+```{r PIMATree1}
+print(model1)
+```
+
+The model can be visualized using a tree:
+
+```{r PIMAPlot1}
+plot(model1)
+text(model1, digits = 3, cex=0.8)
+```
+
+A nicer plot can be obtained using the `rpart.plot` function from the `rpart.plot` package. This function allows for multiple tunings, but the default values may already yield a nice informative plot.
+
+```{r PIMAPlotNice1}
+rpart.plot(model1, cex=.7)
+detach(package:rpart.plot)
+```
+
+If we believed the model was ready for use we could use it to predict diabetes for new subject.
+
+**Imagine we kow nothing about overfitting**. We may want to check the accuracy of the model on the dataset we have used to build it.
+
+```{r PIMAaccuracy1}
+predicted.classes<- predict(model1, PimaIndiansDiabetes2, "class")
+mean(predicted.classes == PimaIndiansDiabetes2$diabetes)
+```
+
+A better strategy is to use train dataset to build the model and a test dataset to check how it works.
+
+```{r PIMATestTrain1}
+set.seed(123)
+ssize <- nrow(PimaIndiansDiabetes2)
+propTrain <- 0.8
+training.indices <-sample(1:ssize, floor(ssize*propTrain))
+train.data  <- PimaIndiansDiabetes2[training.indices, ]
+test.data <- PimaIndiansDiabetes2[-training.indices, ]
+```
+
+Now we build the model on the train data and check its accuracy on the test data.
+
+```{r PIMAtestTrain2}
+model2 <- rpart(diabetes ~., data = train.data)
+predicted.classes.test<- predict(model2, test.data, "class")
+mean(predicted.classes.test == test.data$diabetes)
+```
+
+The accuracy is good, but smaller, as expected.
