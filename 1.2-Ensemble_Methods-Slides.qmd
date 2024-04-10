@@ -133,13 +133,16 @@ editor_options:
 ## Averaging decreases variance
 
 - Bagging relies, informally, on the idea that:
+
   - given $X\sim F()$, s.t. $Var_F(X)=\sigma^2$, 
   - given a s.r.s. $X_1, ..., X_n$ from $F$ then 
   - if $\overline{X}=\frac{1}{N}\sum_{i=1}^n X_i$ then $var_F(\overline{X})=\sigma^2/n$.
-  
-- That is, *relying on the sample mean instead of on simple observations decreases variance by a factor of $n$*.
 
-## Averaging trees ...
+- That is, *relying on the sample mean instead of on simple observations, decreases variance by a factor of $n$*.
+
+- BTW this idea is still (approximately) valid for more general statistics where the CLT applies.
+
+## What means *averaging trees*?
 
 Two questions arise here:
 
@@ -153,12 +156,12 @@ Two questions arise here:
 
 ## The bootstrap
 
-- *Bootstrap* methods were introduced by Bradley Efron in 1979 [@Efron79] to estimate the standard error of a statistic.
-- The success of the idea lied in that the procedure was presented as ``automatic'', that is:
+- *Bootstrap* methods were introduced by @Efron79 to estimate the standard error of a statistic.
+- The success of the idea lied in that the procedure was presented as *automatic*, that is:
   - instead of having to do complex calculations,
   - it allowed to approximate them using computer simulation.
 
-- Some people  called it ``the end of mathematical statistics''.
+- Some called it *the end of mathematical statistics*.
 
 ## Bootstrap Applications 
 
@@ -169,13 +172,13 @@ Two questions arise here:
   - Confidence intervals,
   - Significance tests, ...
 
-- We begin with the easiest and best known case: *estimating the standard error (that is the square root of the variance) of an estimator*.
+- We illustrate it with the simplest case: *estimating the standard error (that is the square root of the variance) of an estimator*.
 
-## Precision of an estimate (1)
+## A point estimation problem
 
 - Assume we want to estimate some parameter $\theta$,
-that can be expressed as $\theta (F)$, where $F$ is the distribution function of each
-$X_i$ in $(X_1,X_2,...,X_n)$. 
+that can be expressed as $\theta (F)$, where $F$ is the distribution function of each $X_i$ in $(X_1,X_2,...,X_n)$. 
+
 - For example:
 
 :::{.font90}
@@ -186,9 +189,9 @@ $X_i$ in $(X_1,X_2,...,X_n)$.
 \end{eqnarray*}
 :::
 
-## Plug-in estimates
+## Plug-in estimators
 
--  To estimate $\theta(F)$ we usually rely on *plug-in estimators*: $\hat{\theta}=\theta (F_n)$:
+-  To estimate $\theta(F)$ we often rely on *plug-in estimators*: $\hat{\theta}=\theta (F_n)$
 
 :::{.font90}
 \begin{eqnarray*}
@@ -200,14 +203,13 @@ $X_i$ in $(X_1,X_2,...,X_n)$.
 \end{eqnarray*}
 :::
 
-## Precision of an estimate (1)
+## Precision of an estimate
 
-- An important when computing an estimator $\hat \theta$ of a parameter $\theta$ is *how precise is $\hat \theta$ as an estimator of $\theta$*?
+- An key point, when computing an estimator $\hat \theta$ of a parameter $\theta$, is *how precise is $\hat \theta$ as an estimator of $\theta$*?
 
-  - With the sample mean, $\overline{X}$, the standard error estimation is immediate because the expression of the variance estimator is known: 
-$
-\sigma _{\overline{X}}=\frac{\sigma (X)}{\sqrt{n}}
-$
+  - With the sample mean, $\overline{X}$, the standard error estimation is immediate because the variance of the estimator is known: 
+$\sigma_\overline{X}=\frac{\sigma (X)}{\sqrt{n}}$
+
   - So, a natural estimator of the standard error of $\overline{X}$ is: $\hat\sigma_\overline{X}=\frac{\hat{\sigma}(X)}{\sqrt{n}}$
 
 ## Precision of an estimate (2) {.smaller}
@@ -217,7 +219,7 @@ $
 :::{.font90}
 $$
 \sigma _{\overline{X}}=\frac{\sigma (X)}{\sqrt{n}}=\frac{\sqrt{\int
-[x-\int x\,dF(x)]\sp 2dF(x)}}{\sqrt{n}}=\sigma _{\overline{X}}(F)
+[x-\int x\,dF(x)]^2 dF(x)}}{\sqrt{n}}=\sigma _{\overline{X}}(F)
 $$
 :::
 
