@@ -1,27 +1,47 @@
 ---
 title: "Ensemble Methods"
-#subtitle: 'Improving predictors by aggregation'
-author: "A. Sanchez, F. Reverter and E. Vegas"
+subtitle: 'Improving predictors by aggregation'
+authors:
+- Esteban Vegas
+- Ferran Reverter
+- Alex Sanchez
+date: "`r Sys.Date()`"
 format:
-  revealjs: 
-    incremental: false  
-    transition: slide
-    background-transition: fade
-    transition-speed: slow
-    scrollable: true
-    menu:
-      side: left
-      width: half
-      numbers: true
-    slide-number: c/t
-    show-slide-number: all
-    progress: true
-    css: "css4CU.css"
-    theme: sky
-    self-contained: true
-#    embed-resources: true
-    self-contained-math: true
-#    suppress-bibliography: true
+    
+    html: 
+      toc: true
+      toc-depth: 3
+      code-fold: false
+      fig-width: 8
+      fig-height: 6
+#       embed-resources: true
+    pdf:
+      toc: true
+      toc-depth: 3
+      code-fold: false
+      fig-width: 8
+      fig-height: 6
+      geometry: 
+      - top=30mm
+      - left=30mm
+knit:
+  quarto:
+    chunk_options:
+      echo: true
+      cache: false
+      prompt: false
+      tidy: true
+      comment: NA
+      message: false
+      warning: false
+    knit_options:
+      width: 75
+reference-location: margin
+execute:
+    echo: true
+    message: false
+    warning: false
+    cache: true
 bibliography: "StatisticalLearning.bib"
 editor_options: 
   chunk_output_type: console
@@ -29,18 +49,45 @@ editor_options:
 
 # Introduction to Ensembles
 
-## Some problems of *weak* learners.
+## Weak learners
+
+- Individual models that perform only slightly better than random guessing are sometimes called *weak learners* [@Bishop2007].
+
+- Weak learners low predictive accuracy may be due, either to the predictor having high bias or high variance.
+
+
+![](1.2-EnsembleMethods_insertimage_1.png)
+
+
+## Shallow trees may be *weak* learners.
 
 - Decision trees have many good properties but some important drawbacks:
-  - Smaller accuracy than competing alternatives
-  - Very sensitive to small changes in data
-  - Overall it makes the highly variable predictors
-- Tree are not the only classifiers to suffer from such problems.
+  - They may be very sensitive to small changes in training data. That is, adding or removing a few individuals mauyt lead to very different tree structure.
+  - High sensitivity implies high variability in their predictions.
+  - They are *greedy* algorithms, that is, they make locally optimal decisions at each node without considering the global optimal solution. This can lead to suboptimal splits and ultimately a weaker predictive performance.
 
+- Altogether these problems suggest that trees may be a good option (e.g. for simplicity and interpretability) but *with some room for improvement*.
 
-## Ensembles
+- It is to be noted, too, that these problems are not unique to trees. Other simple models such as linear regression may be considered as weakl learners in may situations.
 
-- A common strategy to deal with these issues is to build repeated (weak learners) models on the same data and combine them to form a single result.
+## Weak learners and bias-variance trade-off
+
+- When we try to improve weak learners we need to deal with the bias-variance trade-off.
+  - How can a model be made less variable or less biased without this increasing its bias or variance?
+
+![The bias-variance trade-off. Source: WIkipedia](1.2-EnsembleMethods_insertimage_2.png)
+
+![Plot title. ](1.2-EnsembleMethods_insertimage_3.png)
+
+- There are distinct appraches to deal with this problem
+  - Regularization, 
+  - Feature engineering,
+  - Model selection ...
+
+## Ensemble learning and the bias variance trade-off
+
+- Ensemble learning takes a distinct approach, as far as i relies on "*the wisdom of crowds*", meaning by this that 
+it is based on building repeated (weak learners) models on the same data and combine them to form a single result.
 
 - These are called *ensemble* or consensus estimators/predictors.
 
@@ -49,12 +96,13 @@ editor_options:
 
 ## Ensemble methods
 
-- Ensemble can be built on different learners but we will focus on those built on trees:
+- If we rely on how they deal with the bias-variance trade-off we can consider distinct groups of ensemble methods
 
-  - Bagging, 
-  - Random Forests, 
-  - Boosting, 
-  - Bayesian Trees.
+- **Bagging**,  **Random forests** and **Random patches** yield a smaller variance than simple trees by building multiple trees based on aggregating trees built on a subset of individuala (1), features (2) or both ·).
+
+- **Boosting** or **Stacking** combine distinct predictors either sequentially (1) or using a meta-model (2) to yield a model with an increasingly smaller error, and so reduce the bias.
+
+- **Hybrid techniques** such as  *Gradient Boosted Trees with Bagging* or *Stacked bagging* combine approaches in order to deal with both variance and bias.
   
 # Bagging: Aggregating predictors
 
