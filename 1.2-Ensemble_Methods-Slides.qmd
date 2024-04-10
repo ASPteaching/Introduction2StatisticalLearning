@@ -413,7 +413,7 @@ knitr::include_graphics("images/oobErrorEstimation.png")
 
 ## Bagging in R (1.1)
 
-- This example relies on the well-known `AmesHousing` dataset on house prices in Ames, IA.
+- `AmesHousing` dataset on house prices in Ames, IA.
 
 - We use libraries:
   - `rpart` for stratified resampling
@@ -447,7 +447,7 @@ ames_bag1 <- ipred::bagging(
 #  40.16    0.15   40.34
 ```
 
-<br>
+## Bagging in R (1.3)
 
 ```{r eval=FALSE, echo=TRUE}
 show(ames_bag1)
