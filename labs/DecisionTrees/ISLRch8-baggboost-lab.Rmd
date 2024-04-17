@@ -265,8 +265,7 @@ The square root of the MSE is therefore around $5.941$, indicating that this mod
 
 Here we apply bagging and random forests to the `Boston` data, using the `randomForest` package in `R`. The exact results obtained in this section may depend on the version of `R` and the version of the `randomForest` package installed on your computer.
 
-Recall that bagging is simply a special case of a random forest with
-$m=p$. Therefore, the `randomForest()` function can be used to perform both random forests and bagging.
+Recall that bagging is simply a special case of a random forest with $m=p$. Therefore, the `randomForest()` function can be used to perform both random forests and bagging.
 
 We perform bagging as follows:
 

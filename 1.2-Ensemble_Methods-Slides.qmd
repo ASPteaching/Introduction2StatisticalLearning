@@ -517,11 +517,16 @@ knitr::include_graphics("images/oobErrorEstimation.png")
 
 ## Bagging in R (1.1)
 
-- `AmesHousing` dataset on house prices in Ames, IA.
+- The example uses the `AmesHousing` dataset on house prices in Ames, IA to predict the "Sales price" of houses.
 
-- We use libraries:
-  - `rpart` for stratified resampling
-  - `ipred` for bagging.
+- We start by splitting the dataset in test/train subsets
+- Next we build a bagged tree on the train subset and evaluate it on the test subset.
+- Last we try to interpret the results using "Variable importance"
+
+- Bagging is equivalent to RandomForest if we use all the trees so the library `randomForest` is used.
+
+
+## Bagging - Prepare data
 
 ```{r echo=TRUE}
 # Prepare "clean" dataset from raw data
@@ -529,40 +534,55 @@ ames <- AmesHousing::make_ames()
 
 # Split in test/training
 set.seed(123)
-split <- rsample::initial_split(ames, prop = 0.7, 
-                       strata = "Sale_Price")
-ames_train  <- rsample::training(split)
-ames_test   <- rsample::testing(split)
+train <- sample(1:nrow(ames), nrow(ames)/2)
+# split <- rsample::initial_split(ames, prop = 0.7, 
+#                        strata = "Sale_Price")
+ames_train  <- ames[train,]
+ames_test   <- ames[-train,]
 ```
 
-## Bagging in R (1.2)
+## Bagging - Build bag of trees
 
-
-
-```{r eval=FALSE, echo=TRUE}
-system.time(
-ames_bag1 <- ipred::bagging(
-  formula = Sale_Price ~ .,
-  data = ames_train,
-  nbagg = 100,  coob = TRUE,
-  control = rpart::rpart.control(minsplit = 2, cp = 0)
-)
-)
-#   user  system elapsed 
-#  40.16    0.15   40.34
+```{r, eval=FALSE, echo=TRUE}
+library(randomForest)
+set.seed(12543)
+bag.Ames <- randomForest(Sale_Price ~ ., 
+                         data = ames_train, 
+                         mtry = ncol(ames_train-1), 
+                         ntree = 100,
+                         importance = TRUE)
 ```
 
-## Bagging in R (1.3)
+## Bagging - Results
 
 ```{r eval=FALSE, echo=TRUE}
-show(ames_bag1)
-# Bagging regression trees with 100 bootstrap replications 
-# 
-# Call: bagging.data.frame(formula = Sale_Price ~ ., data = ames_train, 
-#     nbagg = 100, coob = TRUE, control = rpart.control(minsplit = 2, 
-#         cp = 0))
-# 
-# Out-of-bag estimate of root mean squared error:  26350.91 
+show(bag.Ames )
+
+Call:
+ randomForest(formula = Sale_Price ~ ., data = ames_train, mtry = ncol(ames_train -      1), ntree = 100, importance = TRUE) 
+               Type of random forest: regression
+                     Number of trees: 100
+No. of variables tried at each split: 80
+
+          Mean of squared residuals: 771498315
+                    % Var explained: 87.89
+
+```
+
+## Bagging - Prediction and accuracy (1)
+
+
+```{r, eval=FALSE, eho=TRUE}
+yhat.bag <- predict(bag.Ames, newdata = ames_test)
+MSE= mean((yhat.bag -ames_test$Sale_Price)^2)
+plot(yhat.bag, ames_test$Sale_Price, main=c("MSE= ", MSE))
+abline(0, 1)
+```
+
+## Bagging - Prediction and accuracy (1)
+
+```{r fig.align='center', out.width="100%"}
+knitr::include_graphics("images/bag_Ames_fit.png")
 ```
 
 ## Interpetability: The "achiles heel"
@@ -580,45 +600,25 @@ show(ames_bag1)
 
 ## Feature importance from Trees
 
-:::: {.columns}
-
-::: {.column width='50%'}
-
-:::{.font80}
 - To measure feature importance, the reduction in the loss function (e.g., SSE) attributed to each variable at each split is tabulated.
 
 - The total reduction in the loss function across all splits by a variable are summed up and used as the total feature importance.
-.
-:::
-
-:::
-
-::: {.column width='50%'}
-```{r, out.width="100%", fig.align='center', fig.cap="VIP for trees computed with `caret`. Values are standardized -> most important feature has a value of 100"}
-knitr::include_graphics("images/ames1VIP.png")
-```
-:::
-
-::::
 
 
 ## Feature importance for Ensembles
 
-
-:::: {.columns}
-
-::: {.column width='40%'}
 - Variable importance measures can be extended to an ensemble simply by adding up variable importance over all trees built.
 
-:::
-
-::: {.column width='60%'}
-```{r, out.width="100%", fig.align='center'}
-knitr::include_graphics("images/ames2VIP.png")
+```{r, eval=FALSE, out.width="100%", fig.align='center'}
+require(dplyr)
+VIP <- importance(bag.Ames) 
+VIP <- VIP[order(VIP[,1], decreasing = TRUE),]
+head(VIP, n=10)
 ```
-:::
 
-::::
+```{r}
+knitr::include_graphics("images/amesVIP2.png")
+```
 
 
 # Random Forests
