@@ -664,7 +664,7 @@ knitr::include_graphics("images/RandomForestsAlgorithm1.png")
 
 ## Random forest algorithm (2)
 
-```{r, out.width="100%", fig.cap="Random Forests Algorithm, from chapter 17 in [@Hastie2016]. This version of the algorithm includes computin OOBE, but, strictly speaking it is another algorithm"}
+```{r, out.width="100%", fig.cap="Random Forests Algorithm, from chapter 17 in [@Hastie2016]."}
 knitr::include_graphics("images/RandomForestsAlgorithm.png")
 ```
 

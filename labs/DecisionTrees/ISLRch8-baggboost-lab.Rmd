@@ -1,22 +1,61 @@
-```{r setup, echo = FALSE}
-knitr::opts_chunk$set(error = TRUE)
-```
-# Decision Trees
-## Fitting Classification Trees
+---
+title: "Lab: Tree-based methods"
+authors:
+- Adapted by EVL, FRC and ASP
+date: "`r Sys.Date()`"
+format:
+    html: 
+      toc: true
+      toc-depth: 3
+      code-fold: false
+      fig-width: 8
+      fig-height: 6
+    pdf: default
+knit:
+  quarto:
+    chunk_options:
+      echo: true
+      cache: false
+      prompt: false
+      tidy: true
+      comment: NA
+      message: false
+      warning: false
+    knit_options:
+      width: 75
+reference-location: margin
+execute:
+    echo: true
+    message: false
+    warning: false
+    cache: true
+bibliography: "StatisticalLearning.bib"
+editor_options: 
+  chunk_output_type: console
+---
 
+# Introduction
 
-The `tree` library is used to construct classification and regression trees.
+This lab presents some examples of applying shallow and ensemble-based trees.
+
+It is adapted directly from lab 8 in "Introduction to Statistical Learning with R examples", 2nd edition, and it can be run in parallel in Python or in R using the respective notebooks for each language downloadable from the book's website.
+
+## Install / load required libraries
 
 ```{r chunk1}
-library(tree)
+if(!require(tree)) install.packages("tree", dep=TRUE)
+if(!require(ISLR2)) install.packages("ISLR2", dep=TRUE)
 ```
+
+# Fitting Classification Trees
+
+The first example illustrates how to build classification and regression trees.
 
 We first use classification trees  to analyze the `Carseats` data set.
 In these data, `Sales` is a continuous variable, and so we begin by recoding it  as a binary variable. We use the `ifelse()` function to create a variable, called `High`, which takes on a value of `Yes` if the `Sales` variable exceeds $8$,
 and takes on a value of `No` otherwise.
 
 ```{r chunk2}
-library(ISLR2)
 attach(Carseats)
 High <- factor(ifelse(Sales <= 8, "No", "Yes"))
 ```
@@ -27,7 +66,7 @@ Finally, we use the `data.frame()` function to merge `High` with the rest of the
 Carseats <- data.frame(Carseats, High)
 ```
 
-We now  use the `tree()` function to fit a classification tree in order to predict `High` using all variables but `Sales`.
+We now  use the `tree()` function from the `tree` package to fit a classification tree in order to predict `High` using all variables but `Sales`.
 The syntax of the `tree()` function is quite similar to that of the `lm()` function.
 
 ```{r chunk4}
@@ -54,8 +93,24 @@ One of the most attractive properties of trees is that they can be  graphically 
 
 ```{r chunk6}
 plot(tree.carseats)
-text(tree.carseats, pretty = 0)
+text(tree.carseats, pretty = 1, cex=0.8)
 ```
+
+
+Alternatively we might have used `rpart` to build the tree and `rpart.plot` to depict it.
+
+```{r}
+require(rpart)
+tree.carseats2 <- rpart(
+  formula = High ~ . - Sales, 
+  data    = Carseats
+  # method  = "anova"
+)
+require(rpart.plot)
+rpart.plot(tree.carseats2)
+```
+
+
 
 The most important indicator of `Sales` appears to be shelving location, since the first branch differentiates `Good` locations from `Bad` and `Medium` locations.
 
@@ -65,12 +120,16 @@ If we just type the name of the tree object,  `R` prints output corresponding to
 tree.carseats
 ```
 
+```{r}
+tree.carseats2
+```
 
-In order to properly evaluate the performance of a classification tree
-on these data, we must estimate the test error rather than simply
-computing the training error. We split the observations into a
-training set and a test set, build the tree using the training set,
-and evaluate its performance on the test data. The `predict()`
+In order to properly evaluate the performance of a classification tree on these data, we must estimate the test error rather than simply 
+computing the training error. 
+
+We split the observations into a training set and a test set, build the tree using the training set, and evaluate its performance on the test data. 
+
+The `predict()`
 function can be used for this purpose. In the case of a classification
 tree, the argument `type = "class"` instructs `R` to return the
 actual class prediction. This approach leads to correct predictions
@@ -102,15 +161,14 @@ names(cv.carseats)
 cv.carseats
 ```
 
-Despite its name, `dev` corresponds to the number of
-cross-validation errors. The tree with 9 terminal nodes results in only 74 cross-validation errors.  We plot
-the  error rate as a function of both `size` and
-`k`.
+Despite its name, `dev` corresponds to the number of cross-validation errors.
+The tree with 9 terminal nodes results in only 74 cross-validation errors.  We plot the  error rate as a function of both `size` and `k`.
 
 ```{r chunk10}
-par(mfrow = c(1, 2))
+opt<- par(mfrow = c(1, 2))
 plot(cv.carseats$size, cv.carseats$dev, type = "b")
 plot(cv.carseats$k, cv.carseats$dev, type = "b")
+par(opt)
 ```
 
 We now apply the  `prune.misclass()`  function in order to prune the tree to obtain the nine-node tree.
@@ -146,10 +204,6 @@ table(tree.pred, High.test)
 ```
 
 
-
-
-
-
 ## Fitting Regression Trees
 
 Here we fit a regression tree to the `Boston`  data set. First, we create a training set, and fit the tree to the training data.
@@ -164,11 +218,14 @@ summary(tree.boston)
 Notice that the output of `summary()` indicates that only four of the variables have been used in constructing the tree. In the context of a regression tree, the deviance is simply the sum of squared errors for the tree. We now plot the tree.
 
 ```{r chunk15}
+par(mfrow=c(1,1))
 plot(tree.boston)
-text(tree.boston, pretty = 0)
+text(tree.boston, pretty = 0, cex=0.7)
 ```
 
-The variable `lstat` measures the percentage of individuals with {lower  socioeconomic status}, while the variable `rm` corresponds to the average number of rooms. The tree indicates that larger values of `rm`, or lower values of `lstat`, correspond to more expensive houses. For example, the tree predicts a median house price of $$45{,}400$ for homes in census tracts in which `rm >= 7.553`.
+The variable `lstat` measures the percentage of individuals with {lower  socioeconomic status}, while the variable `rm` corresponds to the average number of rooms. 
+
+The tree indicates that larger values of `rm`, or lower values of `lstat`, correspond to more expensive houses. For example, the tree predicts a median house price of $$45{,}400$ for homes in census tracts in which `rm >= 7.553`.
 
 
 It is worth noting that we could have fit a much bigger tree, by
@@ -176,10 +233,11 @@ passing `control = tree.control(nobs = length(train), mindev = 0)` into the `tre
 
 Now we use the `cv.tree()` function to see whether pruning the tree will improve performance.
 
-```{r chunk16}
+```{r}
 cv.boston <- cv.tree(tree.boston)
 plot(cv.boston$size, cv.boston$dev, type = "b")
 ```
+
 
 In this case, the most complex tree  under consideration is selected by cross-validation. However, if we wish to prune the tree, we could do so as follows, using the `prune.tree()` function:
 
@@ -203,16 +261,13 @@ In other words, the  test set MSE associated with the regression tree is $35.29$
 The square root of the MSE is therefore around $5.941$, indicating that this model leads to test predictions that are (on average) within approximately $$5{,}941$ of the true median home value for the census tract.
 
 
-
 ## Bagging and Random Forests
 
-
-
-
 Here we apply bagging and random forests to the `Boston` data, using the `randomForest` package in `R`. The exact results obtained in this section may depend on the version of `R` and the version of the `randomForest` package installed on your computer.
+
 Recall that bagging is simply a special case of a random forest with
-$m=p$. Therefore, the
-`randomForest()` function can be used to perform both random forests and bagging.
+$m=p$. Therefore, the `randomForest()` function can be used to perform both random forests and bagging.
+
 We perform bagging as follows:
 
 ```{r chunk19}
