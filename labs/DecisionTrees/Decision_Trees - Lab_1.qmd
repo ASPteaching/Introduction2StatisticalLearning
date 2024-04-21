@@ -56,7 +56,7 @@ The lab relies on the `Carseats` dataset, a simulated dataset, that is included 
 ```{r}
 require(ISLR2)
 data("Carseats")
-help("Carseats")
+# help("Carseats")
 ```
 
 A data frame with 400 observations on the following 11 variables.
@@ -476,7 +476,7 @@ This example is borrowed from [@amat2017].
 
 The `Boston` dataset available in the `MASS` package contains housing prices for the city of Boston, as well as socioeconomic information for the neighborhood in which they are located.
 
-```{r}
+```{r loadBostonDat}
 library(ISLR2)
 data("Boston")
 datos <- Boston
@@ -488,7 +488,7 @@ Our goal is to fit a regression model that allows predicting the average price o
 
 A quick visualization of the available variables shows that, not only they are of mixed types, but also the relation between them is far from linear inmost if not all cases.
 
-```{r, fig.align='center'}
+```{r, BostonPlotVars, fig.align='center'}
 color <- adjustcolor("forestgreen", alpha.f = 0.5)
 ps <- function(x, y, ...) {  # custom panel function
   panel.smooth(x, y, col = color, col.smooth = "black", 
@@ -506,7 +506,7 @@ This is a good scenario to consider regression trees as a good option.
 
 Create a train and test sets
 
-```{r}
+```{r BostonSplitTestTrain}
 set.seed(123)
 train <- sample(1:nrow(datos), size = nrow(datos)/2)
 datos_train <- datos[train,]
@@ -518,7 +518,7 @@ We use the `tree` function of the `tree` package to build the model. This functi
 - `mincut`: minimum number of observations that at least one of the child nodes must have for the division to occur.
 - `minsize`: minimum number of observations a node must have in order for it to be split.
 
-```{r}
+```{r BostonFitTree1}
 set.seed(123)
 regTree<- tree::tree(
                     formula = medv ~ .,
@@ -536,7 +536,7 @@ In the context of regression trees, the `Residual mean deviance` term is the res
 
 The tree can be visualized:
 
-```{r}
+```{r BostonPlotTree}
 par(mar = c(1,1,1,1))
 plot(x = regTree, type = "proportional")
 text(x = regTree, splits = TRUE, pretty = 0, cex = 0.8, col = "firebrick")
@@ -548,7 +548,7 @@ We use the `cv.tree` function that uses cross validation to identify the optimal
 
 We **grow the tree again** with less restrictive parameters so we have a big tree to prune:
 
-```{r}
+```{r BostonFitBigTree}
 regTree2<- tree::tree(
                     formula = medv ~ .,
                     data    = datos_train,
@@ -557,8 +557,11 @@ regTree2<- tree::tree(
                     minsize = 2,
                     mindev  = 0
                   )
+```
 
-# Optimization
+
+```{r BostonComputeComplexity}
+
 set.seed(123)
 cv_regTree2 <- tree::cv.tree(regTree2, K = 5)
 ```
@@ -572,12 +575,12 @@ The function returns an object `cv_regTree2` containing:
 
 These can be used to visualize and understand the optimization performed.
 
-```{r}
+```{r BostonOptimalAlpha}
 optSize <- rev(cv_regTree2$size)[which.min(rev(cv_regTree2$dev))]
 paste("Optimal size obtained is:", optSize)
 ```
 
-```{r}
+```{r BostonPlotAlphas}
 library(ggplot2)
 library(ggpubr)
 
@@ -606,7 +609,7 @@ ggarrange(p1, p2)
 
 Once the optimal value identified, the final pruning is applied with the `prune.tree` function. This function also accepts the optimal value of $\alpha$ instead of size.
 
-```{r}
+```{r BostonPruneTree}
 finalTree <- tree::prune.tree(
                   tree = regTree2,
                   best = optSize
@@ -625,7 +628,7 @@ The quality of the prediction is based in the Root Mean Square.
 
 For the original tree one has:
 
-```{r}
+```{r BostonPredictAndCheck1}
 predicciones <- predict(regTree, newdata = datos_test)
 test_rmse    <- sqrt(mean((predicciones - datos_test$medv)^2))
 paste("Error de test (rmse) del árbol inicial:", round(test_rmse,2))
@@ -633,7 +636,7 @@ paste("Error de test (rmse) del árbol inicial:", round(test_rmse,2))
 
 And for the final tree:
 
-```{r}
+```{r BostonPredictAndCheckFinal}
 predicciones_finales <- predict(finalTree, newdata = datos_test)
 test_rmse    <- sqrt(mean((predicciones_finales - datos_test$medv)^2))
 paste("Error de test (rmse) del árbol final:", round(test_rmse,2))

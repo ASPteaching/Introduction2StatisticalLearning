@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-04-17">
+<meta name="dcterms.date" content="2024-04-21">
 
 <title>Decision Trees Lab 2: Ensembles</title>
 <style>
@@ -100,11 +100,18 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#bagging-trees" id="toc-bagging-trees" class="nav-link active" data-scroll-target="#bagging-trees">Bagging trees</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#the-dataset" id="toc-the-dataset" class="nav-link" data-scroll-target="#the-dataset">The dataset</a></li>
+  <li><a href="#spliting-the-data-into-testtrain" id="toc-spliting-the-data-into-testtrain" class="nav-link" data-scroll-target="#spliting-the-data-into-testtrain">Spliting the data into test/train</a></li>
+  </ul></li>
+  <li><a href="#a-simple-regression-tree" id="toc-a-simple-regression-tree" class="nav-link" data-scroll-target="#a-simple-regression-tree">A simple regression tree</a></li>
+  <li><a href="#bagging-trees" id="toc-bagging-trees" class="nav-link" data-scroll-target="#bagging-trees">Bagging trees</a>
   <ul class="collapse">
   <li><a href="#variable-importance" id="toc-variable-importance" class="nav-link" data-scroll-target="#variable-importance">Variable importance</a></li>
-  <li><a href="#random-forests-for-gene-expression-data" id="toc-random-forests-for-gene-expression-data" class="nav-link" data-scroll-target="#random-forests-for-gene-expression-data">Random forests for gene expression data</a></li>
   </ul></li>
+  <li><a href="#a-random-forest-to-improve-bagging" id="toc-a-random-forest-to-improve-bagging" class="nav-link" data-scroll-target="#a-random-forest-to-improve-bagging">A random forest to improve bagging</a></li>
+  <li><a href="#random-forests-for-gene-expression-data" id="toc-random-forests-for-gene-expression-data" class="nav-link" data-scroll-target="#random-forests-for-gene-expression-data">Random forests for gene expression data</a></li>
   <li><a href="#random-forests-with-python" id="toc-random-forests-with-python" class="nav-link" data-scroll-target="#random-forests-with-python">Random Forests with Python</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
@@ -131,7 +138,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 17, 2024</p>
+      <p class="date">April 21, 2024</p>
     </div>
   </div>
   
@@ -155,53 +162,328 @@ div.csl-indent {
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)       <span class="co"># for fitting decision trees</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipred)       <span class="co"># for fitting bagged decision trees</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>This lab presents some examples on building ensemble predictors with a variety of methods.</p>
+<p>In order to facilitate the comparison between methods and tools the same prediction problem will be solved with distinct methods and distinct parameter settings.</p>
+<p>The example problem is the prediction of house prices in the <code>AmesHousing</code> dataset, a dataset with multiple variables about cost of housing in Ames, IA.</p>
+<section id="the-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="the-dataset">The dataset</h2>
+<p>Packge <code>AmesHousing</code> contains the data jointly with some instructions to create the required dataset.</p>
+<p>We will use, however data from the <code>modeldata</code> package where some preprocessing of the data has already been performed (see: <a href="https://www.tmwr.org/ames">https://www.tmwr.org/ames</a>)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(modeldata))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"modeldata"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(ames, <span class="at">package =</span> <span class="st">"modeldata"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The dataset has 74 variables so a descriptive analysis is not provided.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(ames)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2930   74</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(ames)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<!-- Although not strictly necessary, given that the variable that has the widest range of variation is the variable to predict we make a log transform for it. Eventually we can use either eof these to build and predict and compare how the models perform. -->
+<!-- ```{r} -->
+<!-- require(dplyr) -->
+<!-- ames <- ames %>% mutate(logSale_Price = log10(Sale_Price)) -->
+<!-- ``` -->
+</section>
+<section id="spliting-the-data-into-testtrain" class="level2">
+<h2 class="anchored" data-anchor-id="spliting-the-data-into-testtrain">Spliting the data into test/train</h2>
+<p>We split the data in separate test / training sets and do it in such a way that samplig is balanced for the response variable, <code>Sale_Price</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(rsample))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"rsample"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified sampling with the rsample package</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">initial_split</span>(ames, <span class="at">prop =</span> <span class="fl">0.7</span>, </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">strata =</span> <span class="st">"Sale_Price"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ames_train  <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ames_test   <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="a-simple-regression-tree" class="level1">
+<h1>A simple regression tree</h1>
+<p>As a first attempt to predict Sales_Price we build a unique regression tree, which as has been discussed is a weak learner. The <code>tree</code> package will be used to fit and optimize the tree.</p>
+<p>We build a tree using non-restrictive parameters. This will allow space for pruning it better.</p>
+<p>We use the <code>tree.control</code> function to set the values for the <code>control</code> parameter in the <code>tree</code> function.</p>
+<p>Let’s start with a tree with the default values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tree)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ctlPars <span class="ot">&lt;-</span><span class="fu">tree.control</span>(<span class="at">nobs=</span><span class="fu">nrow</span>(ames_train), <span class="at">mincut =</span> <span class="dv">5</span>, <span class="at">minsize =</span> <span class="dv">10</span>, <span class="at">mindev =</span> <span class="fl">0.01</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ames_rt1 <span class="ot">&lt;-</span>  tree<span class="sc">::</span><span class="fu">tree</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data    =</span> ames_train,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">split   =</span> <span class="st">"deviance"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">control =</span> ctlPars)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ames_rt1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression tree:
+tree::tree(formula = Sale_Price ~ ., data = ames_train, control = ctlPars, 
+    split = "deviance")
+Variables actually used in tree construction:
+[1] "Neighborhood"  "First_Flr_SF"  "Gr_Liv_Area"   "Total_Bsmt_SF"
+[5] "Second_Flr_SF"
+Number of terminal nodes:  12 
+Residual mean deviance:  1.428e+09 = 2.909e+12 / 2037 
+Distribution of residuals:
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+-227100.0  -21240.0    -237.2       0.0   19080.0  212000.0 </code></pre>
+</div>
+</div>
+<p>This gives a small tree with only 11 terminal nodes.</p>
+<p>We can visualize the tree</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> ames_rt1, <span class="at">type =</span> <span class="st">"proportional"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x =</span> ames_rt1, <span class="at">splits =</span> <span class="cn">TRUE</span>, <span class="at">pretty =</span> <span class="dv">0</span>, <span class="at">cex =</span> <span class="fl">0.6</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Ensemble-Lab_2_files/figure-html/plotAmes1-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In order to optimize the tree we compute the best cost complexity value</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cv_ames_rt1 <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">cv.tree</span>(ames_rt1, <span class="at">K =</span> <span class="dv">5</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>optSize <span class="ot">&lt;-</span> <span class="fu">rev</span>(cv_ames_rt1<span class="sc">$</span>size)[<span class="fu">which.min</span>(<span class="fu">rev</span>(cv_ames_rt1<span class="sc">$</span>dev))]</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Optimal size obtained is:"</span>, optSize)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Optimal size obtained is: 12"</code></pre>
+</div>
+</div>
+<p>The best value of alpha is obtained with the same tree, which suggests that there will be no advantage in pruning. This is confirmed by plotting tree size vs deviance which shows that the tree with the samllest error is the biggest one that can be obtained.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>resultados_cv <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n_nodes  =</span> cv_ames_rt1<span class="sc">$</span>size,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">deviance =</span> cv_ames_rt1<span class="sc">$</span>dev,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">alpha    =</span> cv_ames_rt1<span class="sc">$</span>k</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                 )</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> resultados_cv, <span class="fu">aes</span>(<span class="at">x =</span> n_nodes, <span class="at">y =</span> deviance)) <span class="sc">+</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> optSize, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Error vs tree size"</span>) <span class="sc">+</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_bw</span>() </span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> resultados_cv, <span class="fu">aes</span>(<span class="at">x =</span> alpha, <span class="at">y =</span> deviance)) <span class="sc">+</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Error vs penalization (alpha)"</span>) <span class="sc">+</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_bw</span>() </span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Ensemble-Lab_2_files/figure-html/plotPruneAmes-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We could have tried to obtain a bigger tree with the hope that pruning might find a better tree. This can be done setting the tree parameters to minimal values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ctlPars2 <span class="ot">&lt;-</span><span class="fu">tree.control</span>(<span class="at">nobs=</span><span class="fu">nrow</span>(ames_train), <span class="at">mincut =</span> <span class="dv">1</span>, <span class="at">minsize =</span> <span class="dv">2</span>, <span class="at">mindev =</span> <span class="dv">0</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ames_rt2 <span class="ot">&lt;-</span>  tree<span class="sc">::</span><span class="fu">tree</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">formula =</span> Sale_Price <span class="sc">~</span> .,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data    =</span> ames_train,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">split   =</span> <span class="st">"deviance"</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">control =</span> ctlPars2)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ames_rt2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression tree:
+tree::tree(formula = Sale_Price ~ ., data = ames_train, control = ctlPars2, 
+    split = "deviance")
+Variables actually used in tree construction:
+ [1] "Neighborhood"   "First_Flr_SF"   "Garage_Cond"    "Gr_Liv_Area"   
+ [5] "Central_Air"    "Garage_Area"    "Enclosed_Porch" "Lot_Area"      
+ [9] "Longitude"      "Land_Contour"   "MS_SubClass"    "Lot_Frontage"  
+[13] "Lot_Config"     "Year_Built"     "MS_Zoning"      "Overall_Cond"  
+[17] "Fireplaces"     "BsmtFin_Type_1" "Bsmt_Unf_SF"    "Year_Remod_Add"
+[21] "Exterior_1st"   "Exterior_2nd"   "Functional"     "Open_Porch_SF" 
+[25] "Mo_Sold"        "Total_Bsmt_SF"  "Sale_Condition" "Bldg_Type"     
+[29] "Heating_QC"     "Latitude"       "Mas_Vnr_Area"   "Garage_Cars"   
+[33] "Bsmt_Exposure"  "Condition_1"    "Mas_Vnr_Type"   "Second_Flr_SF" 
+[37] "Alley"          "Exter_Cond"     "Fence"          "Lot_Shape"     
+[41] "Bsmt_Cond"      "Bedroom_AbvGr"  "Wood_Deck_SF"   "Roof_Style"    
+[45] "Sale_Type"      "BsmtFin_Type_2" "Garage_Type"    "Bsmt_Full_Bath"
+[49] "Year_Sold"      "Garage_Finish"  "Screen_Porch"   "Half_Bath"     
+[53] "Foundation"     "Full_Bath"      "Land_Slope"     "TotRms_AbvGrd" 
+[57] "House_Style"   
+Number of terminal nodes:  1222 
+Residual mean deviance:  2579000 = 2.133e+09 / 827 
+Distribution of residuals:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  -2750    -500       0       0     500    2943 </code></pre>
+</div>
+</div>
+<p>This bigger tree has indeed a smaller deviance but pruning provides no benefit:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>cv_ames_rt2 <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">cv.tree</span>(ames_rt2, <span class="at">K =</span> <span class="dv">5</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>optSize2 <span class="ot">&lt;-</span> <span class="fu">rev</span>(cv_ames_rt2<span class="sc">$</span>size)[<span class="fu">which.min</span>(<span class="fu">rev</span>(cv_ames_rt2<span class="sc">$</span>dev))]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Optimal size obtained is:"</span>, optSize2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Optimal size obtained is: 12"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>prunedTree2 <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">prune.tree</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">tree =</span> ames_rt2,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">best =</span> optSize2</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>               )</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(prunedTree2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression tree:
+snip.tree(tree = ames_rt2, nodes = c(61L, 31L, 12L, 13L, 60L, 
+18L, 19L, 14L, 23L, 10L, 22L, 8L))
+Variables actually used in tree construction:
+[1] "Neighborhood"  "First_Flr_SF"  "Gr_Liv_Area"   "Total_Bsmt_SF"
+[5] "Second_Flr_SF"
+Number of terminal nodes:  12 
+Residual mean deviance:  1.428e+09 = 2.909e+12 / 2037 
+Distribution of residuals:
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+-227100.0  -21240.0    -237.2       0.0   19080.0  212000.0 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>res_cv2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n_nodes  =</span> cv_ames_rt2<span class="sc">$</span>size,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">deviance =</span> cv_ames_rt2<span class="sc">$</span>dev,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">alpha    =</span> cv_ames_rt2<span class="sc">$</span>k</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                 )</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> res_cv2, <span class="fu">aes</span>(<span class="at">x =</span> n_nodes, <span class="at">y =</span> deviance)) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> optSize2, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Error vs tree size"</span>) <span class="sc">+</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_bw</span>() </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> res_cv2, <span class="fu">aes</span>(<span class="at">x =</span> alpha, <span class="at">y =</span> deviance)) <span class="sc">+</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Error vs penalization (alpha)"</span>) <span class="sc">+</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_bw</span>() </span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The performance of the trees is hardly different between small or big tree in pruned or non-pruned version.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ames_rt_pred1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(ames_rt1, <span class="at">newdata =</span> ames_test)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>test_rmse1    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((ames_rt_pred1 <span class="sc">-</span> ames_test<span class="sc">$</span>Sale_Price)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error test (rmse) for initial tree:"</span>, <span class="fu">round</span>(test_rmse1,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Error test (rmse) for initial tree: 39691.13"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ames_rt_pred2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(ames_rt2, <span class="at">newdata =</span> ames_test)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>test_rmse2    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((ames_rt_pred2 <span class="sc">-</span> ames_test<span class="sc">$</span>Sale_Price)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error test (rmse) for big tree:"</span>, <span class="fu">round</span>(test_rmse2,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Error test (rmse) for big tree: 37064.3"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ames_pruned_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(prunedTree2, <span class="at">newdata =</span> ames_test)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>test_rmse3    <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((ames_pruned_pred <span class="sc">-</span> ames_test<span class="sc">$</span>Sale_Price)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error test (rmse) for pruned tree:"</span>, <span class="fu">round</span>(test_rmse3,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Error test (rmse) for pruned tree: 39691.13"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>improvement <span class="ot">&lt;-</span> (test_rmse3<span class="sc">-</span>test_rmse2)<span class="sc">/</span>test_rmse2<span class="sc">*</span><span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The MSE for each model will be saved to facilitate comparison with other models</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>errTable <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Model=</span><span class="fu">character</span>(),  <span class="at">RMSE=</span><span class="fu">double</span>())</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>errTable[<span class="dv">1</span>, ] <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">"Default Regression Tree"</span>, <span class="fu">round</span>(test_rmse1,<span class="dv">2</span>))</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>errTable[<span class="dv">2</span>, ] <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">"Big Regression Tree"</span>, <span class="fu">round</span>(test_rmse2,<span class="dv">2</span>))</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>errTable[<span class="dv">3</span>, ] <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">"Optimally pruned Regression Tree"</span>, <span class="fu">round</span>(test_rmse3,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In summary, what is illustrated by this example is that, for some datasets, it is very hard to obtain an optimal tree because there seems to be a minimum complexity which is very hard to decrease.</p>
+<p>Building a saturated tree only provides a slight improvement of less than 5% in RMSE at the cost of having to use 5 times more variables in a tree withh more than 1000 nodes.</p>
+<p>This is a good point to consider using an ensemble instead of single trees.</p>
+</section>
 <section id="bagging-trees" class="level1">
 <h1>Bagging trees</h1>
-<p>The first example is adapted from <span class="citation" data-cites="Boehmke2020">(<a href="#ref-Boehmke2020" role="doc-biblioref">Boehmke and Greenwell 2020</a>)</span>, also <a href="https://bradleyboehmke.github.io/HOML/">available online</a>.</p>
-<p>This example relies on the <code>AmesHousing</code> dataset on house prices in Ames, IA.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(AmesHousing))</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"AmesHousing"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ames <span class="ot">&lt;-</span> AmesHousing<span class="sc">::</span><span class="fu">make_ames</span>()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(ames, <span class="st">"amesData.csv"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>ames2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"amesData.csv"</span>, <span class="at">row.names =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(ames), <span class="fu">nrow</span>(ames)<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># split &lt;- rsample::initial_split(ames, prop = 0.7, </span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                        strata = "Sale_Price")</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ames_train  <span class="ot">&lt;-</span> ames[train,]</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>ames_test   <span class="ot">&lt;-</span> ames[<span class="sc">-</span>train,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Building a decision trees to predict the sales price for the Ames housing data yields a poor performance classifier/predictor that is beaten by alternatives such as MARS or KNN (check it!)</p>
+<p>The first attempt to build an ensemble may be to apply <code>bagging</code> that is building multiple trees from a set of resamples and averaging the predictions of each tree.</p>
 <p>In this example, rather than use a single pruned decision tree, we can use, say, 100 bagged unpruned trees (by not pruning the trees we’re keeping bias low and variance high which is when bagging will have the biggest effect).</p>
 <p>Bagging is equivalent to RandomForest if we use all the trees so the library <code>randomForest</code> is used.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make bootstrapping reproducible</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>bag.Ames <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Sale_Price <span class="sc">~</span> ., </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> ames_train, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">mtry =</span> <span class="fu">ncol</span>(ames_train<span class="dv">-1</span>), </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">ntree =</span> <span class="dv">100</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">importance =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make bootstrapping reproducible</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>bag.Ames <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Sale_Price <span class="sc">~</span> ., </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> ames_train, </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">mtry =</span> <span class="fu">ncol</span>(ames_train<span class="dv">-1</span>), </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>                         <span class="co"># ntree = 100,</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">importance =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Bagging, as most ensemble procedures, can be time consuming. See <a href="https://bradleyboehmke.github.io/HOML/bagging.html#easily-parallelize"><span class="citation" data-cites="Boehmke2020">Boehmke and Greenwell (<span>2020</span>)</span></a> for an example on how to easily parallelize code, and save time.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(bag.Ames)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(bag.Ames)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
- randomForest(formula = Sale_Price ~ ., data = ames_train, mtry = ncol(ames_train -      1), ntree = 100, importance = TRUE) 
+ randomForest(formula = Sale_Price ~ ., data = ames_train, mtry = ncol(ames_train -      1), importance = TRUE) 
                Type of random forest: regression
-                     Number of trees: 100
-No. of variables tried at each split: 80
+                     Number of trees: 500
+No. of variables tried at each split: 73
 
-          Mean of squared residuals: 866796581
-                    % Var explained: 87.4</code></pre>
+          Mean of squared residuals: 722828439
+                    % Var explained: 88.8</code></pre>
 </div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>yhat.bag <span class="ot">&lt;-</span> <span class="fu">predict</span>(bag.Ames, <span class="at">newdata =</span> ames_test)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yhat.bag, ames_test<span class="sc">$</span>Sale_Price)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Ensemble-Lab_2_files/figure-html/predictBag-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>test_rmse_bag  <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(<span class="fu">mean</span>((yhat.bag <span class="sc">-</span> ames_test<span class="sc">$</span>Sale_Price)<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error test (rmse) for bagged tree:"</span>, <span class="fu">round</span>(test_rmse_bag,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Error test (rmse) for bagged tree: 24796.54"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>errTable[<span class="dv">4</span>, ] <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">"Bagged Tree (ntree=100)"</span>, <span class="fu">round</span>(test_rmse_bag,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Bagging tends to improve quickly as the number of resampled trees increases, and then it reaches a platform.</p>
 <p>The figure below has been produced iterated the computation above over <code>nbagg</code> values of 1–200 and applied the <code>bagging()</code> function.</p>
@@ -220,87 +502,121 @@ No. of variables tried at each split: 80
 <p>Due to the bagging process, models that are normally perceived as interpretable are no longer so.</p>
 <p>However, we can still make inferences about how features are influencing our model using <em>feature importance</em> measures based on the sum of the reduction in the loss function (e.g., SSE) attributed to each variable at each split in a given tree.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(dplyr)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>VIP <span class="ot">&lt;-</span> <span class="fu">importance</span>(bag.Ames) </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>VIP <span class="ot">&lt;-</span> VIP[<span class="fu">order</span>(VIP[,<span class="dv">1</span>], <span class="at">decreasing =</span> <span class="cn">TRUE</span>),]</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(VIP, <span class="at">n=</span><span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(dplyr)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>VIP <span class="ot">&lt;-</span> <span class="fu">importance</span>(bag.Ames) </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>VIP <span class="ot">&lt;-</span> VIP[<span class="fu">order</span>(VIP[,<span class="dv">1</span>], <span class="at">decreasing =</span> <span class="cn">TRUE</span>),]</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(VIP, <span class="at">n=</span><span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 %IncMSE IncNodePurity
-Overall_Qual   27.899733  5.930912e+12
-Gr_Liv_Area    26.939028  1.003356e+12
-Neighborhood   14.153970  8.925010e+11
-MS_SubClass    12.235069  9.503008e+10
-Total_Bsmt_SF   9.169066  3.597096e+11
-Full_Bath       8.985248  4.326952e+10
-First_Flr_SF    7.850447  3.006980e+11
-BsmtFin_Type_1  7.478921  3.328741e+10
-Garage_Area     6.983203  8.789073e+10
-Year_Built      6.854755  6.047041e+10
-Year_Remod_Add  6.281539  4.387938e+10
-Bsmt_Qual       6.107453  1.083683e+11
-Kitchen_Qual    5.865716  6.373143e+10
-Garage_Type     5.227705  3.122012e+10
-Fireplace_Qu    5.138712  2.087180e+10
-Lot_Area        5.027384  1.198332e+11
-Second_Flr_SF   4.475512  1.124112e+11
-Garage_Cars     4.438466  6.622680e+10
-Heating_QC      4.074978  7.321280e+09
-Latitude        3.911391  4.755162e+10
-Overall_Cond    3.480828  3.522815e+10
-Garage_Finish   3.312274  8.134650e+09
-Bsmt_Full_Bath  3.070104  1.208989e+10
-Exterior_2nd    3.061239  4.516252e+10
-Longitude       2.895247  2.840838e+10
-Half_Bath       2.810053  5.196130e+09
-Mas_Vnr_Area    2.730861  7.521317e+10
-Bsmt_Unf_SF     2.672626  3.829770e+10
-Bedroom_AbvGr   2.638568  2.374336e+10
-BsmtFin_SF_1    2.621009  6.831223e+09</code></pre>
+Gr_Liv_Area    58.850401  1.787033e+12
+Neighborhood   49.410923  5.095346e+12
+Total_Bsmt_SF  32.932428  9.524729e+11
+First_Flr_SF   24.633630  5.279402e+11
+Year_Remod_Add 24.578718  2.035538e+11
+MS_SubClass    21.761033  1.424198e+11
+Overall_Cond   18.759503  9.691400e+10
+BsmtFin_Type_1 18.499865  6.153661e+10
+Garage_Cars    18.150624  2.102481e+12
+Garage_Area    15.299616  2.692346e+11
+Garage_Cond    14.954903  4.667409e+10
+Fireplaces     14.525355  5.737344e+10
+Lot_Area       14.272773  1.487081e+11
+Exterior_1st   14.213733  1.078685e+11
+Second_Flr_SF  13.477682  1.382054e+11
+Exterior_2nd   13.267601  6.793371e+10
+Year_Built     12.922042  2.278559e+11
+Bsmt_Unf_SF    12.760030  7.922741e+10
+Longitude      11.813764  6.577466e+10
+Garage_Type    11.476481  4.197270e+10
+Garage_Finish  10.564749  2.169831e+10
+Latitude       10.396311  7.109725e+10
+Bsmt_Cond      10.122780  1.502036e+10
+Central_Air    10.094562  2.126183e+10
+Bsmt_Exposure  10.037850  5.264230e+10
+Bsmt_Full_Bath  9.526083  3.195805e+10
+Open_Porch_SF   9.499377  4.564048e+10
+TotRms_AbvGrd   7.683839  3.005629e+10
+Full_Bath       7.548806  7.584251e+10
+Heating_QC      7.436139  1.665949e+10</code></pre>
 </div>
 </div>
+<p>Importance values can be plotted directly:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>invVIP <span class="ot">&lt;-</span>VIP[<span class="fu">order</span>(VIP[,<span class="dv">1</span>], <span class="at">decreasing =</span> <span class="cn">FALSE</span>),<span class="dv">1</span>] </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tVIP<span class="ot">&lt;-</span> <span class="fu">tail</span>(invVIP, <span class="at">n=</span><span class="dv">15</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tVIP, </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">names.arg=</span><span class="fu">row.names</span>(tVIP), <span class="at">cex.names=</span><span class="fl">0.5</span>,<span class="at">las=</span><span class="dv">2</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">horiz =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>invVIP <span class="ot">&lt;-</span>VIP[<span class="fu">order</span>(VIP[,<span class="dv">1</span>], <span class="at">decreasing =</span> <span class="cn">FALSE</span>),<span class="dv">1</span>] </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>tVIP<span class="ot">&lt;-</span> <span class="fu">tail</span>(invVIP, <span class="at">n=</span><span class="dv">15</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tVIP, <span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">cex.names=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Alternatively if the tree is built with <code>caret</code> the <code>vip</code> function from package <code>vip</code> can be used.</p>
+<p>Alternatively one can use the <code>vip</code>function from the <code>vip</code> package</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system.time</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  ames_bag2 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    Sale_Price <span class="sc">~</span> .,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> ames_train,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"treebag"</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"oob"</span>),</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">nbagg =</span> <span class="dv">100</span>,  </span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">keepX=</span><span class="cn">TRUE</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">minsplit =</span> <span class="dv">2</span>, <span class="at">cp =</span> <span class="dv">0</span>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>vip<span class="sc">::</span><span class="fu">vip</span>(ames_bag2, <span class="at">num_features =</span> <span class="dv">40</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"images/ames2VIP.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(vip)) <span class="fu">install.packages</span>(<span class="st">"vip"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vip</span>(bag.Ames, <span class="at">num_features =</span> <span class="dv">40</span>, <span class="at">bar =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="images/ames2VIP.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="random-forests-for-gene-expression-data" class="level2">
-<h2 class="anchored" data-anchor-id="random-forests-for-gene-expression-data">Random forests for gene expression data</h2>
+</section>
+<section id="a-random-forest-to-improve-bagging" class="level1">
+<h1>A random forest to improve bagging</h1>
+<p>Bagging can be improved if, instead of using all variables to build each tree we rely on subsets of variables, which are chosen at each split in order to decrease correlation between trees.</p>
+<p>Random Forests are considered to produce good predictors with default values sop no parameter is set in a first iteration.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make bootstrapping reproducible</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(randomForest)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>RF.Ames <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Sale_Price <span class="sc">~</span> ., </span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> ames_train, </span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">importance =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(RF.Ames)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+ randomForest(formula = Sale_Price ~ ., data = ames_train, importance = TRUE) 
+               Type of random forest: regression
+                     Number of trees: 500
+No. of variables tried at each split: 24
+
+          Mean of squared residuals: 723328698
+                    % Var explained: 88.79</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>yhat.rf <span class="ot">&lt;-</span> <span class="fu">predict</span>(RF.Ames, <span class="at">newdata =</span> ames_test)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(yhat.rf, ames_test<span class="sc">$</span>Sale_Price)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Ensemble-Lab_2_files/figure-html/predictRF-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>test_rmse_rf  <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(<span class="fu">mean</span>((yhat.rf <span class="sc">-</span> ames_test<span class="sc">$</span>Sale_Price)<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Error test (rmse) for Random Forest:"</span>, <span class="fu">round</span>(test_rmse_rf,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Error test (rmse) for Random Forest: 24540.96"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>errTable[<span class="dv">5</span>, ] <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">"Random Forest (defaults)"</span>, <span class="fu">round</span>(test_rmse_rf,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>There is some improvement on bagging but it is clearly small.</p>
+<p>Notice however that the percentage of explained variance is bigger for RF than for Bag</p>
+</section>
+<section id="random-forests-for-gene-expression-data" class="level1">
+<h1>Random forests for gene expression data</h1>
 <p>Random forest have been particularly successful in Bioinformatics where high dimensional data are common.</p>
 <p>One common application has been the use of RF to derive cancer-related classifiers based on gene expression data.</p>
 <p>Gene expression data are high dimensional tabular datasets where for each inividual the expression of a high number of genes has been measured</p>
@@ -316,47 +632,47 @@ BsmtFin_SF_1    2.621009  6.831223e+09</code></pre>
 <p>The code below is shown for consistency, but unless you are interested/familiar with Bioconductor and microarray data storage and preprocessing it can be skipped.</p>
 <p>This code generates a simplified dataset that is saved into a binary file `data/smallALL.Rda’. This file can be directly loaded for the example.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(affy)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"affy"</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(genefilter)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"genefilter"</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(ALL)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"ALL"</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(affy)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ALL)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(ALL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(affy)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"affy"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(genefilter)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"genefilter"</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(ALL)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"ALL"</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(affy)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ALL)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(ALL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Preprocessing is applied to obtain relevant subset of data Also, keep 30 arrays here JUST for computational convenience #</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(genefilter); </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>e.mat <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">^</span>(<span class="fu">exprs</span>(ALL)[,<span class="fu">c</span>(<span class="dv">81</span><span class="sc">:</span><span class="dv">110</span>)]) </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ffun <span class="ot">&lt;-</span> <span class="fu">filterfun</span>(<span class="fu">pOverA</span>(<span class="fl">0.20</span>,<span class="dv">100</span>)) </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>t.fil <span class="ot">&lt;-</span> <span class="fu">genefilter</span>(e.mat,ffun) </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>smallData <span class="ot">&lt;-</span> <span class="fu">log2</span>(e.mat[t.fil,]) </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>group <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">'B'</span>,<span class="dv">15</span>),<span class="fu">rep</span>(<span class="st">'T'</span>,<span class="dv">15</span>)) </span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(smallData) </span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(smallData)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>infoData <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">pData</span>(ALL)[<span class="dv">81</span><span class="sc">:</span><span class="dv">110</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], group) <span class="co"># column "BT" defines groups</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span> (smallData, infoData, <span class="at">file=</span><span class="st">"data/smallALL.Rda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(genefilter); </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>e.mat <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">^</span>(<span class="fu">exprs</span>(ALL)[,<span class="fu">c</span>(<span class="dv">81</span><span class="sc">:</span><span class="dv">110</span>)]) </span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>ffun <span class="ot">&lt;-</span> <span class="fu">filterfun</span>(<span class="fu">pOverA</span>(<span class="fl">0.20</span>,<span class="dv">100</span>)) </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>t.fil <span class="ot">&lt;-</span> <span class="fu">genefilter</span>(e.mat,ffun) </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>smallData <span class="ot">&lt;-</span> <span class="fu">log2</span>(e.mat[t.fil,]) </span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>group <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">'B'</span>,<span class="dv">15</span>),<span class="fu">rep</span>(<span class="st">'T'</span>,<span class="dv">15</span>)) </span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(smallData) </span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(smallData)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>infoData <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">pData</span>(ALL)[<span class="dv">81</span><span class="sc">:</span><span class="dv">110</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], group) <span class="co"># column "BT" defines groups</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span> (smallData, infoData, <span class="at">file=</span><span class="st">"data/smallALL.Rda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span> (<span class="at">file =</span> <span class="st">"data/smallALL.Rda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span> (<span class="at">file =</span> <span class="st">"data/smallALL.Rda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We use the <code>randomForest</code> library to build an “out-of-the box” classifier.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(randomForest)) <span class="fu">install.packages</span>(<span class="st">"randomForest"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest) </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(<span class="at">x=</span><span class="fu">t</span>(smallData),</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y=</span><span class="fu">as.factor</span>(infoData<span class="sc">$</span>group),</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ntree=</span><span class="dv">10000</span>) </span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(randomForest)) <span class="fu">install.packages</span>(<span class="st">"randomForest"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest) </span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) </span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(<span class="at">x=</span><span class="fu">t</span>(smallData),</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y=</span><span class="fu">as.factor</span>(infoData<span class="sc">$</span>group),</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ntree=</span><span class="dv">10000</span>) </span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  12.00    0.00   12.03 </code></pre>
+   6.78    0.00   13.32 </code></pre>
 </div>
 </div>
 <p>Inspect the results</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -374,46 +690,46 @@ T  0 15           0</code></pre>
 </div>
 <p>Now look at variable importance:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>imp.temp <span class="ot">&lt;-</span> <span class="fu">abs</span>(rf<span class="sc">$</span>importance[,]) </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">order</span>(imp.temp,<span class="at">decreasing=</span><span class="cn">TRUE</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(smallData)),imp.temp[t],<span class="at">log=</span><span class="st">'x'</span>,<span class="at">cex.main=</span><span class="fl">1.5</span>,    <span class="at">xlab=</span><span class="st">'gene rank'</span>,<span class="at">ylab=</span><span class="st">'variable importance'</span>,<span class="at">cex.lab=</span><span class="fl">1.5</span>,    <span class="at">pch=</span><span class="dv">16</span>,<span class="at">main=</span><span class="st">'ALL subset results'</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>imp.temp <span class="ot">&lt;-</span> <span class="fu">abs</span>(rf<span class="sc">$</span>importance[,]) </span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">order</span>(imp.temp,<span class="at">decreasing=</span><span class="cn">TRUE</span>)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(smallData)),imp.temp[t],<span class="at">log=</span><span class="st">'x'</span>,<span class="at">cex.main=</span><span class="fl">1.5</span>,    <span class="at">xlab=</span><span class="st">'gene rank'</span>,<span class="at">ylab=</span><span class="st">'variable importance'</span>,<span class="at">cex.lab=</span><span class="fl">1.5</span>,    <span class="at">pch=</span><span class="dv">16</span>,<span class="at">main=</span><span class="st">'ALL subset results'</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Or, a better plot:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(rf, <span class="at">n.var=</span><span class="dv">25</span>, <span class="at">main=</span><span class="st">'ALL Subset Results'</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(rf, <span class="at">n.var=</span><span class="dv">25</span>, <span class="at">main=</span><span class="st">'ALL Subset Results'</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="Ensemble-Lab_2_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We can focus on the 25 most important genes</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>gn.imp <span class="ot">&lt;-</span> <span class="fu">names</span>(imp.temp)[t] </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>gn<span class="fl">.25</span> <span class="ot">&lt;-</span> gn.imp[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>] </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># vector of top 25 genes, in order</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>gn.imp <span class="ot">&lt;-</span> <span class="fu">names</span>(imp.temp)[t] </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>gn<span class="fl">.25</span> <span class="ot">&lt;-</span> gn.imp[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>] </span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="co"># vector of top 25 genes, in order</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can use the Bioinformatics Bioconductor libraries to find out more about these these genes. Information on how to do it can be found at <a href="https://aspteaching.github.io/An-Introduction-to-Pathway-Analysis-with-R-and-Bioconductor/">https://aspteaching.github.io/An-Introduction-to-Pathway-Analysis-with-R-and-Bioconductor/</a>.</p>
 <p>Again, the code is shown but it has been run aside this lab and the result saved as a binary file.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(hgu95av2.db)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"hgu95av2.db"</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(AnnotationDbi)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"AnnotationDbi"</span>)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hgu95av2.db)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>geneAnots <span class="ot">&lt;-</span> AnnotationDbi<span class="sc">::</span><span class="fu">select</span>(hgu95av2.db, gn<span class="fl">.25</span>,</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">c</span>(<span class="st">"SYMBOL"</span>, <span class="st">"GENENAME"</span>))</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(geneAnots, <span class="at">n=</span><span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(hgu95av2.db)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"hgu95av2.db"</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(AnnotationDbi)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"AnnotationDbi"</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hgu95av2.db)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>geneAnots <span class="ot">&lt;-</span> AnnotationDbi<span class="sc">::</span><span class="fu">select</span>(hgu95av2.db, gn<span class="fl">.25</span>,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">c</span>(<span class="st">"SYMBOL"</span>, <span class="st">"GENENAME"</span>))</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(geneAnots, <span class="at">n=</span><span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"images/geneNames.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"images/geneNames.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -424,21 +740,21 @@ T  0 15           0</code></pre>
 </div>
 <p>To end the exploration we plot heatmap that shows how the two groups differ in gene expression.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>sigGenes<span class="ot">&lt;-</span> smallData[gn<span class="fl">.25</span>,]</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">is.element</span>(<span class="fu">rownames</span>(small.eset),gn<span class="fl">.25</span>) </span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>sig.eset <span class="ot">&lt;-</span> small.eset[t,]    </span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># matrix of expression values, not necessarily in order  </span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer) </span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>hmcol <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">brewer.pal</span>(<span class="dv">11</span>,<span class="st">"PuOr"</span>))(<span class="dv">256</span>) </span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(sig.eset) <span class="ot">&lt;-</span> group </span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This will label the heatmap columns </span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>csc <span class="ot">&lt;-</span> <span class="fu">rep</span>(hmcol[<span class="dv">50</span>],<span class="dv">30</span>) </span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>csc[group<span class="sc">==</span><span class="st">'T'</span>] <span class="ot">&lt;-</span> hmcol[<span class="dv">200</span>]    </span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># column side color will be purple for T and orange for B </span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap</span>(sigGenes,<span class="at">scale=</span><span class="st">"row"</span>, <span class="at">col=</span>hmcol,<span class="at">ColSideColors=</span>csc) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>sigGenes<span class="ot">&lt;-</span> smallData[gn<span class="fl">.25</span>,]</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">is.element</span>(<span class="fu">rownames</span>(small.eset),gn<span class="fl">.25</span>) </span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>sig.eset <span class="ot">&lt;-</span> small.eset[t,]    </span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co"># matrix of expression values, not necessarily in order  </span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer) </span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>hmcol <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">brewer.pal</span>(<span class="dv">11</span>,<span class="st">"PuOr"</span>))(<span class="dv">256</span>) </span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(sig.eset) <span class="ot">&lt;-</span> group </span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This will label the heatmap columns </span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>csc <span class="ot">&lt;-</span> <span class="fu">rep</span>(hmcol[<span class="dv">50</span>],<span class="dv">30</span>) </span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>csc[group<span class="sc">==</span><span class="st">'T'</span>] <span class="ot">&lt;-</span> hmcol[<span class="dv">200</span>]    </span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a><span class="co"># column side color will be purple for T and orange for B </span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap</span>(sigGenes,<span class="at">scale=</span><span class="st">"row"</span>, <span class="at">col=</span>hmcol,<span class="at">ColSideColors=</span>csc) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"images/allHeatMap.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"images/allHeatMap.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -447,7 +763,6 @@ T  0 15           0</code></pre>
 </div>
 </div>
 </div>
-</section>
 </section>
 <section id="random-forests-with-python" class="level1">
 <h1>Random Forests with Python</h1>

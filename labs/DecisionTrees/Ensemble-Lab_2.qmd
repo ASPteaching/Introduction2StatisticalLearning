@@ -57,16 +57,42 @@ library(ipred)       # for fitting bagged decision trees
 
 ```
 
-# A case for improvement
+# Introduction
 
-This example relies on the `AmesHousing` dataset on house prices in Ames, IA.
-We start building a regression tree. The fitted tree cannot be improved by pruning, so it will opt to try ensemblemethods on it.
+This lab presents some examples on building ensemble predictors with a variety of methods.
+
+In order to facilitate the comparison between methods and tools the same prediction problem will be solved with distinct methods and distinct parameter settings.
+
+The example problem is the prediction of house prices in the `AmesHousing` dataset, a dataset with multiple variables about cost of housing in Ames, IA.
+
+## The dataset
+
+Packge `AmesHousing` contains the data jointly with some instructions to create the required dataset.
+
+We will use, however data from the `modeldata` package where some preprocessing of the data has already been performed (see: [https://www.tmwr.org/ames](https://www.tmwr.org/ames))
 
 ```{r}
-if(!require(AmesHousing))
-  install.packages("AmesHousing", dep=TRUE)
-ames <- AmesHousing::make_ames()
+if(!require(modeldata))
+  install.packages("modeldata", dep=TRUE)
+data(ames, package = "modeldata")
 ```
+
+The dataset has 74 variables so a descriptive analysis is not provided.
+
+```{r}
+dim(ames)
+boxplot(ames)
+```
+
+<!-- Although not strictly necessary, given that the variable that has the widest range of variation is the variable to predict we make a log transform for it. Eventually we can use either eof these to build and predict and compare how the models perform. -->
+
+<!-- ```{r} -->
+<!-- require(dplyr) -->
+<!-- ames <- ames %>% mutate(logSale_Price = log10(Sale_Price)) -->
+<!-- ``` -->
+
+
+## Spliting the data into test/train
 
 We split the data in separate test / training sets and do it in such a way that samplig is balanced for the response variable, `Sale_Price`.
 
@@ -81,82 +107,180 @@ ames_train  <- training(split)
 ames_test   <- testing(split)
 ```
 
-We use the `tree` package to fit a regression tree to predict the `Sales_price` variable.
+
+# A simple regression tree
+
+As a first attempt to predict Sales_Price we build a unique regression tree, which as has been discussed is a weak learner. The `tree` package will be used to fit and optimize the tree.
+
+We build a tree using non-restrictive parameters. This will allow space for pruning it better.
+
+We use the `tree.control` function to set the values for the `control` parameter in the `tree` function.
+
+Let's start with a tree with the default values.
 
 ```{r}
-require(rpart)
- ames_dt1 <- rpart(
-   formula = Sale_Price ~ .,
-   data    = ames_train
-   # method  = "anova"
- )
+require(tree)
+
+ctlPars <-tree.control(nobs=nrow(ames_train), mincut = 5, minsize = 10, mindev = 0.01)
+
+ames_rt1 <-  tree::tree(
+                    formula = Sale_Price ~ .,
+                    data    = ames_train,
+                    split   = "deviance",
+                    control = ctlPars)
+summary(ames_rt1)
 ```
 
-We can visualize the tree with `rpart.plot()`
+This gives a small tree with only 11 terminal nodes.
+
+We can visualize the tree 
+
+```{r plotAmes1}
+plot(x = ames_rt1, type = "proportional")
+text(x = ames_rt1, splits = TRUE, pretty = 0, cex = 0.6, col = "firebrick")
+```
+
+In order to optimize the tree we compute the best cost complexity value
+
+```{r pruneAmes1}
+set.seed(123)
+cv_ames_rt1 <- tree::cv.tree(ames_rt1, K = 5)
+
+optSize <- rev(cv_ames_rt1$size)[which.min(rev(cv_ames_rt1$dev))]
+paste("Optimal size obtained is:", optSize)
+```
+
+The best value of alpha is obtained with the same tree, which suggests that there will be no advantage in pruning.
+This is confirmed by plotting tree size vs deviance which shows that the tree with the samllest error is the biggest one that can be obtained.
+
+```{r plotPruneAmes}
+library(ggplot2)
+library(ggpubr)
+
+resultados_cv <- data.frame(
+                   n_nodes  = cv_ames_rt1$size,
+                   deviance = cv_ames_rt1$dev,
+                   alpha    = cv_ames_rt1$k
+                 )
+
+p1 <- ggplot(data = resultados_cv, aes(x = n_nodes, y = deviance)) +
+      geom_line() + 
+      geom_point() +
+      geom_vline(xintercept = optSize, color = "red") +
+      labs(title = "Error vs tree size") +
+      theme_bw() 
+  
+p2 <- ggplot(data = resultados_cv, aes(x = alpha, y = deviance)) +
+      geom_line() + 
+      geom_point() +
+      labs(title = "Error vs penalization (alpha)") +
+      theme_bw() 
+
+ggarrange(p1, p2)
+```
+
+We could have tried to obtain a bigger tree with the hope that pruning might find a better tree.  This can be done setting the tree parameters to minimal values.
+
+
+```{r fitAmesRT2}
+ctlPars2 <-tree.control(nobs=nrow(ames_train), mincut = 1, minsize = 2, mindev = 0)
+ames_rt2 <-  tree::tree(
+                    formula = Sale_Price ~ .,
+                    data    = ames_train,
+                    split   = "deviance",
+                    control = ctlPars2)
+summary(ames_rt2)
+```
+
+This bigger tree has indeed a smaller deviance but pruning provides no benefit:
+
+```{r pruneAmes2}
+set.seed(123)
+cv_ames_rt2 <- tree::cv.tree(ames_rt2, K = 5)
+
+optSize2 <- rev(cv_ames_rt2$size)[which.min(rev(cv_ames_rt2$dev))]
+paste("Optimal size obtained is:", optSize2)
+```
 
 ```{r}
-require(rpart.plot)
-rpart.plot(ames_dt1, cex=0.5)
+prunedTree2 <- tree::prune.tree(
+                  tree = ames_rt2,
+                  best = optSize2
+               )
+summary(prunedTree2)
 ```
 
-`rpart()` automatically applies a range of cost complexity ($\alpha$ values to prune the tree).
-
-To compare the error for each $\alpha$ value, `rpart()` performs a 10-fold CV (by default).
 
 ```{r}
-printcp(ames_dt1)
+res_cv2 <- data.frame(
+                   n_nodes  = cv_ames_rt2$size,
+                   deviance = cv_ames_rt2$dev,
+                   alpha    = cv_ames_rt2$k
+                 )
+
+p1 <- ggplot(data = res_cv2, aes(x = n_nodes, y = deviance)) +
+      geom_line() + 
+      geom_point() +
+      geom_vline(xintercept = optSize2, color = "red") +
+      labs(title = "Error vs tree size") +
+      theme_bw() 
+  
+p2 <- ggplot(data = res_cv2, aes(x = alpha, y = deviance)) +
+      geom_line() + 
+      geom_point() +
+      labs(title = "Error vs penalization (alpha)") +
+      theme_bw() 
+
+ggarrange(p1, p2)
 ```
+
+The performance of the trees is hardly different between small or big tree in pruned or non-pruned version.
+
+```{r ames_rt_pred1}
+ames_rt_pred1 <- predict(ames_rt1, newdata = ames_test)
+test_rmse1    <- sqrt(mean((ames_rt_pred1 - ames_test$Sale_Price)^2))
+paste("Error test (rmse) for initial tree:", round(test_rmse1,2))
+```
+
+
+```{r ames_rt_pred2}
+ames_rt_pred2 <- predict(ames_rt2, newdata = ames_test)
+test_rmse2    <- sqrt(mean((ames_rt_pred2 - ames_test$Sale_Price)^2))
+paste("Error test (rmse) for big tree:", round(test_rmse2,2))
+```
+
+```{r ames_pruned_pred}
+ames_pruned_pred <- predict(prunedTree2, newdata = ames_test)
+test_rmse3    <- sqrt(mean((ames_pruned_pred - ames_test$Sale_Price)^2))
+paste("Error test (rmse) for pruned tree:", round(test_rmse3,2))
+improvement <- (test_rmse3-test_rmse2)/test_rmse2*100
+```
+
+The MSE for each model will be saved to facilitate comparison with other models
 
 ```{r}
-plotcp(ames_dt1)
+errTable <- data.frame(Model=character(),  RMSE=double())
+errTable[1, ] <-  c("Default Regression Tree", round(test_rmse1,2))
+errTable[2, ] <-  c("Big Regression Tree", round(test_rmse2,2))
+errTable[3, ] <-  c("Optimally pruned Regression Tree", round(test_rmse3,2))
 ```
 
-A good choice of `cp` for pruning is often the leftmost value for which the mean lies below the horizontal line
+In summary, what is illustrated by this example is that, for some datasets, it is very hard to obtain an optimal tree because there seems to be a minimum complexity which is very hard to decrease. 
 
-## Feature importance
+Building a saturated tree only provides a slight improvement of less than 5% in RMSE at the cost of having to use 5 times more variables in a tree withh more than 1000 nodes.
 
-The `vip` function from the `vip` package allows computing variable importance from a built predictor object.
-
-```{r}
-if(!require(vip))
-  install.packages("vip", dep=TRUE)
-require(vip)
-## ? vip
-vip(ames_dt1, num_features = 40, bar = FALSE)
-```
+This is a good point to consider using an ensemble instead of single trees.
 
 
 # Bagging trees
 
-The first example is adapted from [@Boehmke2020], also [available online](https://bradleyboehmke.github.io/HOML/).
-
-This example relies on the `AmesHousing` dataset on house prices in Ames, IA.
-
-```{r}
-if(!require(AmesHousing))
-  install.packages("AmesHousing", dep=TRUE)
-ames <- AmesHousing::make_ames()
-write.csv(ames, "amesData.csv")
-ames2 <- read.csv("amesData.csv", row.names = 1)
-```
-
-```{r}
-set.seed(123)
-train <- sample(1:nrow(ames), nrow(ames)/2)
-# split <- rsample::initial_split(ames, prop = 0.7, 
-#                        strata = "Sale_Price")
-ames_train  <- ames[train,]
-ames_test   <- ames[-train,]
-```
-
-Building a decision trees to predict the sales price for the Ames housing data yields a poor performance classifier/predictor that is beaten by alternatives such as MARS or KNN (check it!)
+The first attempt to build an ensemble may be to apply `bagging` that is building multiple trees from a set of resamples and averaging the predictions of each tree.
 
 In this example, rather than use a single pruned decision tree, we can use, say, 100 bagged unpruned trees (by not pruning the trees we're keeping bias low and variance high which is when bagging will have the biggest effect).
 
 Bagging is equivalent to RandomForest if we use all the trees so the library `randomForest` is used.
 
-
-```{r}
+```{r fitbaggedTrees1}
 # make bootstrapping reproducible
 set.seed(123)
 
@@ -164,9 +288,8 @@ library(randomForest)
 bag.Ames <- randomForest(Sale_Price ~ ., 
                          data = ames_train, 
                          mtry = ncol(ames_train-1), 
-                         ntree = 100,
+                         # ntree = 100,
                          importance = TRUE)
-
 ```
 
 Bagging, as most ensemble procedures, can be time consuming.
@@ -174,6 +297,16 @@ See [@Boehmke2020](https://bradleyboehmke.github.io/HOML/bagging.html#easily-par
 
 ```{r}
 show(bag.Ames)
+```
+
+```{r predictBag}
+yhat.bag <- predict(bag.Ames, newdata = ames_test)
+plot(yhat.bag, ames_test$Sale_Price)
+abline(0, 1)
+
+test_rmse_bag  <- sqrt(mean(mean((yhat.bag - ames_test$Sale_Price)^2)))
+paste("Error test (rmse) for bagged tree:", round(test_rmse_bag,2))
+errTable[4, ] <-  c("Bagged Tree (ntree=100)", round(test_rmse_bag,2))
 ```
 
 Bagging tends to improve quickly as the number of resampled trees increases, and then it reaches a platform.
@@ -197,40 +330,59 @@ VIP <- VIP[order(VIP[,1], decreasing = TRUE),]
 head(VIP, n=30)
 ```
 
+Importance values can be plotted directly:
 
 ```{r}
 invVIP <-VIP[order(VIP[,1], decreasing = FALSE),1] 
 tVIP<- tail(invVIP, n=15)
-barplot(tVIP, 
-        names.arg=row.names(tVIP), cex.names=0.5,las=2,
-        horiz = TRUE)
+barplot(tVIP, horiz = TRUE, cex.names=0.5)
+```
+
+Alternatively one can use the `vip`function from the `vip` package
+
+
+```{r}
+if (!require(vip)) install.packages("vip", dep=TRUE)
+vip(bag.Ames, num_features = 40, bar = FALSE)
+```
+
+# A random forest to improve bagging
+
+Bagging can be improved if, instead of using all variables to build each tree we rely on subsets of variables, which are chosen at each split in order to decrease correlation between trees.
+
+Random Forests are considered to produce good predictors with default values sop no parameter is set in a first iteration.
+
+```{r fitRF}
+# make bootstrapping reproducible
+set.seed(123)
+
+require(randomForest)
+RF.Ames <- randomForest(Sale_Price ~ ., 
+                         data = ames_train, 
+                         importance = TRUE)
 ```
 
 
-Alternatively if the tree is built with `caret` the `vip` function from package `vip` can be used.
-
-```{r eval=FALSE}
-  system.time(
-  ames_bag2 <- train(
-    Sale_Price ~ .,
-    data = ames_train,
-    method = "treebag",
-    trControl = trainControl(method = "oob"),
-    nbagg = 100,  
-    keepX=TRUE,
-    control = rpart.control(minsplit = 2, cp = 0)
-    )
-  )
-
-vip::vip(ames_bag2, num_features = 40)
+```{r}
+show(RF.Ames)
 ```
 
+```{r predictRF}
+yhat.rf <- predict(RF.Ames, newdata = ames_test)
+plot(yhat.rf, ames_test$Sale_Price)
+abline(0, 1)
 
-```{r, out.width="100%"}
-knitr::include_graphics("images/ames2VIP.png")
+test_rmse_rf  <- sqrt(mean(mean((yhat.rf - ames_test$Sale_Price)^2)))
+paste("Error test (rmse) for Random Forest:", round(test_rmse_rf,2))
+errTable[5, ] <-  c("Random Forest (defaults)", round(test_rmse_rf,2))
 ```
 
-## Random forests for gene expression data
+There is some improvement on bagging but it is clearly small.
+
+Notice however that the percentage of explained variance is bigger for RF than for Bag
+
+
+# Random forests for gene expression data
 
 Random forest have been particularly successful in Bioinformatics where high dimensional data are common.
 
