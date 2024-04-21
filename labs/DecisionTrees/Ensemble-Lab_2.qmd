@@ -57,6 +57,75 @@ library(ipred)       # for fitting bagged decision trees
 
 ```
 
+# A case for improvement
+
+This example relies on the `AmesHousing` dataset on house prices in Ames, IA.
+We start building a regression tree. The fitted tree cannot be improved by pruning, so it will opt to try ensemblemethods on it.
+
+```{r}
+if(!require(AmesHousing))
+  install.packages("AmesHousing", dep=TRUE)
+ames <- AmesHousing::make_ames()
+```
+
+We split the data in separate test / training sets and do it in such a way that samplig is balanced for the response variable, `Sale_Price`.
+
+```{r}
+if(!require(rsample))
+  install.packages("rsample", dep=TRUE)
+# Stratified sampling with the rsample package
+set.seed(123)
+split <- rsample::initial_split(ames, prop = 0.7, 
+                       strata = "Sale_Price")
+ames_train  <- training(split)
+ames_test   <- testing(split)
+```
+
+We use the `tree` package to fit a regression tree to predict the `Sales_price` variable.
+
+```{r}
+require(rpart)
+ ames_dt1 <- rpart(
+   formula = Sale_Price ~ .,
+   data    = ames_train
+   # method  = "anova"
+ )
+```
+
+We can visualize the tree with `rpart.plot()`
+
+```{r}
+require(rpart.plot)
+rpart.plot(ames_dt1, cex=0.5)
+```
+
+`rpart()` automatically applies a range of cost complexity ($\alpha$ values to prune the tree).
+
+To compare the error for each $\alpha$ value, `rpart()` performs a 10-fold CV (by default).
+
+```{r}
+printcp(ames_dt1)
+```
+
+```{r}
+plotcp(ames_dt1)
+```
+
+A good choice of `cp` for pruning is often the leftmost value for which the mean lies below the horizontal line
+
+## Feature importance
+
+The `vip` function from the `vip` package allows computing variable importance from a built predictor object.
+
+```{r}
+if(!require(vip))
+  install.packages("vip", dep=TRUE)
+require(vip)
+## ? vip
+vip(ames_dt1, num_features = 40, bar = FALSE)
+```
+
+
 # Bagging trees
 
 The first example is adapted from [@Boehmke2020], also [available online](https://bradleyboehmke.github.io/HOML/).
