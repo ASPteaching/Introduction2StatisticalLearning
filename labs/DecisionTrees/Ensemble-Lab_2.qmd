@@ -47,14 +47,13 @@ if(!require("rpart.plot")) install.packages("rpart.plot")
 # Helper packages
 library(dplyr)       # for data wrangling
 library(ggplot2)     # for awesome plotting
-library(doParallel)  # for parallel backend to foreach
+library(modeldata)  # for parallel backend to foreach
 library(foreach)     # for parallel processing with for loops
 
 # Modeling packages
 library(caret)       # for general model fitting
 library(rpart)       # for fitting decision trees
 library(ipred)       # for fitting bagged decision trees
-
 ```
 
 # Introduction
@@ -299,15 +298,49 @@ See [@Boehmke2020](https://bradleyboehmke.github.io/HOML/bagging.html#easily-par
 show(bag.Ames)
 ```
 
-```{r predictBag}
+## Distinct error rates
+
+The following chunks of code show the fit between data and predictions for the train set, the test set and the out-of bag samples
+
+### Error estimated from train samples
+
+```{r predictBagTrain}
+yhattrain.bag <- predict(bag.Ames, newdata = ames_train)
+plot(yhattrain.bag, ames_train$Sale_Price)
+abline(0, 1)
+train_mse_bag  <- mean(yhattrain.bag - ames_train$Sale_Price)^2
+paste("Error train (rmse) for bagged tree:", round(train_mse_bag,2))
+```
+
+
+### Error estimated from test samples
+
+```{r predictBagTest}
 yhat.bag <- predict(bag.Ames, newdata = ames_test)
 plot(yhat.bag, ames_test$Sale_Price)
 abline(0, 1)
-
-test_rmse_bag  <- sqrt(mean(mean((yhat.bag - ames_test$Sale_Price)^2)))
-paste("Error test (rmse) for bagged tree:", round(test_rmse_bag,2))
-errTable[4, ] <-  c("Bagged Tree (ntree=100)", round(test_rmse_bag,2))
+test_mse_bag  <- mean(yhat.bag - ames_test$Sale_Price)^2
+paste("Error test (rmse) for bagged tree:", round(test_mse_bag,2))
 ```
+
+### Error estimated from out-of-bag samples
+
+Bagging allows computing an out-of bag error estimate. 
+
+Out of bag error rate is reported in the output and can be computed from the `predicted` (*"the predicted values of the input data based on out-of-bag samples"*) 
+
+
+```{r predictBagOOB}
+oob_err<- mean((bag.Ames$predicted-ames_train$Sale_Price)^2)
+plot(bag.Ames$predicted, ames_train$Sale_Price)
+abline(0, 1)
+paste("Out of bag error for bagged tree:", round(oob_err,2))
+```
+
+Interestingly this may be not only bigger than the error estimated on the train set but also bigger than the error estimated on the test set.
+
+
+## Bagging parameter tuning
 
 Bagging tends to improve quickly as the number of resampled trees increases, and then it reaches a platform.
 
@@ -372,7 +405,7 @@ yhat.rf <- predict(RF.Ames, newdata = ames_test)
 plot(yhat.rf, ames_test$Sale_Price)
 abline(0, 1)
 
-test_rmse_rf  <- sqrt(mean(mean((yhat.rf - ames_test$Sale_Price)^2)))
+test_rmse_rf  <- sqrt(mean((yhat.rf - ames_test$Sale_Price)^2))
 paste("Error test (rmse) for Random Forest:", round(test_rmse_rf,2))
 errTable[5, ] <-  c("Random Forest (defaults)", round(test_rmse_rf,2))
 ```
@@ -381,138 +414,57 @@ There is some improvement on bagging but it is clearly small.
 
 Notice however that the percentage of explained variance is bigger for RF than for Bag
 
+## Parameter optimization for RF
 
-# Random forests for gene expression data
+Several parameters can be changed to optimize a random forest predictor, but, usually, the most important one is the *number of variables* to be randomly selected at each split $m_{try}$, followed by the number of tree, which tends to stabilize after a certain value.
 
-Random forest have been particularly successful in Bioinformatics where high dimensional data are common.
+A common strategy to find the optimum combination of parameters is  to perform a *grid search* through a combination of parameter values. Obviously it can be time consuming so a small grid is run in the example below to illustrate how to do it.
 
-One common application has been the use of RF to derive cancer-related classifiers based on gene expression data.
-
-Gene expression data are high dimensional tabular datasets where for each inividual the expression of a high number of genes has been measured
-
-The example uses "RMA-preprocessed gene expression data" obtained by [@Chiaretti2004]. Briefly they consist of:
-
-- 12625 genes (hgu95av2 Affymetrix GeneChip)
-- 128 samples (arrays)
-- phenotypic data on all 128 patients, including:
-- 95 B-cell cancer
-- 33 T-cell cancer
-
-A standard bioinformatic preprocessing has been applied.
-
-The code below is shown for consistency, but unless you are interested/familiar with Bioconductor and microarray data storage and preprocessing it can be skipped.
-
-This code generates a simplified dataset that is saved into a binary file `data/smallALL.Rda'. This file can be directly loaded for the example.
-
-```{r eval=FALSE}
-if(!require(affy)) BiocManager::install("affy")
-if(!require(genefilter)) BiocManager::install("genefilter")
-if(!require(ALL)) BiocManager::install("ALL")
-library(affy)
-library(ALL)
-data(ALL)
-```
-
-Preprocessing is applied to obtain relevant subset of data
-Also, keep 30 arrays here JUST for computational convenience #  
-
-```{r eval=FALSE}
-library(genefilter); 
-e.mat <- 2^(exprs(ALL)[,c(81:110)]) 
-ffun <- filterfun(pOverA(0.20,100)) 
-t.fil <- genefilter(e.mat,ffun) 
-smallData <- log2(e.mat[t.fil,]) 
-group <- c(rep('B',15),rep('T',15)) 
-dim(smallData) 
-colnames(smallData)
-infoData <- cbind(pData(ALL)[81:110,1:5], group) # column "BT" defines groups
-save (smallData, infoData, file="data/smallALL.Rda")
-```
-
-```{r loadOmics}
-load (file = "data/smallALL.Rda")
-```
-
-We use the `randomForest` library to build an "out-of-the box" classifier.
 
 ```{r}
-if (!require(randomForest)) install.packages("randomForest", dep=TRUE)
-library(randomForest) 
-set.seed(1234) 
+num_trees_range <- seq(100, 400, 100)
+
+num_vars_range <- floor(ncol(ames_train)/(seq(2,4,1)))
+
+RFerrTable <- data.frame(Model=character(), 
+                       NumTree=integer(), NumVar=integer(), 
+                       RMSE=double())
+errValue <- 1
 system.time(
-rf <- randomForest(x=t(smallData),
-                   y=as.factor(infoData$group),
-                   ntree=10000) 
+for (i in seq_along(num_trees_range)){
+  for (j in seq_along(num_vars_range)) {  
+    numTrees <- num_trees_range[i]
+    numVars <- num_vars_range [j] # floor(ncol(ames_train)/3) # default
+    RF.Ames.n <- randomForest(Sale_Price ~ ., 
+                         data = ames_train, 
+                         mtry = numVars,
+                         ntree= numTrees,
+                         importance = TRUE)
+    yhat.rf <- predict(RF.Ames.n, newdata = ames_test)
+    oob.rf <- RF.Ames.n$predicted
+    
+    test_rmse_rf  <- sqrt(mean((yhat.rf - ames_test$Sale_Price)^2))
+
+  
+    RFerrTable[errValue, ] <-  c("Random Forest", 
+                            NumTree = numTrees, NumVar = numVars, 
+                            RMSE = round(test_rmse_rf,2)) 
+    errValue <- errValue+1
+  }
+}
 )
 ```
+  
+```{r}
+RFerrTable %>% kableExtra::kable()
+```
 
-Inspect the results
+The minimum RMSE is attained at.
 
 ```{r}
-rf
+RFerrTable[RFerrTable$RMSE==min(RFerrTable$RMSE),]
 ```
 
-Now look at variable importance:
-
-```{r}
-imp.temp <- abs(rf$importance[,]) 
-t <- order(imp.temp,decreasing=TRUE)
-plot(c(1:nrow(smallData)),imp.temp[t],log='x',cex.main=1.5,    xlab='gene rank',ylab='variable importance',cex.lab=1.5,    pch=16,main='ALL subset results')  
-```
-
-Or, a better plot:
-
-```{r}
-varImpPlot(rf, n.var=25, main='ALL Subset Results') 
-```
-
-
-We can focus on the 25 most important genes
-
-```{r}
-gn.imp <- names(imp.temp)[t] 
-gn.25 <- gn.imp[1:25] 
-# vector of top 25 genes, in order
-```
-
-We can use the Bioinformatics Bioconductor libraries to find out more about these these genes. Information on how to do it can be found at [https://aspteaching.github.io/An-Introduction-to-Pathway-Analysis-with-R-and-Bioconductor/](https://aspteaching.github.io/An-Introduction-to-Pathway-Analysis-with-R-and-Bioconductor/).
-
-Again, the code is shown but it has been run aside this lab and the result saved as a binary file.
-
-```{r eval=FALSE}
-if(!require(hgu95av2.db)) BiocManager::install("hgu95av2.db")
-if(!require(AnnotationDbi)) BiocManager::install("AnnotationDbi")
-library(hgu95av2.db)
-geneAnots <- AnnotationDbi::select(hgu95av2.db, gn.25,
-                      c("SYMBOL", "GENENAME"))
-head(geneAnots, n=25)
-```
-
-```{r}
-knitr::include_graphics("images/geneNames.png")
-```
-
-
-To end the exploration we plot  heatmap that shows how the two groups differ in gene expression.
-
-```{r eval=FALSE}
-sigGenes<- smallData[gn.25,]
-t <- is.element(rownames(small.eset),gn.25) 
-sig.eset <- small.eset[t,]    
-# matrix of expression values, not necessarily in order  
-library(RColorBrewer) 
-hmcol <- colorRampPalette(brewer.pal(11,"PuOr"))(256) 
-colnames(sig.eset) <- group 
-# This will label the heatmap columns 
-csc <- rep(hmcol[50],30) 
-csc[group=='T'] <- hmcol[200]    
-# column side color will be purple for T and orange for B 
-heatmap(sigGenes,scale="row", col=hmcol,ColSideColors=csc) 
-```
-
-```{r}
-knitr::include_graphics("images/allHeatMap.png")
-```
 
 # Random Forests with Python
 

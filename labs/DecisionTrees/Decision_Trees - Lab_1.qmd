@@ -230,7 +230,7 @@ We know there is a chance that fitting the tree produces some overfitting so we 
 
 The function `cv.tree()` performs cross-validation in order to determine the optimal level of tree complexity. 
 - Cost complexity pruning is used in order to select a sequence of trees for consideration. 
-- We use the argument `FUN = prune.misclass` in order to indicate that we want the classification error rate to guide the cross-validation and pruning process, rather than the default for the `cv.tree()` function, which is deviance. 
+- We use the argument `FUN = prune.misclass` in order to indicate that we want the *classification error rate* to guide the cross-validation and pruning process, rather than the default for the `cv.tree()` function, which is *deviance*. 
 
 The `cv.tree()` function reports the number of terminal nodes of each tree considered (size) as well as the corresponding error rate and the value of the cost-complexity parameter used 
 

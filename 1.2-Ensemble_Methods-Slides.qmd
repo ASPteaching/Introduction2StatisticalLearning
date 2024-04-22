@@ -807,12 +807,14 @@ knitr::include_graphics("images/RandomForestsHyperparameters4.png")
 
 ## Another ensemble approach
 
+:::{.font90}
 - The idea of *improving weak learners by aggregation* has moved historically along two distinct lines:
 
-  - Build many similar learners (trees) on resamples obtained from the original sample and, somehow, average their predictions.
+  - Build similar learners on resamples from the original sample and, somehow, average their predictions.
     - This entails *Bagging* and *Random Forests*
-  - Build a learner (tree) progressively, improving it at every step using weak learners, until the desired /maximal possible quality is obtained.
+  - Build a learner progressively, improving it at every step using weak learners, until the desired /maximal possible quality is obtained.
     - This is what *Boosting* is about.
+:::
 
 ## Bagging vs Boosting
 
@@ -826,7 +828,6 @@ knitr::include_graphics("images/baggingVsboosting1.png")
 
 :::
 
-::: {.fragment}
 ::: {.column width='50%'}
 
 ```{r, out.width="100%"}
@@ -834,9 +835,10 @@ knitr::include_graphics("images/baggingVsboosting2.png")
 ```
 
 :::
-:::
 
 ::::
+
+Source: [Ensemble Learning: Bagging & Boosting](https://resources.experfy.com/ai-ml/ensemble-learning-bagging-boosting/)
 
 ## So what is Boosting
 
@@ -881,12 +883,24 @@ knitr::include_graphics("images/baggingVsboosting2.png")
 
 ## Adaboost
 
-- AdaBoost (Adaptive Boosting) combines multiple weak classifiers into a strong classifier. 
-- It does so by, at each iteration:
-  - Train weak classifiers on the dataset and
-  - Assign higher weights to misclassified samples.
-- This way, subsequent classifiers focus more on  samples that were previously miss-classified, and
-- The accuracy of the ensemble classifier will increase. 
+- AdaBoost (Adaptive Boosting) directly reflects what has been described above as "boosting".
+
+- Its main objective is to *Improve classification accuracy by combining multiple "weak learners"*
+
+- In order to run AdaBoost it is required:
+
+  - To choose a weak learner with slightly better than random guessing capability (e.g., shallow decision trees).
+  - To encoding classesas +1 and -1.
+  - To set **initial equal weights* for all training observations.
+
+## Running Adaboost
+ 
+- Adaboost proceeds iteratively by, at each iteration:
+  - Fit the weak learner using initial weights.
+  - Predict and identify misclassified observations.
+  - Update *observation weights*: decrease for correctly classified, increase for misclassified.
+  - Assign a *learner weight* to the weak learner based on its accuracy.
+- The final prediction is a *weighted combination* of all weak learners.
 
 ::: {.notes}
 - AdaBoost implements a vector of weights to penalize those samples that were incorrectly inferred (by increasing the weight) and reward those that were correctly inferred (by decreasing the weight). 
@@ -905,28 +919,34 @@ knitr::include_graphics("images/baggingVsboosting2.png")
 knitr::include_graphics("images/adaboost.png")
 ```
 
-## Adaboost pseudo-code{.smaller}
+Source: [Ensemble Learning: Bagging & Boosting](https://resources.experfy.com/ai-ml/ensemble-learning-bagging-boosting/)
 
-1. Initialize the sample weights: $w_i = 1/N$, where $N$ is the number of training samples.
+## Adaboost pseudo-code
+
+:::{.font60}
+1. Initialize sample weights: $w_i = 1/N$, where $N$ = # of training samples.
 2. For each iteration $t=1,2,\dots,T$ do:
 
   a. Train a weak classifier $h_t(x)$ on the training set weighted by $w_i$.
-  b. Compute the weighted error rate: $\epsilon_t = \sum_{i=1}^N w_i I(y_i \neq h_t(x_i))$, where $I$ is the indicator function.
+  b. Compute the weighted error rate: 
+  $$\epsilon_t = \frac{\sum_{i=1}^N w_i I(y_i \neq h_t(x_i))}{\sum_{i=1}^N w_i }$$
   c. Compute the classifier weight: $\alpha_t = \frac{1}{2}\log\frac{1-\epsilon_t}{\epsilon_t}$.
-  d. Update the sample weights: $w_i \leftarrow w_i \exp(-\alpha_t y_i h_t(x_i))$.
+  d. Update the sample weights: $w_i \leftarrow w_i \exp(-\alpha_t I(y_i \neq h_t(x_i)))$.
   e. Normalize the sample weights: $w_i \leftarrow \frac{w_i}{\sum_{j=1}^N w_j}$.
   
 3. Output the final classifier: $H(x) = \text{sign}\left(\sum_{t=1}^T \alpha_t h_t(x)\right)$.
-
+:::
 
 ## Adaboost applications
 
+:::{.font80}
 - AdaBoost was sucessfully used in face recognition. 
-- Here, the task is to identify whether an image contains a face or not. 
-- AdaBoost can be used to train a classifier on a set of face images and a set of non-face images. 
+- Task: to identify whether an image contains a face or not. 
+- AdaBoost used to train a classifier on a set of face images and a set of non-face images. 
 - The weak classifier can be a decision stump that checks whether a specific feature is present in the image or not. 
-- AdaBoost will then iteratively train weak classifiers and assign higher weights to misclassified samples, leading to a stronger ensemble classifier. 
+- AdaBoost iteratively trains weak classifiers and assigns higher weights to misclassified samples, leading to a stronger ensemble classifier. 
 - The resulting classifier can then be used to detect faces in new images with high accuracy.
+:::
 
 ## Adaboost has limitations
 
@@ -934,8 +954,8 @@ knitr::include_graphics("images/adaboost.png")
 - However, Adaboost has its limitations. 
   - It does not handle continuous variables very well. 
   - Can be sensitive to noisy data and outliers,
-  - May not perform well with complex datasets. Moreover, 
-  - Its performance can plateau, meaning it will no longer improve after a certain number of iterations.
+  - May not perform well with complex datasets. 
+  - Its performance can reach a "plateau": it will no longer improve after a certain number of iterations.
 
 
 ## Gradient Boosting
