@@ -647,7 +647,7 @@ variables, the labels are first replaced by 0,1,2 for
 - This is known as *label encoding*
 
 ```{r, fig.align='center', out.width="100%", fig.cap=""}
-knitr::include_graphics("images/ANN-IrisExample7.png")
+knitr::include_graphics("images/ANN-IrisExample8.png")
 ```
 
 ## Encode categorical vars (2) {.smaller}
@@ -657,7 +657,7 @@ the iris dataset and then one-hot encoded by calling
 the `to_one_hot` function
 
 ```{r, fig.align='center', out.width="100%", fig.cap=""}
-knitr::include_graphics("images/ANN-IrisExample8.png")
+knitr::include_graphics("images/ANN-IrisExample9.png")
 ```
 
 
