@@ -57,7 +57,7 @@ library("knitr")
 knitr::opts_chunk$set(comment=NA,echo = TRUE, cache=TRUE)
 ```
 
-# From Artifial Neurons to Artificial Intelligence
+# From Artificial Neurons to Artificial Intelligence
 
 In the post-pandemic world a big phenomenon is impacting society: a lightning rise of Artificial Intelligence with a mess of realities and promises.
 
