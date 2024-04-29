@@ -689,7 +689,9 @@ $$
 ## Multiple architectures for ANN
 
 -   We have so far focused on a single hidden layer neural network of
-    the example One can build neural networks with many distinct
+    the example.
+    
+- Indeed, One can build neural networks with many distinct
     architectures (meaning patterns of connectivity between neurons),
     including ones with multiple hidden layers.
 
@@ -936,8 +938,7 @@ $N(0,0.01)$.
 
 # An example
 
-In this example we train and use a "shallow neural network", called this
-way in contrast with "deep neural networks".
+In this example we train and use a "shallow neural network", called this way in contrast with "deep neural networks".
 
 We will use the `neuralnet` R package, which is not intended to work
 with deep neural networks, to build a simple neural network to predict

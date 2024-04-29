@@ -800,348 +800,179 @@ f(z)=\frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}
 <section id="putting-it-all-together" class="slide level2">
 <h2>Putting it all together</h2>
 
-<img data-src="images/ArtificialNeuron.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p><span class="math inline">\(\Sigma=\left\langle w_{j}, x\right\rangle+ b_{j}\)</span></p>
+<img data-src="images/ArtificialNeuron.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="in-words" class="slide level2">
+<h2>In words</h2>
+<ul>
+<li><p>An ANN a vector of input values <span class="math inline">\(x_{1}, \ldots, x_{d}\)</span> and combines it with some weights that are local to the neuron <span class="math inline">\(\left(w_{0}, w_{1}, . ., w_{d}\right)\)</span> to compute a net input <span class="math inline">\(w_{0}+\sum_{i=1}^{d} w_{i} * x_{i}\)</span>.</p></li>
+<li><p>To compute its output, it then passes the net input through a possibly non-linear univariate activation function <span class="math inline">\(g(\cdot)\)</span>, usually vchosen from a set of options such as <em>Sigmoid</em>, <em>Tanh</em> or <em>ReLU</em> functions</p></li>
+<li><p>To dela with the <em>bias</em>, we create an extra input variable <span class="math inline">\(x_{0}\)</span> with value always equal to 1 , and so the function computed by a single artificial neuron (parameterized by its weights <span class="math inline">\(\mathbf{w}\)</span> ) is:</p></li>
+</ul>
+<p><span class="math display">\[
+y(\mathbf{x})=g\left(w_{0}+\sum_{i=1}^{d} w_{i} x_{i}\right)=g\left(\sum_{i=0}^{d} w_{i} x_{i}\right)=g\left(\mathbf{w}^{\mathbf{T}} \mathbf{x}\right)
+\]</span></p>
 </section></section>
 <section>
 <section id="from-neurons-to-neural-networks" class="title-slide slide level1 center">
 <h1>From neurons to neural networks</h1>
 
 </section>
-<section id="multilayer-perceptrons" class="slide level2 smaller">
-<h2>Multilayer perceptrons</h2>
+<section id="the-basic-neural-network" class="slide level2 smaller">
+<h2>The basic neural network</h2>
+<p>Following with the brain analogy one can combine (artificial) neurons to create better learners.</p>
+<p>A simple artificial neural network is usually created by combining two types of modifications to the basic perceptron (AN).</p>
 <ul>
-<li>A Multilayer Perceptron or Artificial Neural Network (ANN) is a computational model that mimics the structure and function of the human brain.</li>
-<li>It is composed of interconnected nodes, called neurons, that are organized into layers.</li>
-<li>Neurons in each layer are connected to neurons in the next layer, forming a directed graph-like structure.</li>
-<li>The first layer (input layer) receives input data.</li>
-<li>Last layer produces the final prediction</li>
-<li>Intermediate (hidden) layers perform intermediate calculations.</li>
+<li>Stacking several neurons insteads of just one.</li>
+<li>Adding an additional layer of neurons, which is call a <em>hidden</em> layer,</li>
 </ul>
+<p>This yields a system where the output of a can be the input of another in many different ways.</p>
 </section>
 <section id="an-artificial-neural-network" class="slide level2">
 <h2>An Artificial Neural network</h2>
 
-<img data-src="images/MultiLayer1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="the-architecture-of-ann" class="slide level2">
+<img data-src="images/nn.jpg" class="quarto-figure quarto-figure-center r-stretch" style="width:90.0%"></section>
+<section id="the-architecture-of-ann" class="slide level2 smaller">
 <h2>The architecture of ANN</h2>
+<p>In this figure, we have used circles to also denote the inputs to the network.</p>
 <ul>
-<li><p>Multilayers perceptrons have a basic architecture:</p>
+<li><p>Circles labeled +1 are <em>bias units</em>, and correspond to the intercept term.</p></li>
+<li><p>The leftmost layer of the network is called the <em>input layer</em>.</p></li>
+<li><p>The rightmost layer of the network is called the output layer.</p>
 <ul>
-<li>each unit (or neuron) of a layer is linked to all the units of the next layer</li>
-<li>but has no link with the neurons of the same layer.</li>
+<li>In this example, the output layer has only one node.</li>
 </ul></li>
-<li><p>This basic architecture can changes in many possible ways</p>
+<li><p>The middle layer of nodes is called the <em>hidden layer</em>, because its values are not observed in the training set.</p></li>
+</ul>
+<p>Bias nodes are not counted when stating the neuron size. In the example above we also say that our example neural network has:</p>
 <ul>
-<li>There may be links between neurons in same layer,</li>
-<li>Missing links between two layers …</li>
+<li>3 input units (not counting the bias unit),</li>
+<li>3 hidden units, and</li>
+<li>1 output unit.</li>
+</ul>
+</section>
+<section id="how-an-ann-works" class="slide level2 smaller">
+<h2>How an ANN works</h2>
+<p>An ANN is a predictive model (a *learner) whose properties and behaviour can be well characterized.</p>
+<p>In practice this means:</p>
+<ul>
+<li><p>The ANN operates through a process known as <em>forward propagation</em>, which encompasses the entire journey of information flow from the input layer to the output layer.</p></li>
+<li><p>Forward propagation is performed by composing a series of linear and non-linear (activation) functions.</p></li>
+<li><p>These are characterized (parametrized) by their <em>weights</em> and <em>biases</em>, that need to be <em>learnt</em>. This is done by <em>training the ANN</em>.</p></li>
+</ul>
+</section>
+<section id="training-the-ann" class="slide level2 smaller">
+<h2>Training the ANN</h2>
+<ul>
+<li><p>In order for the ANN to perform well, the training process aims at finding the best possible parameter values for the learning task defined by the fnctions. This is done by</p>
+<ul>
+<li>Selecting an appropriate (convex) loss function,</li>
+<li>Finding those weights that minimize a the total <em>cost</em> function (avg. loss).</li>
+</ul></li>
+<li><p>This is usually done using some iterative optimization procedure such as <em>gradient descent</em>.</p>
+<ul>
+<li>This requires evaluating derivatives in a huge number of points.</li>
+<li>Such high number may be reduced by <em>Stochastic Gradient Descent</em>.</li>
+<li>The evaluation of derivatives is simplified thanks to <em>Backpropagation</em>.</li>
 </ul></li>
 </ul>
 </section>
-<section id="the-architecture-of-an-ann" class="slide level2">
-<h2>The architecture of an ANN</h2>
-<ul>
-<li><p>The architecture of a multilayer perceptron is defined by:</p>
-<ul>
-<li>The number of hidden layers and</li>
-<li>The number of neurons in each layer</li>
-</ul></li>
-<li><p>Activation functions are important in the definition of the ANN, but not relevant for the architecture.</p></li>
-</ul>
-</section>
-<section id="activation-functions-for-ann-1" class="slide level2">
-<h2>Activation functions for ANN (1)</h2>
-<ul>
-<li>For the output layer, the activation function is generally different from the one used on the hidden layers.
-<ul>
-<li>For <strong>regression</strong>, we apply no activation function on the output layer.</li>
-<li>For <strong>binary</strong> classification, where output is a prediction of <span class="math inline">\(\mathbb{P}(Y=1 /X) \in [0,1]\)</span>
-<ul>
-<li>The <em>sigmoid</em> activation function is used.</li>
-</ul></li>
-<li>For <strong>multi-class classification</strong>, where there is one neuron per class giving a prediction of <span class="math inline">\(\mathbb{P}(Y=i / X)\)</span>.
-<ul>
-<li>The soft-max activation function is common</li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="the-soft-max-activation-function" class="slide level2">
-<h2>The soft-max activation function</h2>
+<section id="forward-propagation" class="slide level2 smaller">
+<h2>Forward propagation</h2>
+<p>As described above the process that encompasses the computations required to go from the input values to the final output is known as <em>forward propagation</em>.</p>
+<p>The weights are combined with the input to produce the final output.</p>
+<p>Each node, <span class="math inline">\(a_i^{(2)}\)</span> of the hidden layer opperates on all nodes of the input values</p>
+<p><span class="math display">\[\begin{eqnarray}
+a_1^{(2)}&amp;=&amp;f(\theta_{10}^{(1)}+\theta_{11}^{(1)}x_1+\theta_{12}^{(1)}x_2+\theta_{13}^{(1)}x_3)\\
+a_2^{(2)}&amp;=&amp;f(\theta_{20}^{(1)}+\theta_{21}^{(1)}x_1+\theta_{22}^{(1)}x_2+\theta_{23}^{(1)}x_3)\\
+a_3^{(2)}&amp;=&amp;f(\theta_{30}^{(1)}+\theta_{31}^{(1)}x_1+\theta_{32}^{(1)}x_2+\theta_{33}^{(1)}x_3))
+\end{eqnarray}\]</span></p>
+<p>The output of the hidden layer is transformed through the activation function:</p>
 <p><span class="math display">\[
-\operatorname{softmax}(z)_{i}=\frac{\exp \left(z_{i}\right)}{\sum_{j} \exp \left(z_{j}\right)}
+h_{\Theta}(x)=a_1^{(3)}=f(\theta_{10}^{(2)}+\theta_{11}^{(2)}a_1^{(2)}+\theta_{12}^{(2)}a_2^{(2)}+\theta_{13}^{(2)}a_3^{(2)}
 \]</span></p>
-<ul>
-<li><p>Commonly used in multiclass classification tasks to convert raw scores into probabilities.</p></li>
-<li><p>Inputs a vector of real numbers and normalizes it into a probability distribution over multiple classes.</p></li>
-<li><p>Outputs a vector where each element represents the probability of the corresponding class.</p></li>
-</ul>
-</section></section>
-<section>
-<section id="ann-example-using-python" class="title-slide slide level1 center">
-<h1>ANN example using Python</h1>
-
 </section>
-<section id="iris-data-classification" class="slide level2">
-<h2>Iris data classification</h2>
-<ul>
-<li><p>The example below has been borrowed from D. Wishart’s cours on “Machine Learning” from Bioinformatics Canada courses in Bioinformatics.</p></li>
-<li><p>The example trains a simple ANN to classify Iris species using the well-known “iris” dataset.</p></li>
-<li><p>The code and data is available in the lab folder as a python notebook <code>irisANN.ipynb</code></p></li>
-</ul>
+<section id="a-compact-notation-1" class="slide level2 smaller">
+<h2>A compact notation (1)</h2>
+<p>Let <span class="math inline">\(z_i^{(l)}\)</span> denote the total weighted sum of inputs to unit <span class="math inline">\(i\)</span> in layer <span class="math inline">\(l\)</span>:</p>
+<p><span class="math display">\[
+z_i^{(2)}=\theta_{i0}^{(1)}+\theta_{i1}^{(1)}x_1+\theta_{i2}^{(1)}x_2+\theta_{i3}^{(1)}x_3,
+\]</span> the output becomes: <span class="math inline">\(a_i^{(l)}=f(z_i^{(l)})\)</span>.</p>
+<p>Extending the activation function <span class="math inline">\(f(\cdot)\)</span> to apply elementwise to vectors:</p>
+<p><span class="math display">\[
+    f([z_1,z_2,z_3]) = [f(z_1), f(z_2),f(z_3)],
+\]</span> we can write the previous equations more compactly as:</p>
+<span class="math display">\[\begin{eqnarray}
+z^{(2)}&amp;=&amp;\Theta^{(1)}x\nonumber\\
+a^{(2)}&amp;=&amp;f(z^{(2)})\nonumber\\
+z^{(3)}&amp;=&amp;\Theta^{(2)}a^{(2)}\nonumber\\
+h_{\Theta}(x)&amp;=&amp;a^{(3)}=f(z^{(3)})\nonumber
+\end{eqnarray}\]</span>
 </section>
-<section id="the-general-workflow" class="slide level2 smaller">
-<h2>The general workflow</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>PREPARE</strong></p>
-<ul>
-<li>Read data</li>
-<li>Check data</li>
-<li>Create training/testing data sets</li>
-<li>Create a one hot encoding function</li>
-<li>Create a normalization function</li>
-<li>Normalize the data</li>
-<li>Perform label encoding and one hot encoding</li>
-<li>Define activation function</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><strong>RUN</strong></p>
-<ul>
-<li>Initialize weights and biases</li>
-<li><em>Determine number of batches</em></li>
-<li><em>Perform forward propagation</em></li>
-<li><em>Calculate the errors</em></li>
-<li><em>Perform back propagation</em></li>
-<li><em>Update weights and biases</em></li>
-</ul>
-</div>
-</div>
+<section id="a-compact-notation-2" class="slide level2 smaller">
+<h2>A compact notation (2)</h2>
+<p>More generally, recalling that we also use <span class="math inline">\(a^{(1)}=x\)</span> to also denote the values from the input layer,</p>
+<p>Given layer <span class="math inline">\(l\)</span>’s activations <span class="math inline">\(a^{(l)}\)</span>, we can compute layer <span class="math inline">\(l+1\)</span>’s activations <span class="math inline">\(a^{(l+1)}\)</span> as:</p>
+<p><span class="math display">\[\begin{equation}
+z^{(l+1)}=\Theta^{(l)}a^{(l)}
+\label{eqforZs}
+\end{equation}\]</span></p>
+<p><span class="math display">\[\begin{equation}
+a^{(l+1)}=f(z^{(l+1)})
+\label{eqforAs}
+\end{equation}\]</span></p>
 </section>
-<section id="load-required-libraries" class="slide level2 smaller">
-<h2>Load required libraries</h2>
-<div class="columns">
-<div class="column" style="width:60%;">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/ANN-IrisExample1.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:40%;">
+<section id="a-compact-notation-3" class="slide level2 smaller">
+<h2>A compact notation (3)</h2>
+<p>This can be used to provide a matrix representation for the weighted sum of inputs of all neurons:</p>
+$$ z^{(l+1)}=
+<span class="math display">\[\begin{bmatrix}
+z_1^{(l+1)}\\
+z_2^{(l+1)}\\
+\vdots\\
+z_{s_{l+1}}^{(l)}
+\end{bmatrix}\]</span>
+=
+<span class="math display">\[\begin{bmatrix}
+\theta_{10}^{(l)}&amp; \theta_{11}^{(l)}&amp;\theta_{12}^{(l)}&amp;...&amp;\theta_{1s_{l}}^{(l)}&amp;\\
+\theta_{20}^{(l)}&amp; \theta_{21}^{(l)}&amp;\theta_{22}^{(l)}&amp;...&amp;\theta_{2s_{l}}^{(l)}&amp;\\
+\vdots &amp; \vdots&amp; \vdots &amp; \vdots &amp; \vdots\\
+\theta_{s_{l+1}0}^{(l)}&amp; \theta_{s_{l+1}1}^{(l)}&amp;\theta_{s_{l+1}2}^{(l)}&amp;...&amp;\theta_{s_{l+1}s_{l}}^{(l)}&amp;\\
+\end{bmatrix}\]</span>
+
+<span class="math display">\[\begin{bmatrix}
+1\\
+a_1^{(l)}\\
+a_2^{(l)}\\
+\vdots\\
+a_{s_l}^{(l)}
+\end{bmatrix}\]</span>
+<p>$$</p>
+</section>
+<section id="a-compact-notation-4" class="slide level2 smaller">
+<h2>A compact notation (4)</h2>
+<p>So that, the activation is then:</p>
+<p><span class="math display">\[
+a^{(l+1)}=
+\begin{bmatrix}
+a_1^{(l+1)}\\
+a_2^{(l+1)}\\
+\vdots\\
+a_{s_{l+1}}^{(l)}
+\end{bmatrix}=f(z^{(l+1)})=\begin{bmatrix}
+f(z_1^{(l+1)})\\
+f(z_2^{(l+1)})\\
+\vdots\\
+f(z_{s_{l+1}}^{(l)})
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="multiple-architectures-for-ann" class="slide level2">
+<h2>Multiple architectures for ANN</h2>
 <ul>
-<li><code>numpy</code> allows for mathematical operations and array handling</li>
-<li><code>pandas</code> is used to read data and for providing dataframe capabilities</li>
-<li><code>seaborn</code> and <code>matplotlib</code> are used for data visualization</li>
+<li><p>We have so far focused on a single hidden layer neural network of the example.</p></li>
+<li><p>One can. however build neural networks with many distinct architectures (meaning patterns of connectivity between neurons), including ones with multiple hidden layers.</p></li>
+<li><p>See <a href="https://www.asimovinstitute.org/neural-network-zoo/">here the Neural Network Zoo</a>.</p></li>
 </ul>
-</div>
-</div>
-</section>
-<section id="load-data" class="slide level2">
-<h2>Load data</h2>
-
-<img data-src="images/ANN-IrisExample2.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="check-data" class="slide level2 smaller">
-<h2>Check data</h2>
-<ul>
-<li>To make sure that (i) no data is missing and (ii) check the class labels a function <code>verify_dataset</code> is defined.</li>
-</ul>
-
-<img data-src="images/ANN-IrisExample3.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="create-testtraining-sets" class="slide level2 smaller">
-<h2>Create test/training sets</h2>
-<ul>
-<li>The data set of 150 flowers is divided into 2/3 for training and 1/3 for testing.</li>
-</ul>
-
-<img data-src="images/ANN-IrisExample4.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="transform-non-numerical-data" class="slide level2 smaller">
-<h2>Transform non numerical data</h2>
-<ul>
-<li><p>ANNs require categorical input data to be binary encoded, while numerical input data can be used directly.</p></li>
-<li><p>One-hot encoding recodes <em>categorical</em> or <em>nominal</em> variables to 1s and 0s.</p></li>
-</ul>
-
-<img data-src="images/ANN-IrisExample5a.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="one-hot-encoding-function" class="slide level2 smaller">
-<h2>one-hot encoding function</h2>
-
-<img data-src="images/ANN-IrisExample5b.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="data-normalization" class="slide level2 smaller">
-<h2>Data normalization</h2>
-<ul>
-<li><p>The numerical input data (flower measurements) exist in different ranges</p></li>
-<li><p>If this input data is not scaled, the model will assume that features with higher values are more important when predicting flower classes, which may not be the case</p></li>
-<li><p>A key step in preparing the data is normalization, also known as feature scaling</p>
-<p>– Here, L2 normalization will be used so that for each row in the data set, the sum of squares adds up to one</p></li>
-</ul>
-</section>
-<section id="a-normalization-function" class="slide level2 smaller">
-<h2>A normalization function</h2>
-
-<img data-src="images/ANN-IrisExample6.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="separate-io-and-normalize" class="slide level2 smaller">
-<h2>Separate I/O and normalize</h2>
-<ul>
-<li>Input data “x” is extracted from the original dataset, and normalized by calling the <code>normalize</code> function</li>
-</ul>
-
-<img data-src="images/ANN-IrisExample7.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="encode-categorical-vars-1" class="slide level2 smaller">
-<h2>Encode categorical vars (1)</h2>
-<ul>
-<li><p>Before one hot encoding the output (categorical) variables, the labels are first replaced by 0,1,2 for <em>setosa</em>, <em>virginica</em>, and <em>versicolor</em> respectively</p></li>
-<li><p>This is known as <em>label encoding</em></p></li>
-</ul>
-
-<img data-src="images/ANN-IrisExample8.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="encode-categorical-vars-2" class="slide level2 smaller">
-<h2>Encode categorical vars (2)</h2>
-<ul>
-<li>Next, the y values (flower species) are extracted from the iris dataset and then one-hot encoded by calling the <code>to_one_hot</code> function</li>
-</ul>
-
-<img data-src="images/ANN-IrisExample9.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="define-activation-function" class="slide level2 smaller">
-<h2>Define Activation function</h2>
-<ul>
-<li><p>The sigmoid function is used for the activation function, as it outputs values between 0 and 1</p></li>
-<li><p>This is useful because this model predicts probabilities as an output</p></li>
-<li><p>Additionally, this function is differentiable which allows for gradient descent optimization.</p></li>
-</ul>
-
-<img data-src="images/ANN-IrisExample11.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="weights-and-biases-inizialization" class="slide level2">
-<h2>Weights and biases inizialization</h2>
-<ul>
-<li><p>Before training the model, the weights and biases are initialized as random values between 0 and 1</p>
-<ul>
-<li>w0 is the set of weights for connections between the input and hidden layer</li>
-<li>w1 is the set of weights for connections between the hidden and output layer</li>
-</ul></li>
-<li><p>The biases bh and bo are for the hidden and output layers respectively</p></li>
-</ul>
-</section>
-<section id="initialize-weight-and-biases" class="slide level2 smaller">
-<h2>Initialize weight and biases</h2>
-
-<img data-src="images/initializeweights.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section></section>
-<section id="to-be-continued" class="title-slide slide level1 center">
-<h1>To be continued …</h1>
-
-</section>
-
-<section>
-<section id="ann-example-using-r" class="title-slide slide level1 center">
-<h1>ANN example using R</h1>
-
-</section>
-<section id="a-predictive-ann" class="slide level2">
-<h2>A predictive ANN</h2>
-<p>We use the <code>neuralnet</code> package to build a simple neural network to predict if a type of stock pays dividends or not.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(neuralnet)) </span>
-<span id="cb1-2"><a href=""></a>  <span class="fu">install.packages</span>(<span class="st">"neuralnet"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="data-for-the-example" class="slide level2">
-<h2>Data for the example</h2>
-<p>And use the <code>dividendinfo.csv</code> dataset from <a href="https://github.com/MGCodesandStats/datasets" class="uri">https://github.com/MGCodesandStats/datasets</a></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>mydata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/MGCodesandStats/datasets/master/dividendinfo.csv"</span>)</span>
-<span id="cb2-2"><a href=""></a><span class="fu">str</span>(mydata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   200 obs. of  6 variables:
- $ dividend       : int  0 1 1 0 1 1 1 0 1 1 ...
- $ fcfps          : num  2.75 4.96 2.78 0.43 2.94 3.9 1.09 2.32 2.5 4.46 ...
- $ earnings_growth: num  -19.25 0.83 1.09 12.97 2.44 ...
- $ de             : num  1.11 1.09 0.19 1.7 1.83 0.46 2.32 3.34 3.15 3.33 ...
- $ mcap           : int  545 630 562 388 684 621 656 351 658 330 ...
- $ current_ratio  : num  0.924 1.469 1.976 1.942 2.487 ...</code></pre>
-</div>
-</div>
-</section>
-<section id="data-pre-processing" class="slide level2">
-<h2>Data pre-processing</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a>normalize <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb4-2"><a href=""></a>  <span class="fu">return</span> ((x <span class="sc">-</span> <span class="fu">min</span>(x)) <span class="sc">/</span> (<span class="fu">max</span>(x) <span class="sc">-</span> <span class="fu">min</span>(x)))</span>
-<span id="cb4-3"><a href=""></a>}</span>
-<span id="cb4-4"><a href=""></a>normData <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">lapply</span>(mydata, normalize))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="test-and-training-sets" class="slide level2">
-<h2>Test and training sets</h2>
-<p>Finally we break our data in a test and a training set:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>perc2Train <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span></span>
-<span id="cb5-2"><a href=""></a>ssize <span class="ot">&lt;-</span> <span class="fu">nrow</span>(normData)</span>
-<span id="cb5-3"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
-<span id="cb5-4"><a href=""></a>data_rows <span class="ot">&lt;-</span> <span class="fu">floor</span>(perc2Train <span class="sc">*</span>ssize)</span>
-<span id="cb5-5"><a href=""></a>train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>ssize), data_rows)</span>
-<span id="cb5-6"><a href=""></a>trainset <span class="ot">&lt;-</span> normData[train_indices,]</span>
-<span id="cb5-7"><a href=""></a>testset <span class="ot">&lt;-</span> normData[<span class="sc">-</span>train_indices,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="training-a-neural-network" class="slide level2">
-<h2>Training a neural network</h2>
-<p>We train a simple NN with two hidden layers, with 4 and 2 neurons respectively.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="co">#Neural Network</span></span>
-<span id="cb6-2"><a href=""></a><span class="fu">library</span>(neuralnet)</span>
-<span id="cb6-3"><a href=""></a>nn <span class="ot">&lt;-</span> <span class="fu">neuralnet</span>(dividend <span class="sc">~</span> fcfps <span class="sc">+</span> earnings_growth <span class="sc">+</span> de <span class="sc">+</span> mcap <span class="sc">+</span> current_ratio, </span>
-<span id="cb6-4"><a href=""></a>                <span class="at">data=</span>trainset, </span>
-<span id="cb6-5"><a href=""></a>                <span class="at">hidden=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>), </span>
-<span id="cb6-6"><a href=""></a>                <span class="at">linear.output=</span><span class="cn">FALSE</span>, </span>
-<span id="cb6-7"><a href=""></a>                <span class="at">threshold=</span><span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="network-plot" class="slide level2">
-<h2>Network plot</h2>
-<p>The output of the procedure is a neural network with estimated weights</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">plot</span>(nn, <span class="at">rep =</span> <span class="st">"best"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="2.1-Introduction_to_ANN-Slides_files/figure-revealjs/unnamed-chunk-30-1.png" width="960" class="r-stretch"></section>
-<section id="predictions" class="slide level2">
-<h2>Predictions</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>temp_test <span class="ot">&lt;-</span> <span class="fu">subset</span>(testset, <span class="at">select =</span></span>
-<span id="cb8-2"><a href=""></a>                      <span class="fu">c</span>(<span class="st">"fcfps"</span>,<span class="st">"earnings_growth"</span>, </span>
-<span id="cb8-3"><a href=""></a>                        <span class="st">"de"</span>, <span class="st">"mcap"</span>, <span class="st">"current_ratio"</span>))</span>
-<span id="cb8-4"><a href=""></a>nn.results <span class="ot">&lt;-</span> <span class="fu">compute</span>(nn, temp_test)</span>
-<span id="cb8-5"><a href=""></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">actual =</span> </span>
-<span id="cb8-6"><a href=""></a>                  testset<span class="sc">$</span>dividend, </span>
-<span id="cb8-7"><a href=""></a>                  <span class="at">prediction =</span> nn.results<span class="sc">$</span>net.result)</span>
-<span id="cb8-8"><a href=""></a><span class="fu">head</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   actual   prediction
-9       1 0.9919213885
-19      1 0.9769206123
-22      0 0.0002187144
-26      0 0.6093330933
-27      1 0.7454164893
-29      1 0.9515431416</code></pre>
-</div>
-</div>
-</section>
-<section id="model-evaluation" class="slide level2">
-<h2>Model evaluation</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>roundedresults<span class="ot">&lt;-</span><span class="fu">sapply</span>(results,round,<span class="at">digits=</span><span class="dv">0</span>)</span>
-<span id="cb10-2"><a href=""></a>roundedresultsdf<span class="ot">=</span><span class="fu">data.frame</span>(roundedresults)</span>
-<span id="cb10-3"><a href=""></a><span class="fu">attach</span>(roundedresultsdf)</span>
-<span id="cb10-4"><a href=""></a><span class="fu">table</span>(actual,prediction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      prediction
-actual  0  1
-     0 33  3
-     1  4 27</code></pre>
-</div>
-</div>
 </section>
 <section id="training-an-ann" class="slide level2 smaller">
 <h2>Training an ANN</h2>
@@ -1349,31 +1180,25 @@ f(z_{s_{l+1}}^{(l)})
 \end{bmatrix}
 \]</span></p>
 </section>
-<section id="matricial-representation-iii" class="slide level2 smaller">
-<h2>Matricial representation (III)</h2>
-<ul>
-<li>For the simple ANN of the example we have: $$</li>
-</ul>
-<p>$$</p>
-<ul>
-<li>And, for a general ANN with <span class="math inline">\(l\)</span> layers: $$</li>
-</ul>
-<p>$$</p>
-</section>
-<section id="forward-propagation" class="slide level2">
-<h2>Forward propagation</h2>
+<section id="eficient-forward-propagation" class="slide level2">
+<h2>Eficient Forward propagation</h2>
 <ul>
 <li><p>The way input data is transformed, through a series of weightings and transformations, until the ouput layer is called <em>forward propagation</em>.</p></li>
 <li><p>By organizing parameters in matrices, and using matrix-vector operations, fast linear algebra routines can be used to perform the required calculations in a fast efficent way.</p></li>
 </ul>
 </section>
-<section id="multiple-architectures-for-ann" class="slide level2">
+<section id="multiple-architectures-for-ann-1" class="slide level2 smaller">
 <h2>Multiple architectures for ANN</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <ul>
 <li><p>We have so far focused on a single hidden layer neural network of the example</p></li>
 <li><p>One can build neural networks with many distinct architectures (meaning patterns of connectivity between neurons), including ones with multiple hidden layers.</p></li>
-<li><p>See <a href="https://www.asimovinstitute.org/neural-network-zoo/">here the Neural Network Zoo</a>.</p></li>
 </ul>
+</div><div class="column" style="width:50%;">
+<p><img data-src="2.1-Introduction_to_ANN-Slides_insertimage_3.png"> <a href="https://www.asimovinstitute.org/neural-network-zoo/">The Neural Network Zoo</a></p>
+</div>
+</div>
 </section>
 <section id="multiple-layer-dense-networks" class="slide level2">
 <h2>Multiple layer dense Networks</h2>
@@ -1387,8 +1212,8 @@ f(z_{s_{l+1}}^{(l)})
 <li>In this setting, to compute the output of the network, we can compute all the activations in layer <span class="math inline">\(L_2\)</span>, then layer <span class="math inline">\(L_3\)</span>, and so on, up to layer <span class="math inline">\(L_{nl}\)</span>, using equations seen previously.</li>
 </ul>
 </section>
-<section id="feed-forward-neural-networks-ffnn" class="slide level2">
-<h2>Feed Forward neural networks (FFNN)</h2>
+<section id="feed-forward-nns" class="slide level2">
+<h2>Feed Forward NNs</h2>
 <ul>
 <li>The type of NN described is called feed-forward <em>neural network (FFNN)</em>, since
 <ul>
@@ -1396,46 +1221,61 @@ f(z_{s_{l+1}}^{(l)})
 <li>The connectivity graph does not have any directed loops or cycles.</li>
 </ul></li>
 </ul>
+</section></section>
+<section id="optimizing-the-ann" class="title-slide slide level1 center">
+<h1>Optimizing the ANN</h1>
+
+</section>
+
+<section>
+<section id="optimizitation-for-ann" class="title-slide slide level1 center">
+<h1>Optimizitation for ANN</h1>
+<ul>
+<li><p>The equations described above show how to use forward propagation to yield a prediction, given an input and a set of parameters (weights and biases).</p></li>
+<li><p>As with any learning tasks what we want to do is finding a set of parameter’s best values that, in some sense provide the best possible prediction.</p></li>
+<li><p>For this we need two things</p>
+<ul>
+<li>A loss function to quantify the difference between reali world and predictions.</li>
+<li>Some optimization procedure(s) to iteratively tune the parameter’ values in order to minimize the loss.</li>
+</ul></li>
+</ul>
 </section>
 <section id="a-loss-function-for-optimization" class="slide level2">
 <h2>A loss function for optimization</h2>
-<ul>
-<li><p>In order to estimate the weights we will aim at minimizing an appropriate loss function.</p></li>
-<li><p>A first idea may be to use <em>squared error loss</em> <span class="math display">\[
-l(h_\theta(x),y)=(y-\frac{1}{1+e^{-\theta^\intercal x}})^2
-\]</span></p></li>
-<li><p>However it happens to be that <a href="https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c"><em>this is is not a convex problem</em></a> which means that MSE is not appropriate.</p></li>
-</ul>
+<p>A first idea may be to use <em>squared error loss</em>:</p>
+<p><span class="math display">\[
+  l(h_\theta(x),y)=\left (y-\frac{1}{1+e^{-\theta^\intercal x}}\right )^2
+\]</span></p>
+<p>However it happens to be that <a href="https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c"><em>this is is not a convex problem</em></a> which means that MSE is not appropriate.</p>
 </section>
-<section id="cross-entropy-loss-function" class="slide level2">
-<h2>Cross-entropy loss function</h2>
-<ul>
-<li>Alternatively, we use the <em>binary cross-entropy loss function</em> : <span class="math display">\[
-l(h_\theta(x),y)=\big{\{}\begin{array}{ll}
--\log h_\theta(x) &amp; \textrm{if }y=1\\
--\log(1-h_\theta(x))&amp; \textrm{if }y=0
-\end{array}
-\]</span></li>
-<li>It can be written compactly as:</li>
-</ul>
+<section id="non-convexity-illustration" class="slide level2 smaller">
+<h2>Non convexity illustration</h2>
+</section>
+<section id="non-convexity-illustration-1" class="slide level2 smaller">
+<h2>Non convexity illustration</h2>
+
+<img data-src="2.1-Introduction_to_ANN-Slides_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
+<section id="binary-cross-entropy-loss-function" class="slide level2">
+<h2><strong>Binary cross-entropy loss function</strong></h2>
+<p><span class="math display">\[
+    l(h_\theta(x),y)=\big{\{}\begin{array}{ll}
+    -\log h_\theta(x) &amp; \textrm{if }y=1\\
+    -\log(1-h_\theta(x))&amp; \textrm{if }y=0
+    \end{array}
+\]</span></p>
+<p>This function can also be written as:</p>
 <p><span class="math display">\[
 l(h_\theta(x),y)=-y\log h_\theta(x) - (1-y)\log(1-h_\theta(x))
 \]</span></p>
+<p>Using cross-entropy loss, the cost function is of the form:</p>
+<p><span class="math display">\[\begin{eqnarray*}
+    J(\theta)=-\frac{1}{n}\big[\sum_{i=1}^n&amp;&amp;(y^{(i)}\log h_\theta(x^{(i)})+\\ &amp;&amp;(1-y^{(i)})\log(1-h_\theta(x^{(i)}))\big]
+\end{eqnarray*}\]</span></p>
+<p>Now, this is a convex optimization problem.</p>
 </section>
-<section id="a-convex-cost-function" class="slide level2">
-<h2>A convex cost function</h2>
-<ul>
-<li>Using cross-entropy loss, the cost function is of the form: <span class="math display">\[\begin{eqnarray*}
-J(\theta)=-\frac{1}{n}\big[\sum_{i=1}^n&amp;&amp;(y^{(i)}\log h_\theta(x^{(i)})+\\ &amp;&amp;(1-y^{(i)})\log(1-h_\theta(x^{(i)}))\big]
-\end{eqnarray*}\]</span></li>
-<li>This is a convex optimization problem.</li>
-</ul>
-</section>
-<section id="a-regularized-cost-function" class="slide level2">
-<h2>A regularized cost function</h2>
-<ul>
-<li>Better to work with a <em>regularized version</em> of the cost function (we don’t regularize the bias units)</li>
-</ul>
+<section id="regularized-cross-entropy" class="slide level2">
+<h2>Regularized cross entropy</h2>
+<p>In practice we often work with a <em>regularized version</em> of the cost function (we don’t regularize the bias units)</p>
 <span class="math display">\[\begin{eqnarray*}
 J(\Theta)&amp;=&amp;-\frac{1}{n}\big[\sum_{i=1}^n \sum_{k=1}^K y_k^{(i)}\log( h_\theta(x^{(i)}))_k\\
 &amp;+&amp;(1-y_k^{(i)})\log(1-(h_\theta(x^{(i)}))_k)\big]\\
@@ -1443,126 +1283,211 @@ J(\Theta)&amp;=&amp;-\frac{1}{n}\big[\sum_{i=1}^n \sum_{k=1}^K y_k^{(i)}\log( h_
 (\theta_{ji}^{(l)})^2
 \end{eqnarray*}\]</span>
 </section>
-<section id="optimization-with-gradient-descent" class="slide level2">
-<h2>Optimization with gradient descent</h2>
+<section id="gradient-descent" class="slide level2 smaller">
+<h2>Gradient Descent</h2>
 <ul>
-<li>In ANN we do not aim at finding estimating equations (like <em>likekihood equations</em>) whose solution will solve the optimization problem</li>
-<li>Instead we use iterative procedures, that
-<ul>
-<li>Are much faster</li>
-<li>Yield results as near the optimum as required.</li>
-</ul></li>
-<li>The (first) option of choice is the gradient descent method.</li>
+<li><p>We saw in the previous section that training a network corresponds to choosing the parameters, that is, the weights and biases, that minimize the cost function.</p></li>
+<li><p>The weights and biases take the form of matrices and vectors, but at this stage it is convenient to imagine them stored as a single vector that we call <span class="math inline">\(\theta\)</span>.</p></li>
+<li><p>Generally, we will suppose <span class="math inline">\(\theta\in\mathbb{R}^p\)</span>, and write the cost function as <span class="math inline">\(J(\theta)\)</span> to emphasize its dependence on the parameters. So Cost <span class="math inline">\(J: \mathbb{R}^p\rightarrow \mathbb{R}\)</span>.</p></li>
 </ul>
 </section>
-<section id="how-gradient-descent-works-i" class="slide level2">
-<h2>How gradient descent works (I)</h2>
-<!-- - The method proceeds iteratively, computing a sequence of vectors in $\mathbb{R}^p$  -->
-<!-- - with the aim of converging to a vector that minimizes the cost function.  -->
+<section id="gradient-descent-1" class="slide level2 smaller">
+<h2>Gradient Descent</h2>
+
+<img data-src="images/errorsurface.jpg" style="width:60.0%" class="r-stretch quarto-figure-center"><p class="caption">Error hyper-surface</p></section>
+<section id="gradient-descent-2" class="slide level2 smaller">
+<h2>Gradient Descent</h2>
 <ul>
-<li>Suppose that our current vector is <span class="math inline">\(\theta\)</span>.</li>
-<li>How should we choose a perturbation, <span class="math inline">\(\Delta\theta\)</span>, so that the next vector, <span class="math inline">\(\theta+\Delta\theta\)</span>, represents an improvement?</li>
-<li>If <span class="math inline">\(\Delta\theta\)</span> is small, then ignoring terms of order <span class="math inline">\(||\Delta\theta||^2\)</span>, a Taylor series expansion gives <span class="math display">\[
+<li><em>Gradient Descent</em> is a classical method in optimization that is often referred to as <em>steepest descent</em>.</li>
+</ul>
+<p>Given a function <span class="math inline">\(J(\theta)\)</span> to be minimized, the method proceeds iteratively, computing a sequence of vectors <span class="math inline">\(\theta^1, \theta^2, ..., \theta^n\)</span> in <span class="math inline">\(\mathbb{R}^p\)</span> with the aim of converging to a vector that minimizes the cost function.</p>
+<p>Suppose that our current vector is <span class="math inline">\(\theta\)</span>. <em>How should we choose a perturbation, <span class="math inline">\(\Delta\theta\)</span>, so that the next vector, <span class="math inline">\(\theta+\Delta\theta\)</span>, represents an improvement, that is: <span class="math inline">\(J(\theta +\Delta\theta) &lt; J(\theta)\)</span>?</em></p>
+</section>
+<section id="gradient-descent-3" class="slide level2 smaller">
+<h2>Gradient Descent</h2>
+<p>As is often the case, we will proceed by linearization of the cost function using a Taylor series expansion.</p>
+<p>If <span class="math inline">\(\Delta\theta\)</span> is small, then ignoring terms of order <span class="math inline">\(||\Delta\theta||^2\)</span> or higher, a Taylor series expansion gives:</p>
+<p><span class="math display">\[
 J(\theta+\Delta\theta)\approx J(\theta)+\sum_{i=1}^p\frac{\partial J(\theta)}{\partial\theta_i}\Delta\theta_i
-\]</span></li>
-</ul>
-<!-- Here -->
-<!-- $\frac{\partial J(\theta)}{\partial\theta_i}$  -->
-<!-- denotes the -->
-<!-- partial derivative of the cost function with respect to the $i$-th -->
-<!-- weight.  -->
+\]</span> where <span class="math inline">\({\displaystyle \frac{\partial J(\theta)}{\partial\theta_i}}\)</span> denotes the partial derivative of the cost function with respect to the <span class="math inline">\(i\)</span>-th weight.</p>
 </section>
-<section id="how-gradient-descent-works-ii" class="slide level2">
-<h2>How gradient descent works (II)</h2>
-<ul>
-<li><p>Let <span class="math inline">\(\nabla J(\theta)\in\mathbb{R}^p\)</span> be the vector of partial derivatives, aka the gradient: <span class="math display">\[\begin{equation}\label{g1}
-\nabla J(\theta)=\big(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\big)^\intercal, \mbox{then:}
-\end{equation}\]</span> <span class="math display">\[\begin{equation}\label{g2}
+<section id="gradient-descent-4" class="slide level2 smaller">
+<h2>Gradient Descent</h2>
+<p>For convenience, we will let <span class="math inline">\(\nabla J(\theta)\in\mathbb{R}^p\)</span> denote the vector of partial derivatives, known as the gradient, so that</p>
+<p><span class="math display">\[\begin{equation}\label{g1}
+\nabla J(\theta)=\left(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\right)^\intercal
+\end{equation}\]</span></p>
+<p>Now the approximation can be written as:</p>
+<p><span class="math display">\[\begin{equation}\label{g2}
 J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
-\end{equation}\]</span></p></li>
-<li><p>Our aim is to reduce the value of the cost function.</p></li>
-<li><p>It seems reasonable to choose <span class="math inline">\(\Delta\theta\)</span> (a <em>direction</em>) to make <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> as negative as possible.</p></li>
-</ul>
+\end{equation}\]</span></p>
 </section>
-<section id="how-gradient-descent-works-iii" class="slide level2">
-<h2>How gradient descent works (III)</h2>
-<ul>
-<li>This can be addressed via the Cauchy-Schwarz inequality:
-<ul>
-<li>For any <span class="math inline">\(f,g\in\mathbb{R}^p\)</span>, we have <span class="math inline">\(|f^\intercal g|\leq ||f||\cdot ||g||\)</span>.</li>
-<li>Moreover, the two sides are equal if and only if <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are linearly dependent (meaning they are parallel).</li>
-</ul></li>
-</ul>
+<section id="gradient-descent-5" class="slide level2 smaller">
+<h2>Gradient Descent</h2>
+<p>Recalling that our aim is to reduce the value of the cost function, the Taylor approximation above motivates the idea of choosing <span class="math inline">\(\Delta\theta\)</span> to <em>make <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> negative</em>, because this will make the value of <span class="math inline">\(J(\theta+\Delta\theta)\)</span> smaller.</p>
+<p>The bigger in absolute value we can make this negative expression, the smaller will be the value of the cost function.</p>
+<p>Now, how much is it possible to make <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> decrease?</p>
+<p>The Cauchy-Schwarz inequality, which states that for any <span class="math inline">\(f,g\in\mathbb{R}^p\)</span>, we have: <span class="math display">\[
+|f^\intercal g|\leq ||f||\cdot ||g||.
+\]</span> Moreover, the two sides are equal if and only if <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are linearly dependent (meaning they are parallel).</p>
+<p>So the most negative that <span class="math inline">\(f^\intercal g\)</span> can be is <span class="math inline">\(-||f||\cdot||g||\)</span>, which happens when <span class="math inline">\(f=-g\)</span>. Hence we should choose <span class="math inline">\(\Delta\theta\)</span> to lie in the direction of <span class="math inline">\(-\nabla J(\theta)\)</span>.</p>
 </section>
-<section id="how-gradient-descent-works-iv" class="slide level2">
-<h2>How gradient descent works (IV)</h2>
-<ul>
-<li><p>So *the most negative that <span class="math inline">\(f^\intercal g\)</span> can be is <span class="math inline">\(-||f||\cdot||g||\)</span>,</p></li>
-<li><p>This happens when <span class="math inline">\(f=-g\)</span>.</p></li>
-<li><p>Hence *we should choose <span class="math inline">\(\Delta\theta\)</span> to lie in the direction of <span class="math inline">\(-\nabla J(\theta)\)</span>.</p></li>
-<li><p>Keeping in mind that this approximation is relevant only for small <span class="math inline">\(\Delta\theta\)</span>, we will limit ourselves to a small step in that direction.</p></li>
-</ul>
-</section>
-<section id="how-gradient-descent-works-v" class="slide level2">
-<h2>How gradient descent works (V)</h2>
-<ul>
-<li><p>This leads to the update <span class="math display">\[\begin{equation}\label{g3}
+<section id="gradient-descent-6" class="slide level2 smaller">
+<h2>Gradient Descent</h2>
+<p>Keeping in mind that the Taylor linearization of <span class="math inline">\(J(\theta)\)</span> is an approximation that is relevant only for small <span class="math inline">\(\Delta\theta\)</span>, we will limit ourselves to a small step in that direction. This leads to the update:</p>
+<p><span class="math display">\[\begin{equation}\label{g3}
 \theta \rightarrow \theta-\eta\nabla J(\theta)
-\end{equation}\]</span></p></li>
-<li><p><span class="math inline">\(\eta\)</span> is small step size known as the <em>learning rate</em>.</p></li>
-<li><p>This equation defines the steepest descent method.</p></li>
-<li><p>We choose an initial vector and iterate</p>
-<ul>
-<li>until some stopping criterion has been met,</li>
-<li>or until the number of iterations has exceeded the computational budget.</li>
-</ul></li>
-</ul>
+\end{equation}\]</span></p>
+<p>.</p>
+<p>Here <span class="math inline">\(\eta\)</span> is small step size that, in this context, is known as the <em>learning rate</em>.</p>
 </section>
-<section id="the-gradient-descent-algorithm" class="slide level2">
-<h2>The gradient descent algorithm</h2>
-<ul>
-<li>Repeat:</li>
-</ul>
-<p><span class="math display">\[
-\theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta)
-\]</span></p>
-<p><span class="math display">\[
-\qquad \textrm{and simultaneously update all }\qquad \theta_j
-\]</span></p>
-<p><span class="math inline">\(\eta\in (0,1]\)</span> denotes the learning parameter.</p>
-</section>
-<section id="gradient-descent-computes-derivatives" class="slide level2">
-<h2>Gradient descent computes derivatives</h2>
-<ul>
-<li>We aim to minimise the cost function</li>
-</ul>
-<p><span class="math display">\[
-\underset{\theta}{\textrm{min }}J(\theta)
-\]</span></p>
-<ul>
-<li>In order to use gradient descent, we need to compute <span class="math inline">\(J(\theta)\)</span> and the partial derivatives: <span class="math display">\[
-\frac{\partial}{\partial\theta_j}J(\theta)
+<section id="gradient-descent-7" class="slide level2 smaller scrollable">
+<h2>Gradient Descent</h2>
+<p>In summary, givent a cost function <span class="math inline">\(J(\theta)\)</span> to be optimized the gradient descent optimization proceeds as follows:</p>
+<ol type="1">
+<li><strong>Initialize</strong> <span class="math inline">\(\theta_0\)</span> randomly or with some predetermined values</li>
+<li><strong>Repeat until convergence:</strong> <span class="math display">\[
+\theta_{t+1} = \theta_{t} - \alpha \nabla J(\theta_{t})
 \]</span></li>
+<li><strong>Stop when:</strong> <span class="math inline">\(|J(\theta_{t+1}) - J(\theta_{t})| &lt; \epsilon\)</span></li>
+</ol>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(\theta_0\)</span> is the initial parameter vector,</li>
+<li><span class="math inline">\(\theta_t\)</span> is the parameter vector at iteration <span class="math inline">\(t\)</span>,</li>
+<li><span class="math inline">\(\alpha\)</span> is the learning rate,</li>
+<li><span class="math inline">\(\nabla J(\theta_{t})\)</span> is the gradient of the loss function with respect to <span class="math inline">\(\theta\)</span> at iteration <span class="math inline">\(t\)</span>,</li>
+<li><span class="math inline">\(\epsilon\)</span> is a small positive value indicating the desired level of convergence.</li>
 </ul>
 </section>
-<section id="other-requirements-for-gradient-descent" class="slide level2">
-<h2>Other requirements for gradient descent</h2>
-<ul>
-<li>The input data have to be normalized to have approximately the same range.</li>
-<li>Biases can be initialized to 0, but they <em>cannot be initialized with the same values, otherwise, all the neurons of a hidden layer would have the same behavior</em>.</li>
-<li>Initial parameters need to break symmetry between different units so weights are usually initialized at random:</li>
-</ul>
+<section id="computing-derivatives" class="slide level2">
+<h2>Computing derivatives</h2>
+<p>In order to use gradient descent, we need to compute <span class="math inline">\(J(\theta)\)</span> and the partial derivative terms <span class="math display">\[
+\frac{\partial}{\partial\theta_j}J(\theta)
+\]</span></p>
 </section>
-<section id="weights-initialization" class="slide level2">
-<h2>Weights initialization</h2>
-<ul>
-<li>We assume values <span class="math inline">\(\theta_{ij}^{(l)}\)</span> to be
-<ul>
-<li>i.i.d. Uniform on <span class="math inline">\([-c,c]\)</span></li>
-<li>with possibly <span class="math inline">\(c= 1/\sqrt{N_l}\)</span> where <span class="math inline">\(N_l\)</span> is the size of the hidden layer <span class="math inline">\(l\)</span>.</li>
-</ul></li>
-<li>We also sometimes initialize the weights with a normal distribution <span class="math inline">\(N(0,0.01)\)</span>.</li>
-</ul>
+<section id="initialization" class="slide level2 smaller">
+<h2>Initialization</h2>
+<p>The input data have to be normalized to have approximately the same range.</p>
+<p>The biases can be initialized to 0. They also cannot be initialized with the same values, otherwise, all the neurons of a hidden layer would have the same behavior.</p>
+<p>Perhaps the only property known with complete certainty is that the initial parameters need to break symmetry between different units.</p>
+<p>We generally initialize the weights at random: the values <span class="math inline">\(\theta_{ij}^{(l)}\)</span> are i.i.d. Uniform on <span class="math inline">\([-c,c]\)</span> with possibly <span class="math inline">\(c= 1/\sqrt{N_l}\)</span> where <span class="math inline">\(N_l\)</span> is the size of the hidden layer <span class="math inline">\(l\)</span>.</p>
+<p>We also sometimes initialize the weights with a normal distribution <span class="math inline">\(N(0,0.01)\)</span>.</p>
+</section></section>
+<section>
+<section id="an-example-using-r" class="title-slide slide level1 center">
+<h1>An example using R</h1>
+
+</section>
+<section id="a-predictive-ann" class="slide level2">
+<h2>A predictive ANN</h2>
+<p>We use the <code>neuralnet</code> package to build a simple neural network to predict if a type of stock pays dividends or not.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(neuralnet)) </span>
+<span id="cb1-2"><a href=""></a>  <span class="fu">install.packages</span>(<span class="st">"neuralnet"</span>, <span class="at">dep=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-for-the-example" class="slide level2">
+<h2>Data for the example</h2>
+<p>And use the <code>dividendinfo.csv</code> dataset from <a href="https://github.com/MGCodesandStats/datasets" class="uri">https://github.com/MGCodesandStats/datasets</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>mydata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/MGCodesandStats/datasets/master/dividendinfo.csv"</span>)</span>
+<span id="cb2-2"><a href=""></a><span class="fu">str</span>(mydata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   200 obs. of  6 variables:
+ $ dividend       : int  0 1 1 0 1 1 1 0 1 1 ...
+ $ fcfps          : num  2.75 4.96 2.78 0.43 2.94 3.9 1.09 2.32 2.5 4.46 ...
+ $ earnings_growth: num  -19.25 0.83 1.09 12.97 2.44 ...
+ $ de             : num  1.11 1.09 0.19 1.7 1.83 0.46 2.32 3.34 3.15 3.33 ...
+ $ mcap           : int  545 630 562 388 684 621 656 351 658 330 ...
+ $ current_ratio  : num  0.924 1.469 1.976 1.942 2.487 ...</code></pre>
+</div>
+</div>
+</section>
+<section id="data-pre-processing" class="slide level2">
+<h2>Data pre-processing</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a>normalize <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb4-2"><a href=""></a>  <span class="fu">return</span> ((x <span class="sc">-</span> <span class="fu">min</span>(x)) <span class="sc">/</span> (<span class="fu">max</span>(x) <span class="sc">-</span> <span class="fu">min</span>(x)))</span>
+<span id="cb4-3"><a href=""></a>}</span>
+<span id="cb4-4"><a href=""></a>normData <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">lapply</span>(mydata, normalize))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="test-and-training-sets" class="slide level2">
+<h2>Test and training sets</h2>
+<p>Finally we break our data in a test and a training set:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>perc2Train <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span></span>
+<span id="cb5-2"><a href=""></a>ssize <span class="ot">&lt;-</span> <span class="fu">nrow</span>(normData)</span>
+<span id="cb5-3"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb5-4"><a href=""></a>data_rows <span class="ot">&lt;-</span> <span class="fu">floor</span>(perc2Train <span class="sc">*</span>ssize)</span>
+<span id="cb5-5"><a href=""></a>train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>ssize), data_rows)</span>
+<span id="cb5-6"><a href=""></a>trainset <span class="ot">&lt;-</span> normData[train_indices,]</span>
+<span id="cb5-7"><a href=""></a>testset <span class="ot">&lt;-</span> normData[<span class="sc">-</span>train_indices,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="training-a-neural-network" class="slide level2">
+<h2>Training a neural network</h2>
+<p>We train a simple NN with two hidden layers, with 4 and 2 neurons respectively.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="co">#Neural Network</span></span>
+<span id="cb6-2"><a href=""></a><span class="fu">library</span>(neuralnet)</span>
+<span id="cb6-3"><a href=""></a>nn <span class="ot">&lt;-</span> <span class="fu">neuralnet</span>(dividend <span class="sc">~</span> fcfps <span class="sc">+</span> earnings_growth <span class="sc">+</span> de <span class="sc">+</span> mcap <span class="sc">+</span> current_ratio, </span>
+<span id="cb6-4"><a href=""></a>                <span class="at">data=</span>trainset, </span>
+<span id="cb6-5"><a href=""></a>                <span class="at">hidden=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>), </span>
+<span id="cb6-6"><a href=""></a>                <span class="at">linear.output=</span><span class="cn">FALSE</span>, </span>
+<span id="cb6-7"><a href=""></a>                <span class="at">threshold=</span><span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="network-plot" class="slide level2">
+<h2>Network plot</h2>
+<p>The output of the procedure is a neural network with estimated weights</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">plot</span>(nn, <span class="at">rep =</span> <span class="st">"best"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="2.1-Introduction_to_ANN-Slides_files/figure-revealjs/unnamed-chunk-21-1.png" width="960" class="r-stretch"></section>
+<section id="predictions" class="slide level2">
+<h2>Predictions</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>temp_test <span class="ot">&lt;-</span> <span class="fu">subset</span>(testset, <span class="at">select =</span></span>
+<span id="cb8-2"><a href=""></a>                      <span class="fu">c</span>(<span class="st">"fcfps"</span>,<span class="st">"earnings_growth"</span>, </span>
+<span id="cb8-3"><a href=""></a>                        <span class="st">"de"</span>, <span class="st">"mcap"</span>, <span class="st">"current_ratio"</span>))</span>
+<span id="cb8-4"><a href=""></a>nn.results <span class="ot">&lt;-</span> <span class="fu">compute</span>(nn, temp_test)</span>
+<span id="cb8-5"><a href=""></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">actual =</span> </span>
+<span id="cb8-6"><a href=""></a>                  testset<span class="sc">$</span>dividend, </span>
+<span id="cb8-7"><a href=""></a>                  <span class="at">prediction =</span> nn.results<span class="sc">$</span>net.result)</span>
+<span id="cb8-8"><a href=""></a><span class="fu">head</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   actual   prediction
+9       1 0.9919213885
+19      1 0.9769206123
+22      0 0.0002187144
+26      0 0.6093330933
+27      1 0.7454164893
+29      1 0.9515431416</code></pre>
+</div>
+</div>
+</section>
+<section id="model-evaluation" class="slide level2">
+<h2>Model evaluation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>roundedresults<span class="ot">&lt;-</span><span class="fu">sapply</span>(results,round,<span class="at">digits=</span><span class="dv">0</span>)</span>
+<span id="cb10-2"><a href=""></a>roundedresultsdf<span class="ot">=</span><span class="fu">data.frame</span>(roundedresults)</span>
+<span id="cb10-3"><a href=""></a><span class="fu">attach</span>(roundedresultsdf)</span>
+<span id="cb10-4"><a href=""></a><span class="fu">table</span>(actual,prediction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      prediction
+actual  0  1
+     0 33  3
+     1  4 27</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="some-extensions" class="title-slide slide level1 center">
+<h1>Some Extensions</h1>
+
 </section>
 <section id="gradient-descent-drawbacks" class="slide level2">
 <h2>Gradient descent drawbacks</h2>
@@ -1666,6 +1591,163 @@ J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 <li>Therefore we will start from the output node, compute all the gradients of the previous layer, and so on until we reach the input layer.</li>
 </ul>
 </section></section>
+<section>
+<section id="ann-example-using-python" class="title-slide slide level1 center">
+<h1>ANN example using Python</h1>
+
+</section>
+<section id="iris-data-classification" class="slide level2">
+<h2>Iris data classification</h2>
+<ul>
+<li><p>The example below has been borrowed from D. Wishart’s cours on “Machine Learning” from Bioinformatics Canada courses in Bioinformatics.</p></li>
+<li><p>The example trains a simple ANN to classify Iris species using the well-known “iris” dataset.</p></li>
+<li><p>The code and data is available in the lab folder as a python notebook <code>irisANN.ipynb</code></p></li>
+</ul>
+</section>
+<section id="the-general-workflow" class="slide level2 smaller">
+<h2>The general workflow</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>PREPARE</strong></p>
+<ul>
+<li>Read data</li>
+<li>Check data</li>
+<li>Create training/testing data sets</li>
+<li>Create a one hot encoding function</li>
+<li>Create a normalization function</li>
+<li>Normalize the data</li>
+<li>Perform label encoding and one hot encoding</li>
+<li>Define activation function</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>RUN</strong></p>
+<ul>
+<li>Initialize weights and biases</li>
+<li><em>Determine number of batches</em></li>
+<li><em>Perform forward propagation</em></li>
+<li><em>Calculate the errors</em></li>
+<li><em>Perform back propagation</em></li>
+<li><em>Update weights and biases</em></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="load-required-libraries" class="slide level2 smaller">
+<h2>Load required libraries</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/ANN-IrisExample1.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:40%;">
+<ul>
+<li><code>numpy</code> allows for mathematical operations and array handling</li>
+<li><code>pandas</code> is used to read data and for providing dataframe capabilities</li>
+<li><code>seaborn</code> and <code>matplotlib</code> are used for data visualization</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="load-data" class="slide level2">
+<h2>Load data</h2>
+
+<img data-src="images/ANN-IrisExample2.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="check-data" class="slide level2 smaller">
+<h2>Check data</h2>
+<ul>
+<li>To make sure that (i) no data is missing and (ii) check the class labels a function <code>verify_dataset</code> is defined.</li>
+</ul>
+
+<img data-src="images/ANN-IrisExample3.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="create-testtraining-sets" class="slide level2 smaller">
+<h2>Create test/training sets</h2>
+<ul>
+<li>The data set of 150 flowers is divided into 2/3 for training and 1/3 for testing.</li>
+</ul>
+
+<img data-src="images/ANN-IrisExample4.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="transform-non-numerical-data" class="slide level2 smaller">
+<h2>Transform non numerical data</h2>
+<ul>
+<li><p>ANNs require categorical input data to be binary encoded, while numerical input data can be used directly.</p></li>
+<li><p>One-hot encoding recodes <em>categorical</em> or <em>nominal</em> variables to 1s and 0s.</p></li>
+</ul>
+
+<img data-src="images/ANN-IrisExample5a.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="one-hot-encoding-function" class="slide level2 smaller">
+<h2>one-hot encoding function</h2>
+
+<img data-src="images/ANN-IrisExample5b.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="data-normalization" class="slide level2 smaller">
+<h2>Data normalization</h2>
+<ul>
+<li><p>The numerical input data (flower measurements) exist in different ranges</p></li>
+<li><p>If this input data is not scaled, the model will assume that features with higher values are more important when predicting flower classes, which may not be the case</p></li>
+<li><p>A key step in preparing the data is normalization, also known as feature scaling</p>
+<p>– Here, L2 normalization will be used so that for each row in the data set, the sum of squares adds up to one</p></li>
+</ul>
+</section>
+<section id="a-normalization-function" class="slide level2 smaller">
+<h2>A normalization function</h2>
+
+<img data-src="images/ANN-IrisExample6.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="separate-io-and-normalize" class="slide level2 smaller">
+<h2>Separate I/O and normalize</h2>
+<ul>
+<li>Input data “x” is extracted from the original dataset, and normalized by calling the <code>normalize</code> function</li>
+</ul>
+
+<img data-src="images/ANN-IrisExample7.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="encode-categorical-vars-1" class="slide level2 smaller">
+<h2>Encode categorical vars (1)</h2>
+<ul>
+<li><p>Before one hot encoding the output (categorical) variables, the labels are first replaced by 0,1,2 for <em>setosa</em>, <em>virginica</em>, and <em>versicolor</em> respectively</p></li>
+<li><p>This is known as <em>label encoding</em></p></li>
+</ul>
+
+<img data-src="images/ANN-IrisExample8.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="encode-categorical-vars-2" class="slide level2 smaller">
+<h2>Encode categorical vars (2)</h2>
+<ul>
+<li>Next, the y values (flower species) are extracted from the iris dataset and then one-hot encoded by calling the <code>to_one_hot</code> function</li>
+</ul>
+
+<img data-src="images/ANN-IrisExample9.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="define-activation-function" class="slide level2 smaller">
+<h2>Define Activation function</h2>
+<ul>
+<li><p>The sigmoid function is used for the activation function, as it outputs values between 0 and 1</p></li>
+<li><p>This is useful because this model predicts probabilities as an output</p></li>
+<li><p>Additionally, this function is differentiable which allows for gradient descent optimization.</p></li>
+</ul>
+
+<img data-src="images/ANN-IrisExample11.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="weights-and-biases-inizialization" class="slide level2">
+<h2>Weights and biases inizialization</h2>
+<ul>
+<li><p>Before training the model, the weights and biases are initialized as random values between 0 and 1</p>
+<ul>
+<li>w0 is the set of weights for connections between the input and hidden layer</li>
+<li>w1 is the set of weights for connections between the hidden and output layer</li>
+</ul></li>
+<li><p>The biases bh and bo are for the hidden and output layers respectively</p></li>
+</ul>
+</section>
+<section id="initialize-weight-and-biases" class="slide level2 smaller">
+<h2>Initialize weight and biases</h2>
+
+<img data-src="images/initializeweights.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section></section>
+<section id="to-be-continued" class="title-slide slide level1 center">
+<h1>To be continued …</h1>
+
+</section>
+
 <section id="references-and-resources" class="title-slide slide level1 center">
 <h1>References and Resources</h1>
 <div class="quarto-auto-generated-content">
