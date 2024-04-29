@@ -10,10 +10,10 @@ format:
     html: 
       toc: true
       toc-depth: 3
-      code-fold: false
+      code-fold: show
       fig-width: 8
       fig-height: 6
-#       embed-resources: true
+      embed-resources: true
     pdf:
       toc: true
       toc-depth: 3
@@ -49,7 +49,7 @@ editor:
     wrap: 72
 ---
 
-```{r}
+```{r echo=FALSE}
 options(width=100) 
 if(!require("knitr")) install.packages("knitr")
 library("knitr")
@@ -141,6 +141,22 @@ Success stories such as
 
 have also contributed to the widespread adoption of AI.
 
+
+AI comes, however, also with fears from multiple sources from science fiction to religion
+
+- Mass unemployment
+  
+- Loss of privacity
+  
+- AI bias
+  
+- AI fakes
+  
+- Or, simply, AI takeover
+  
+  ![](2.1-Introduction_to_ANN-Slides_insertimage_2.png)
+
+
 ## Comparison with Traditional Machine Learning
 
 A reasonable question is: "*How are Artificial Intelligence, Machine
@@ -149,7 +165,7 @@ Learning and Deep learning related*"?
 A standard answer can be found in the image below that has a myriad
 variations:
 
-```{r, fig.align='center', out.width="100%"}
+```{r, fig.align='center', out.width="100%", echo=FALSE}
 knitr::include_graphics("images/AI-ML-DL-1.jpg")
 ```
 
@@ -167,24 +183,23 @@ have many variants:
     learning data representations as successive successive layers of
     increasingly meaningful representations.
 
-```{r, fig.align='center', out.width="100%"}
+```{r, fig.align='center', out.width="100%", echo=FALSE}
 knitr::include_graphics("images/ML_vs_DL-2.png")
 ```
 
-We will be coming back to the difference between ML and DL, but two
-strengths of DL that differentiate it from ML **,**:
+We will be coming back to the difference between ML and DL, but we can at least highlight two strengths of DL that differentiate it from ML:
 
--   DNN combine feature extraction and classification in a way that does
+- DNN combine feature extraction and classification in a way that does
     not require (or dramatically decreases) human intervention.
--   The power of DNN requires in its ability to improve with data
-    availability, without seemingly reaching plateaus as ML.
+- The power of DNN requires in its ability to improve with data
+  availability, without seemingly reaching plateaus as ML.
 
 ![An illustration of the performance comparison between deep learning
 (DL) and other machine learning (ML) algorithms, where DL modeling from
 large amounts of data can increase the
 performance](images/PerformanceVsAmountOfData.png){fig-align="center"}
 
-**Deep learning is having a strong impact**
+**Deep learning is having a strong impact** in many day-to-day activities, which explains the growing interest in the topic at all levels, not only technical or scientific one.
 
 -   Near-human-level image classification
 
@@ -208,9 +223,7 @@ performance](images/PerformanceVsAmountOfData.png){fig-align="center"}
 
 -   Superhuman Go playing
 
-According to [@chollet2022] ... "*we shouldn't believe the short-term
-hype, but should believe in the long-term vision. It may take a while
-for AI to be deployed to its true potential---a potential the full
+According to [@Allaire2022] ... "*we shouldn't believe the short-term hype, but should believe in the long-term vision. It may take a while for AI to be deployed to its true potential---a potential the full
 extent of which no one has yet dared to dream---but AI is coming, and it
 will transform our world in a fantastic way*".
 
@@ -219,17 +232,12 @@ neural networks, perceptrons.
 
 # Artificial Neural Networks
 
-## The perceptron, the building block
+## Mc Cullogh's neuron and the perceptron
 
-The perceptron, was introduced by Rosenblatt (one version of the
-perceptron at least), as a mathematical model that might emulate a
-neuron.
 
-The idea is: *how can we produce a model that, given some inputs, and an
-appropriate set of examples, learn to produce the desired output*?
+The first computational model of a neuron was proposed by Warren McCullough (neuroscientist) and Walter Pitts (logician) in 1943.
 
-The first computational model of a neuron was proposed by Warren
-McCullough (neuroscientist) and Walter Pitts (logician) in 1943.
+THe ide was to build as a mathematical model that might emulate a neuron, in the sense that *given some inputs, and an  appropriate set of examples, learn to produce the desired output*?
 
 [![](images/MacCulloghPitts-Neuron.png){fig-align="center"}](https://towardsdatascience.com/mcculloch-pitts-model-5fdf65ac5dd1)
 
@@ -252,14 +260,12 @@ This first attempt to emulate neurons succeeded but with limitations:
     function
 
 To overcome these limitations Frank Rosenblatt, an American
-psychologist, proposed the classical perception model, the *artificial
-neuron*, in 1958. It is more generalized computational model than the
-McCullough-Pitts neuron where weights and thresholds can be learnt over
-time.
+psychologist, proposed the classical **perceptron model**, the *artificial neuron*, in 1958. 
 
-The perceptron proposed by Rosenblatt this is very similar to an M-P
-neuron but we take a weighted sum of the inputs and set the output as
-one only when the sum is more than an arbitrary threshold (***theta***).
+It is a more generalized computational model than the
+McCullough-Pitts neuron where weights and thresholds can be learnt over time.
+
+The perceptron proposed by Rosenblatt this is very similar to an M-P neuron but it takes a weighted sum of the inputs and sets the output to one iff the sum is more than an arbitrary threshold (**$\theta$**).
 
 [![](images/RosenblattPerceptron1.png)](https://towardsdatascience.com/perceptron-the-artificial-neuron-4d8c70d5cc8d)
 
@@ -281,21 +287,20 @@ Functions* which, eventually, can be non-linear.
 
 ## Neurons and Activation Functions
 
-An activation function is a function that is added into an artificial
-neuron in order to help it learn complex patterns in the data.
-
 How come biological and artificial neurons come to compare?
 
-Biological neurons are specialized cells in the central nervous system
+- Biological neurons are specialized cells in the central nervous system
 that transmit electrical and chemical signals to communicate with each
 other and the rest of the body.
 
-On the other hand, artificial neurons are mathematical models used in
+- On the other hand, artificial neurons are mathematical models used in
 neural networks to process information.
 
+Neurons do not need to respond to all stimuli. When the stimulus is big enough to produce a response we say that the neurom has been activated. By extension one can consider that activation is controlled (or decided) by an *activation function*.
+
+
 In both biological and artificial neurons, the **activation function**
-is what is responsible for *deciding whether the neuron activates or not
-based on the input it receives*.
+is what is responsible for *deciding whether the neuron activates or not  based on the input it receives*.
 
 -   In the case of a biological neuron, the activation function is based
     on the release of neurotransmitters, which are chemical substances
@@ -303,11 +308,13 @@ based on the input it receives*.
     signal reaching the neuron exceeds a certain threshold, the neuron
     releases neurotransmitters, which are received by other neurons or
     cells in the body to continue the communication process.
--   On the other hand, in an artificial neuron, the activation function
+-   On the other hand, in an artificial neuron, the *activation function*
     is a mathematical function applied to the neuron's input to produce
     an output. Like in the biological neuron, this activation function
     decides whether the neuron activates or not based on the input it
     receives.
+    
+*An activation function is a function that is added into an artificial neuron in order to help it learn complex patterns in the data.*
 
 ```{r, fig.align='center', out.width="100%"}
 knitr::include_graphics("images/ActivationFunction0.png")
@@ -317,10 +324,12 @@ knitr::include_graphics("images/ActivationFunction0.png")
 functions.](https://towardsdatascience.com/everything-you-need-to-know-about-activation-functions-in-deep-learning-models-84ba9f82c253)
 
 With all these inputs in mind we can now define an Artificial Neuron as
-a *computational unit* that - takes as input $x=(x_0,x_1,x_2,x_3)$
-($x_0$ = +1, called bias), and - outputs
-$h_{\theta}(x) = f(\theta^\intercal x) = f(\sum_i \theta_ix_i)$, - where
-$f:\mathbb{R}\mapsto \mathbb{R}$ is called the **activation function**.
+a *computational unit* that 
+
+- takes as input $x=(x_0,x_1,x_2,x_3)$ ($x_0$ = +1, called bias), and 
+
+- outputs $h_{\theta}(x) = f(\theta^\intercal x) = f(\sum_i \theta_ix_i)$, 
+- where  $f:\mathbb{R}\mapsto \mathbb{R}$ is called the **activation function**.
 
 The goal of the activation function is to provide the Neuron with *the
 capability of producing the required outputs*.
@@ -346,24 +355,29 @@ $$
 The `tanh(z)` function is a re-scaled version of the sigmoid, and its
 output range is $[-1,1]$ instead of $[0,1]$.
 
-Two useful properties to recall are that: - *If* $f(z)=1/(1+e^z)$ is the
+Two useful properties to recall are that: 
+
+- *If* $f(z)=1/(1+e^z)$ is the
 sigmoid function, then its derivative is given by $f'(z)=f(z)(1-f(z))$.
+
+```{r, fig.align='center', out.width="100%", echo=FALSE}
+knitr::include_graphics("images/sigmoidFunctionDerivative.png")
+```
 
 -   *Similarly, if* $f$ is the `tanh` function, then its derivative is
     given by $f'(z)=1-(f(z))^2$.
 
--   In modern neural networks, the default recommendation is to use the
+In modern neural networks, the default recommendation is to use the
     *rectified linear unit* or ReLU defined by the activation function
     $f(z)=\max\{0,z\}$.
 
-This function remains very close to a linear one, in the sense that is a
-piece-wise linear function with two linear pieces.
+- This function remains very close to a linear one, in the sense that is a piece-wise linear function with two linear pieces.
 
-Because rectified linear units are nearly linear, they preserve many of
+- Because rectified linear units are nearly linear, they preserve many of
 the properties that make linear models easy to optimize with gradient
 based methods.
 
-They also preserve many of the properties that make linear models
+- They also preserve many of the properties that make linear models
 generalize well.
 
 [![](images/ActivationFunctions.png)](https://medium.com/@shrutijadon/survey-on-activation-functions-for-deep-learning-9689331ba092).
@@ -375,6 +389,27 @@ $\left\langle w_{j}, x\right\rangle$ represents the dot product between
 vectors $w$ and $x$.
 
 ![](images/ArtificialNeuron.png)
+
+In summary:
+
+- An artificial neuron (ANN) takes a vector of input values $x_{1}, \ldots, x_{d}$ and combines it with some weights that are local to the neuron $\left(w_{0}, w_{1}, . ., w_{d}\right)$ to compute a net input $w_{0}+\sum_{i=1}^{d} w_{i} * x_{i}$. 
+
+- To compute its output, it then passes the net input through a possibly non-linear univariate activation function $g(\cdot)$, usually vchosen from a set of options such as *Sigmoid*, *Tanh* or *ReLU* functions
+
+- Given there is a special weight $w_{0}$, the *bias*, in order to treat all weights equally, we use the trick of creating an extra input variable $x_{0}$ with value always equal to 1 , and so the function computed by a single artificial neuron (parameterized by its weights $\mathbf{w}$ ) is:
+
+$$
+y(\mathbf{x})=g\left(w_{0}+\sum_{i=1}^{d} w_{i} x_{i}\right)=g\left(\sum_{i=0}^{d} w_{i} x_{i}\right)=g\left(\mathbf{w}^{\mathbf{T}} \mathbf{x}\right)
+$$
+
+- Single artificial neurons are used to model functions $\mathbb{R}^{d} \mapsto \mathbb{R}$. 
+  - The weights $w_{0}, w_{1}, . ., w_{d}$ are the parameters of the model. Different values will compute different functions. 
+
+  - As usual, **the learning task is to find suitable weights that allow neurons to model the data as accurately as possible**.
+
+## One layer neural networks
+
+
 
 ## Multilayer perceptrons
 
@@ -421,140 +456,6 @@ different from the one used on the hidden layers. For example:.
         \operatorname{softmax}(z)_{i}=\frac{\exp \left(z_{i}\right)}{\sum_{j} \exp \left(z_{j}\right)}
         $$
 
-# An example
-
-In this example we train and use a "shallow neural network", called this
-way in contrast with "deep neural networks".
-
-We will use the `neuralnet` R package, which is not intended to work
-with deep neural networks, to build a simple neural network to predict
-if a type of stock pays dividends or not.
-
-```{r}
-if (!require(neuralnet)) 
-  install.packages("neuralnet", dep=TRUE)
-if (!require(caret)) 
-  install.packages("caret", dep=TRUE)
-```
-
-The data for the example are the `dividendinfo.csv` dataset, available
-from: <https://github.com/MGCodesandStats/datasets>
-
-```{r}
-mydata <- read.csv("https://raw.githubusercontent.com/MGCodesandStats/datasets/master/dividendinfo.csv")
-str(mydata)
-```
-
-## Data pre-processing
-
-One of the most important procedures when forming a neural network is
-data normalization. This involves adjusting the data to a common scale
-so as to accurately compare predicted and actual values. Failure to
-normalize the data will typically result in the prediction value
-remaining the same across all observations, regardless of the input
-values.
-
-We can do this in two ways in R:
-
--   Scale the data frame automatically using the scale function in R
--   Transform the data using a max-min normalization technique
-
-In this example We implement the max-min normalization technique.
-
-See [this
-link](https://vitalflux.com/data-science-scale-normalize-numeric-data-using-r/)
-for further details on how to use the normalization function.
-
-```{r}
-normalize <- function(x) {
-  return ((x - min(x)) / (max(x) - min(x)))
-}
-normData <- as.data.frame(lapply(mydata, normalize))
-```
-
-As usually, the dataset is separated in a training and a test set. The
-training set contains a random selection with and (arbitrary) 66% of the
-observations.
-
-```{r}
-perc2Train <- 2/3
-ssize <- nrow(normData)
-set.seed(12345)
-data_rows <- floor(perc2Train *ssize)
-train_indices <- sample(c(1:ssize), data_rows)
-trainset <- normData[train_indices,]
-testset <- normData[-train_indices,]
-```
-
-The `trainset` set will be used to train the network and the `testset`
-set one will be used to evaluate it.
-
-## Training a neural network
-
-Setting the parameters of a neural network requires experience and
-understanding of their meaning, and even so, changes in the parameters
-can lead to similar results.
-
-We create a simple NN with two hidden layers, with 3 and 2 neurons
-respectively. This is specified in the `hidden` parameter. For other
-parameters see [the package
-help](https://www.rdocumentation.org/packages/neuralnet/versions/1.44.2/topics/neuralnet).
-
-```{r}
-# Neural Network
-library(neuralnet)
-nn <- neuralnet(dividend ~ fcfps + earnings_growth + de + mcap + current_ratio, 
-                data=trainset, 
-                hidden=c(3,2), 
-                linear.output=FALSE, 
-                threshold=0.01)
-```
-
-The output of the procedure is a neural network with estimated weights.
-
-This can be seen with a `plot` function (including the `rep` argument).
-
-```{r}
-plot(nn, rep = "best")
-```
-
-The object `nn`contains information the weights and the results although
-it is not particularly clear or useful.
-
-```{r}
-summary(nn)
-nn$result.matrix
-```
-
-## Model evaluation
-
-A prediction for each value in the `testset` dataset can be built with
-the `compute` function.
-
-```{r}
-#Test the resulting output
-temp_test <- subset(testset, select =
-                      c("fcfps","earnings_growth", 
-                        "de", "mcap", "current_ratio"))
-head(temp_test)
-nn.results <- compute(nn, temp_test)
-results <- data.frame(actual = 
-                  testset$dividend, 
-                  prediction = nn.results$net.result)
-head(results)
-```
-
-A confusion matrix can be built to evaluate the predictive ability of
-the network:
-
-```{r}
-
-roundedresults<-sapply(results,round,digits=0)
-roundedresultsdf=data.frame(roundedresults)
-attach(roundedresultsdf)
-confMat<- caret::confusionMatrix(table(actual, prediction))
-confMat
-```
 
 # Some mathematics behind ANN
 
@@ -1005,5 +906,141 @@ randomization are often driven by the requirements of high performance
 computing architectures. Also, it is, of course, possible to vary these
 choices, along with others, such as the learning rate, dynamically as
 the training progresses in an attempt to accelerate convergence.
+
+# An example
+
+In this example we train and use a "shallow neural network", called this
+way in contrast with "deep neural networks".
+
+We will use the `neuralnet` R package, which is not intended to work
+with deep neural networks, to build a simple neural network to predict
+if a type of stock pays dividends or not.
+
+```{r}
+if (!require(neuralnet)) 
+  install.packages("neuralnet", dep=TRUE)
+if (!require(caret)) 
+  install.packages("caret", dep=TRUE)
+```
+
+The data for the example are the `dividendinfo.csv` dataset, available
+from: <https://github.com/MGCodesandStats/datasets>
+
+```{r}
+mydata <- read.csv("https://raw.githubusercontent.com/MGCodesandStats/datasets/master/dividendinfo.csv")
+str(mydata)
+```
+
+## Data pre-processing
+
+One of the most important procedures when forming a neural network is
+data normalization. This involves adjusting the data to a common scale
+so as to accurately compare predicted and actual values. Failure to
+normalize the data will typically result in the prediction value
+remaining the same across all observations, regardless of the input
+values.
+
+We can do this in two ways in R:
+
+-   Scale the data frame automatically using the scale function in R
+-   Transform the data using a max-min normalization technique
+
+In this example We implement the max-min normalization technique.
+
+See [this
+link](https://vitalflux.com/data-science-scale-normalize-numeric-data-using-r/)
+for further details on how to use the normalization function.
+
+```{r}
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+normData <- as.data.frame(lapply(mydata, normalize))
+```
+
+As usually, the dataset is separated in a training and a test set. The
+training set contains a random selection with and (arbitrary) 66% of the
+observations.
+
+```{r}
+perc2Train <- 2/3
+ssize <- nrow(normData)
+set.seed(12345)
+data_rows <- floor(perc2Train *ssize)
+train_indices <- sample(c(1:ssize), data_rows)
+trainset <- normData[train_indices,]
+testset <- normData[-train_indices,]
+```
+
+The `trainset` set will be used to train the network and the `testset`
+set one will be used to evaluate it.
+
+## Training a neural network
+
+Setting the parameters of a neural network requires experience and
+understanding of their meaning, and even so, changes in the parameters
+can lead to similar results.
+
+We create a simple NN with two hidden layers, with 3 and 2 neurons
+respectively. This is specified in the `hidden` parameter. For other
+parameters see [the package
+help](https://www.rdocumentation.org/packages/neuralnet/versions/1.44.2/topics/neuralnet).
+
+```{r}
+# Neural Network
+library(neuralnet)
+nn <- neuralnet(dividend ~ fcfps + earnings_growth + de + mcap + current_ratio, 
+                data=trainset, 
+                hidden=c(3,2), 
+                linear.output=FALSE, 
+                threshold=0.01)
+```
+
+The output of the procedure is a neural network with estimated weights.
+
+This can be seen with a `plot` function (including the `rep` argument).
+
+```{r}
+plot(nn, rep = "best")
+```
+
+The object `nn`contains information the weights and the results although
+it is not particularly clear or useful.
+
+```{r}
+summary(nn)
+nn$result.matrix
+```
+
+## Model evaluation
+
+A prediction for each value in the `testset` dataset can be built with
+the `compute` function.
+
+```{r}
+#Test the resulting output
+temp_test <- subset(testset, select =
+                      c("fcfps","earnings_growth", 
+                        "de", "mcap", "current_ratio"))
+head(temp_test)
+nn.results <- compute(nn, temp_test)
+results <- data.frame(actual = 
+                  testset$dividend, 
+                  prediction = nn.results$net.result)
+head(results)
+```
+
+A confusion matrix can be built to evaluate the predictive ability of
+the network:
+
+```{r}
+
+roundedresults<-sapply(results,round,digits=0)
+roundedresultsdf=data.frame(roundedresults)
+attach(roundedresultsdf)
+confMat<- caret::confusionMatrix(table(actual, prediction))
+confMat
+```
+
 
 # References and resources

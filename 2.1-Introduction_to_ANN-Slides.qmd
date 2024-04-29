@@ -260,7 +260,7 @@ This first attempt to emulate neurons succeeded but with limitations:
 -   Generalizes McCullough-Pitts neuron in that *weights and thresholds can be learnt over time*.
 
     -   It takes a weighted sum of the inputs and
-    -   It sets the output as one only when the sum is more than an arbitrary threshold (***theta***).
+    -   It sets the output to iff the sum is more than an arbitrary threshold (**$\theta$**).
 
 ## Rosenblatt's perceptron
 
