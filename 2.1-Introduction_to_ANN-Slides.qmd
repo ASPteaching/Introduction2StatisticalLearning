@@ -203,7 +203,7 @@ knitr::include_graphics("images/ML_vs_DL-2.png")
     -   *It may take a while for AI to be deployed to its true potential---a potential the full extent of which no one has yet dared to dream*
     -   *but AI is coming, and it will transform our world in a fantastic way*".
 
-# Artificial Neural Networks
+# The Artificial Neurone (AN)
 
 
 ## Emulating biological neurons
@@ -426,11 +426,23 @@ knitr::include_graphics("images/ReLUFunction.png")
 knitr::include_graphics("images/ArtificialNeuron.png")
 ```
 
-$\Sigma=\left\langle w_{j}, x\right\rangle+ b_{j}$
+## In words
 
-## Multilayer perceptrons {.smaller}
+- An ANN a vector of input values $x_{1}, \ldots, x_{d}$ and combines it with some weights that are local to the neuron $\left(w_{0}, w_{1}, . ., w_{d}\right)$ to compute a net input $w_{0}+\sum_{i=1}^{d} w_{i} * x_{i}$. 
 
--   A Multilayer Perceptron or Artificial Neural Network (ANN) is a computational model that mimics the structure and function of the human brain.
+- To compute its output, it then passes the net input through a possibly non-linear univariate activation function $g(\cdot)$, usually vchosen from a set of options such as *Sigmoid*, *Tanh* or *ReLU* functions
+
+- To dela with the  *bias*, we create an extra input variable $x_{0}$ with value always equal to 1 , and so the function computed by a single artificial neuron (parameterized by its weights $\mathbf{w}$ ) is:
+
+$$
+y(\mathbf{x})=g\left(w_{0}+\sum_{i=1}^{d} w_{i} x_{i}\right)=g\left(\sum_{i=0}^{d} w_{i} x_{i}\right)=g\left(\mathbf{w}^{\mathbf{T}} \mathbf{x}\right)
+$$
+
+# From neurons to neural networks
+
+## The Neural Network Model {.smaller}
+
+-   An Artificial Neural Network (ANN) is a computational model that mimics the structure and function of the human brain.
 -   It is composed of interconnected nodes, called neurons, that are organized into layers.
 -   Neurons in each layer are connected to neurons in the next layer, forming a directed graph-like structure.
 -   The first layer (input layer) receives input data.
@@ -785,7 +797,6 @@ attach(roundedresultsdf)
 table(actual,prediction)
 ```
 
-# Some mathematics behind ANN
 
 ## Training an ANN {.smaller}
 

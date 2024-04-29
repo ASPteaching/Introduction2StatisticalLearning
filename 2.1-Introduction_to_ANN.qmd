@@ -230,7 +230,7 @@ will transform our world in a fantastic way*".
 Once the introduction is ready we con move onto the building blocks of
 neural networks, perceptrons.
 
-# Artificial Neural Networks
+# The Artificial Neuron (AN)
 
 ## Mc Cullogh's neuron and the perceptron
 
@@ -392,7 +392,7 @@ vectors $w$ and $x$.
 
 In summary:
 
-- An artificial neuron (ANN) takes a vector of input values $x_{1}, \ldots, x_{d}$ and combines it with some weights that are local to the neuron $\left(w_{0}, w_{1}, . ., w_{d}\right)$ to compute a net input $w_{0}+\sum_{i=1}^{d} w_{i} * x_{i}$. 
+- An artificial neuron takes a vector of input values $x_{1}, \ldots, x_{d}$ and combines it with some weights that are local to the neuron $\left(w_{0}, w_{1}, . ., w_{d}\right)$ to compute a net input $w_{0}+\sum_{i=1}^{d} w_{i} * x_{i}$. 
 
 - To compute its output, it then passes the net input through a possibly non-linear univariate activation function $g(\cdot)$, usually vchosen from a set of options such as *Sigmoid*, *Tanh* or *ReLU* functions
 
@@ -407,133 +407,147 @@ $$
 
   - As usual, **the learning task is to find suitable weights that allow neurons to model the data as accurately as possible**.
 
-## One layer neural networks
+# From neurons to neural networks
+
+## The basic neural networks
+
+Following with the brain analogy one can combine (artificial) neurons to create better learners.
+
+A simple artificial neural network is usually created by combining two types of modifications to the basic perceptron (AN).
+
+- Stacking several neurons insteads of just one.
+- Adding an additional layer of neurons, which is call a *hidden* layer, 
+
+This yields a system where the output of a \emph{neuron} can be the input
+of another in many different ways.
+
+The image below shows a small neural network with three neurons stacked in a *hidden* layer.
+
+
+![](images/nn.jpg){width="70%" align='center'}
+
+
+In this figure, we have used circles to also denote the inputs to the
+network. 
+
+- The circles labeled +1 are called bias units, and correspond to the intercept term. 
+
+- The leftmost layer of the network is called the *input layer*.
+
+- The rightmost layer of the network is called the output layer.
+
+  - In this example, the output layer has only one node. 
+
+- The middle layer of nodes is called the *hidden layer*, because its values are not observed in the training set.
+
+
+Bias nodes are not counted when stating the neuron size. In the example above we also say that our example neural network has:
+
+ - 3 input units (not counting the bias unit), 
+ - 3 hidden units, and 
+ - 1 output unit.
 
 
 
-## Multilayer perceptrons
+<!-- ## Multilayer perceptrons -->
 
-A multilayer perceptron (or Artificial neural network) is a structure
-composed by *several hidden layers of neurons* where the output of a
-neuron of a layer becomes the input of a neuron of the next layer.
+<!-- A multilayer perceptron (or Artificial neural network) is a structure -->
+<!-- composed by *several hidden layers of neurons* where the output of a -->
+<!-- neuron of a layer becomes the input of a neuron of the next layer. -->
 
-Moreover, the output of a neuron can also be the input of a neuron of
-the same layer or of neuron of previous layers (this is the case for
-recurrent neural networks). On last layer, called output layer, we may
-apply a different activation function as for the hidden layers depending
-on the type of problems we have at hand : regression or classification.
+<!-- Moreover, the output of a neuron can also be the input of a neuron of -->
+<!-- the same layer or of neuron of previous layers (this is the case for -->
+<!-- recurrent neural networks). On last layer, called output layer, we may -->
+<!-- apply a different activation function as for the hidden layers depending -->
+<!-- on the type of problems we have at hand : regression or classification. -->
 
-The Figure below represents a neural network with three input variables,
-one output variable, and two hidden layers.
+<!-- The Figure below represents a neural network with three input variables, -->
+<!-- one output variable, and two hidden layers. -->
 
-```{r, fig.align='center', out.width="100%"}
-knitr::include_graphics("images/MultiLayer1.png")
-```
+<!-- ```{r, fig.align='center', out.width="100%"} -->
+<!-- knitr::include_graphics("images/MultiLayer1.png") -->
+<!-- ``` -->
 
-Multilayers perceptrons have a basic architecture since each unit (or
-neuron) of a layer is linked to all the units of the next layer but has
-no link with the neurons of the same layer.
+<!-- Multilayers perceptrons have a basic architecture since each unit (or -->
+<!-- neuron) of a layer is linked to all the units of the next layer but has -->
+<!-- no link with the neurons of the same layer. -->
 
-The parameters of the architecture are:
+<!-- The parameters of the architecture are: -->
 
--   the number of hidden layers and
--   the number of neurons in each layer.
+<!-- -   the number of hidden layers and -->
+<!-- -   the number of neurons in each layer. -->
 
-The activation functions are also to choose by the user. For the output
-layer, as mentioned previously, the activation function is generally
-different from the one used on the hidden layers. For example:.
+<!-- The activation functions are also to choose by the user. For the output -->
+<!-- layer, as mentioned previously, the activation function is generally -->
+<!-- different from the one used on the hidden layers. For example:. -->
 
--   For regression, we apply no activation function on the output layer.
--   For binary classification, the output gives a prediction of
-    $\mathbb{P}(Y=1 / X)$ since this value is in $[0,1]$ and the sigmoid
-    activation function is generally considered.
--   For multi-class classification, the output layer contains one neuron
-    per class (i), giving a prediction of $\mathbb{P}(Y=i / X)$. The sum
-    of all these values has to be equal to 1. The sum of all these
-    values has to be equal to 1.
-    -   A common choice for multi-class ANN is the soft-max activation
-        function: $$
-        \operatorname{softmax}(z)_{i}=\frac{\exp \left(z_{i}\right)}{\sum_{j} \exp \left(z_{j}\right)}
-        $$
+<!-- -   For regression, we apply no activation function on the output layer. -->
+<!-- -   For binary classification, the output gives a prediction of -->
+<!--     $\mathbb{P}(Y=1 / X)$ since this value is in $[0,1]$ and the sigmoid -->
+<!--     activation function is generally considered. -->
+<!-- -   For multi-class classification, the output layer contains one neuron -->
+<!--     per class (i), giving a prediction of $\mathbb{P}(Y=i / X)$. The sum -->
+<!--     of all these values has to be equal to 1. The sum of all these -->
+<!--     values has to be equal to 1. -->
+<!--     -   A common choice for multi-class ANN is the soft-max activation -->
+<!--         function: $$ -->
+<!--         \operatorname{softmax}(z)_{i}=\frac{\exp \left(z_{i}\right)}{\sum_{j} \exp \left(z_{j}\right)} -->
+<!--         $$ -->
 
 
-# Some mathematics behind ANN
 
-- An ANN is a predictive model whose properties and behaviour  can be
-mathematically characterized.
+An ANN is a predictive model (a *learner) whose properties and behaviour  can be well characterized.
 
-- In practice this means:
-  - The ANN acts by composing a series of linear and non-linear (activation) functions.
-  - These are characterized by their *weights* and *biases*, that need to be *learnt*.
-- *Training* the network is done by 
+In practice this means:
+
+- The ANN operates through a process known as *forward propagation*, which encompasses the entire journey of information flow from the input layer to the output layer.
+
+- Forward propagation is performed by composing a series of linear and non-linear (activation) functions.
+
+- These are characterized (parametrized) by their *weights* and *biases*, that need to be *learnt*. This is done by *training the ANN*.
+
+- In order for the ANN to perform well, the training process aims at finding the best possible  parameter values for the learning task defined by the fnctions. This is done by
+
   - Selecting an appropriate (convex) loss function,
   - Finding those weights that minimize a the total *cost* function (avg. loss).
+
 - This is usually done using some iterative optimization procedure such as *gradient descent*.
-- This requires evaluating derivatives in a huge number of points.
-    - Such high number may be reduced by *Stochastic Gradient Descent*.
-    - The evaluation of derivatives is simplified thanks to *Backpropagation*.
+  - This requires evaluating derivatives in a huge number of points.
+  - Such high number may be reduced by *Stochastic Gradient Descent*.
+  - The evaluation of derivatives is simplified thanks to *Backpropagation*.
 
-
-## A guiding example
-
-We will use a concrete model to explain the concepts, which can be
-easily generalized to more neurons and layers.
-
-Consider the following simple ANN:
-
-```{r, echo=FALSE, fig.align='center', out.width="100%"}
-knitr::include_graphics("images/nn.jpg")
-```
-
--   The circles labelled +1 are called bias units, and correspond to the
-    intercept, here named *bias* term.
--   The leftmost layer of the network is called the *input layer*.
--   The rightmost layer is the *output* layer (which, in this example,
-    has only one node).
--   The middle layer(s) is(are) called the *hidden layer(s)*, because
-    its values are not observed in the training set.
-
-So our example network has:
-
--   The input layer with 3 input units (not counting the bias unit),
--   1 hidden layer with 3 hidden units, and
--   The output layer with 1 output unit.
 
 ### A logistic regression ANN
 
-This ANN canseen as a device to perform a logistic regression:
+The simple ANN shown above can be casted to perform a logistic regression:
 
--   From input layer to layer 2: non-linear transformation $\rightarrow$ new set of complex features.
+-   The transformation of the inputs through the hidden layer yields new set of *complex features*.
 
--   From layer 2 to output layer use a sigmoid activation function to   produce the following output from the set of *complex features*.
-
+-   Such complex features may be transformed using a sigmoid activation function to produce the output, which takes the form:
 $$
 \mbox{The output is: }h_{\theta}(x)=\frac{1}{1+e^{-\theta^\intercal x}}
 $$
 
-Recall that, the logistic regression model is:
+Now, recall that, the logistic regression model is:
 
 $$
 \log\frac{p(Y=1|x)}{1-p(Y=1|x)}=\theta^\intercal x
 $$
 
-Isolating $p(Y=1|x)$ and taking logs in both sides, we have:
+By taking logs in both sides and then isolating $p(Y=1|x)$, we have:
 
-$$
-\frac{p(Y=1|x)}{1-p(Y=1|x)}=e^{\theta^\intercal x}
-$$
+\begin{eqnarray}
+\frac{p(Y=1|x)}{1-p(Y=1|x)}&=&e^{\theta^\intercal x}\\
+p(Y=1|x)&=& e^{\theta^\intercal x}\cdot(1-p(Y=1|x))\\
+p(Y=1|x)[1+e^{\theta^\intercal x}]&=& e^{\theta^\intercal x}\\
+p(Y=1|x)&=&\frac{e^{\theta^\intercal x}}{1+e^{\theta^\intercal x}}=\frac{1}{1+e^{-\theta^\intercal x}}
+\end{eqnarray}
 
-Thus $$
-p(Y=1|x)=\frac{e^{\theta^\intercal x}}{1+e^{\theta^\intercal x}}=\frac{1}{1+e^{-\theta^\intercal x}}
-$$
-
-That is, *when the activation function of the output node is the sigmoid
-activation function, the output coincides with a logistic regression on
-complex features*
+That is, *when the activation function of the output node is the sigmoid activation function, the output coincides with a logistic regression on complex features*
 
 -   And, $h_{\theta}(x)$, the output of the ANN, estimates  $p(Y=1|x)$.
 
-## Parametrizing an ANN
+## The parameters of an ANN
 
 -   Let $n_l$ denote the number of layers in our network, thus $n_l=3$
     in our example.
@@ -566,30 +580,42 @@ For $l=1$, we also use $a^{(1)}_i=x_i$ to denote the $i$-th input.
 Given a fixed setting of the parameters $\Theta$, our neural network
 defines a model $h_{\Theta}(x)$ that outputs a real number.
 
-We can now see *how these weights are used to produce the output*:
+## Forward propagation
 
-given by: \begin{eqnarray}
+As described above the process that encompasses the computations required to go from the input values to the final output is known as *forward propagation*.
+
+To understand how it works let's check how the  weights are combined with the input to produce the final output.
+
+Each node, $a_i^{(2)}$ of the hidden layer opperates on all nodes of the input values as follows:
+
+\begin{eqnarray}
 a_1^{(2)}&=&f(\theta_{10}^{(1)}+\theta_{11}^{(1)}x_1+\theta_{12}^{(1)}x_2+\theta_{13}^{(1)}x_3)\\
 a_2^{(2)}&=&f(\theta_{20}^{(1)}+\theta_{21}^{(1)}x_1+\theta_{22}^{(1)}x_2+\theta_{23}^{(1)}x_3)\\
-a_3^{(2)}&=&f(\theta_{30}^{(1)}+\theta_{31}^{(1)}x_1+\theta_{32}^{(1)}x_2+\theta_{33}^{(1)}x_3)\\
-h_{\Theta}(x)&=&a_1^{(3)}=f(\theta_{10}^{(2)}+\theta_{11}^{(2)}a_1^{(2)}+\theta_{12}^{(2)}a_2^{(2)}+\theta_{13}^{(2)}a_3^{(2)})
+a_3^{(2)}&=&f(\theta_{30}^{(1)}+\theta_{31}^{(1)}x_1+\theta_{32}^{(1)}x_2+\theta_{33}^{(1)}x_3))
 \end{eqnarray}
 
-Now, letting $z_i^{(l)}$ denote the total weighted sum of inputs to unit
-$i$ in layer $l$, including the bias term $$
+The output of the hidden layer is transformed through the activation function:
+
+$$
+h_{\Theta}(x)=a_1^{(3)}=f(\theta_{10}^{(2)}+\theta_{11}^{(2)}a_1^{(2)}+\theta_{12}^{(2)}a_2^{(2)}+\theta_{13}^{(2)}a_3^{(2)}
+$$
+
+### A more compact notation
+
+If we let  $z_i^{(l)}$ denote the total weighted sum of inputs to unit $i$ in layer $l$, including the bias term:
+
+$$
 z_i^{(2)}=\theta_{i0}^{(1)}+\theta_{i1}^{(1)}x_1+\theta_{i2}^{(1)}x_2+\theta_{i3}^{(1)}x_3,
-$$ the output becomes: $a_i^{(l)}=f(z_i^{(l)})$.
+$$ 
+the output becomes: $a_i^{(l)}=f(z_i^{(l)})$.
 
-## Compacting notation
 
--   Note that this easily lends itself to a more compact notation.
+Extending the activation function $f(\cdot)$ to apply to vectors in   an element-wise fashion: 
 
--   Extending the activation function $f(\cdot)$ to apply to vectors in
-    an element-wise fashion: $$
+$$
     f([z_1,z_2,z_3]) = [f(z_1), f(z_2),f(z_3)],
-    $$
-
-then we can write the previous equations more compactly as:
+$$
+we can write the previous equations more compactly as:
 
 ```{=tex}
 \begin{eqnarray}
@@ -599,18 +625,23 @@ z^{(3)}&=&\Theta^{(2)}a^{(2)}\nonumber\\
 h_{\Theta}(x)&=&a^{(3)}=f(z^{(3)})\nonumber
 \end{eqnarray}
 ```
--   More generally, recalling that we also use $a^{(1)}=x$ to also
-    denote the values from the input layer,
 
--   then given layer $l$'s activations $a^{(l)}$, we can compute layer
-    $l+1$'s activations $a^{(l+1)}$ as:
+More generally, recalling that we also use $a^{(1)}=x$ to also  denote the values from the input layer,
 
-```{=tex}
-\begin{eqnarray}
-z^{(l+1)}&=&\Theta^{(l)}a^{(l)}\\
-a^{(l+1)}&=&f(z^{(l+1)})
-\end{eqnarray}
-```
+Given layer $l$'s activations $a^{(l)}$, we can compute layer   $l+1$'s activations $a^{(l+1)}$ as:
+
+
+\begin{equation}
+z^{(l+1)}=\Theta^{(l)}a^{(l)}
+\label{eqforZs}
+\end{equation}
+
+\begin{equation}
+a^{(l+1)}=f(z^{(l+1)})
+\label{eqforAs}
+\end{equation}
+
+
 This can be used to provide a matrix representation for the weighted sum
 of inputs of all neurons:
 
@@ -654,13 +685,6 @@ f(z_{s_{l+1}}^{(l)})
 \end{bmatrix}
 $$
 
-### Forward propagation
-
--   By organizing our parameters in matrices and using matrix-vector
-    operations, we can take advantage of fast linear algebra routines to
-    quickly perform calculations in our network.
-
--   This process is called *forward propagation*.
 
 ## Multiple architectures for ANN
 
@@ -680,7 +704,7 @@ densely connected to layer $l+1$.
 
 In this setting, to compute the output of the network, we can
 successively compute all the activations in layer $L_2$, then layer
-$L_3$, and so on, up to layer $L_{nl}$ , using Equations (5-6). This is
+$L_3$, and so on, up to layer $L_{nl}$ , using the equations above. This is
 one example of a feed-forward *neural network (FFNN)*, since the
 connectivity graph does not have any directed loops or cycles.
 
@@ -688,56 +712,97 @@ connectivity graph does not have any directed loops or cycles.
 
 Neural networks can also have multiple output units.
 
-For example, in (Fig. 4) we can see a network with two hidden layers
-layers $L_2$ and $L_3$ and four output units in layer $L_4$, where bias
-of each layer were omitted.
+For example, in the image below we can see a network with two hidden layers layers $L_2$ and $L_3$ and four output units in layer $L_4$, where bias of each layer were omitted.
 
-![Neural network](images/nn2.jpg){width="60%"}
+![Neural network](images/nn2.jpg){width="80%"}
 
-To train this network, we would need training examples
-$(x^{(i)},y^{(i)})$ where $y^{(i)}\in\mathbb{R}^4$. This sort of network
-is useful if there are multiple outputs that you're interested in
+To train this network, we would need training examples $(x^{(i)},y^{(i)})$ where $y^{(i)}\in\mathbb{R}^4$. 
+
+This type of network is useful if there are multiple outputs that you're interested in
 predicting.
 
-For example, in a medical diagnosis application, the vector $x$ might
+- For example, in a medical diagnosis application, the vector $x$ might
 give the input features of a patient, and the different outputs $y_i$'s
 might indicate presence or absence of different diseases.
 
-## A loss function for optimization
+## Optimizing the ANN
 
--   In order to estimate the weights we will aim at minimizing an
-    appropriate loss function.
+The equations described above show how to use forward propagation to yield a prediction, given an input and a set of parameters (weights and biases).
 
--   A first idea may be to use *squared error loss* $$
-    l(h_\theta(x),y)=(y-\frac{1}{1+e^{-\theta^\intercal x}})^2
-    $$
+As with any learning tasks what we want to do is finding a set of parameter's best values that, in some sense provide the best possible prediction.
 
--   However it happens to be that [*this is is not a convex
-    problem*](https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c)
-    which means that MSE is not appropriate.
+For this we need two things
 
--   Alternatively, we use the *binary cross-entropy loss function* : $$
+- A loss function to quantify the difference between reali world and predictions.
+- Some optimization procedure(s) to iteratively tune the parameter' values in order to minimize the loss.
+
+
+### A loss function for optimization
+
+A first idea may be to use *squared error loss*:
+
+$$
+  l(h_\theta(x),y)=\left (y-\frac{1}{1+e^{-\theta^\intercal x}}\right )^2
+$$
+
+However it happens to be that [*this is is not a convex   problem*](https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c)  which means that MSE is not appropriate.
+
+To illustrate this, we can consider a simple neural network with one input, one hidden layer with a logistic activation function, and one output neuron. 
+
+We aim to minimize the squared error loss function with respect to the weights of the network. Here's how we can visualize the loss surface using R:
+
+```{r}
+library(plot3D)
+
+# Define the squared error loss function
+squared_error <- function(y, y_hat) {
+  return(0.5 * (y - y_hat)^2)
+}
+
+# Define the logistic activation function
+logistic <- function(z) {
+  return(1 / (1 + exp(-z)))
+}
+
+# Generate data
+x <- seq(-10, 10, length.out = 200)
+y <- seq(-10, 10, length.out = 200)
+z <- outer(x, y, FUN = function(x, y) squared_error(1, logistic(x + y)))
+
+# Scale the z values to exaggerate the differences
+z <- z * 500
+
+# Plot the exaggerated loss surface
+persp3D(x, y, z, theta = 30, phi = 30, expand = 0.5, col = "lightblue", ticktype = "detailed", xlab = "Weight 1", ylab = "Weight 2", zlab = "Loss")
+
+```
+  
+This plot illustrates the loss surface of a neural network with two weights to optimize. As can be seen, the surface is not convex, indicating the presence of multiple local minima.
+
+An alternative to squared error loss is the **binary cross-entropy loss function** : 
+
+$$
     l(h_\theta(x),y)=\big{\{}\begin{array}{ll}
     -\log h_\theta(x) & \textrm{if }y=1\\
     -\log(1-h_\theta(x))& \textrm{if }y=0
     \end{array}
-    $$
+$$
 
--   It can be written compactly as:
+This function can also be written as:
 
 $$
 l(h_\theta(x),y)=-y\log h_\theta(x) - (1-y)\log(1-h_\theta(x))
 $$
 
--   Using cross-entropy loss, the cost function is of the form:
-    \begin{eqnarray*}
+Using cross-entropy loss, the cost function is of the form:
+
+\begin{eqnarray*}
     J(\theta)=-\frac{1}{n}\big[\sum_{i=1}^n&&(y^{(i)}\log h_\theta(x^{(i)})+\\ &&(1-y^{(i)})\log(1-h_\theta(x^{(i)}))\big]
-    \end{eqnarray*}
+\end{eqnarray*}
 
--   This is a convex optimization problem.
+Now, this is a convex optimization problem.
 
--   Better to work with a *regularized version* of the cost function (we
-    don't regularize the bias units)
+In practice we often work with a *regularized version* of the cost function (we don't regularize the bias units)
 
 ```{=tex}
 \begin{eqnarray*}
@@ -748,7 +813,7 @@ J(\Theta)&=&-\frac{1}{n}\big[\sum_{i=1}^n \sum_{k=1}^K y_k^{(i)}\log( h_\theta(x
 \end{eqnarray*}
 ```
 
-## Gradient descent
+### Parameter optimizations with *Gradient Descent*
 
 We saw in the previous section that training a network corresponds to choosing the parameters, that is, the weights and biases, that minimize
 the cost function. 
@@ -761,151 +826,113 @@ $J: \mathbb{R}^p\rightarrow \mathbb{R}$.
 
 ![Error hyper-surface](images/errorsurface.jpg){width="60%"}
 
-We now introduce a classical method in optimization that is often
-referred to as steepest descent or gradient descent. The method proceeds
-iteratively, computing a sequence of vectors in $\mathbb{R}^p$ with the
-aim of converging to a vector that minimizes the cost function. Suppose
-that our current vector is $\theta$. How should we choose a
-perturbation, $\Delta\theta$, so that the next vector,
-$\theta+\Delta\theta$, represents an improvement? If $\Delta\theta$ is
-small, then ignoring terms of order $||\Delta\theta||^2$, a Taylor
-series expansion gives
+*Gradient Descent* is a classical method in optimization that is often
+referred to as *steepest descent*.
+
+Given a function $J(\theta)$ to be minimized, the method proceeds iteratively, computing a sequence of vectors $\theta^1, \theta^2, ..., \theta^n$ in $\mathbb{R}^p$ with the
+aim of converging to a vector that minimizes the cost function. 
+
+Suppose that our current vector is $\theta$. 
+*How should we choose a perturbation, $\Delta\theta$, so that the next vector, $\theta+\Delta\theta$, represents an improvement, that is: $J(\theta +\Delta\theta) < J(\theta)$?*
+
+As is often the case, we will proceed by linearization of the cost function using a Taylor series expansion.
+
+If $\Delta\theta$ is small, then ignoring terms of order $||\Delta\theta||^2$ or higher, a Taylor
+series expansion gives:
 
 $$
 J(\theta+\Delta\theta)\approx J(\theta)+\sum_{i=1}^p\frac{\partial J(\theta)}{\partial\theta_i}\Delta\theta_i
-$$ Here $\frac{\partial J(\theta)}{\partial\theta_i}$ denotes the
-partial derivative of the cost function with respect to the $i$-th
-weight. For convenience, we will let $\nabla J(\theta)\in\mathbb{R}^p$
+$$ 
+where ${\displaystyle \frac{\partial J(\theta)}{\partial\theta_i}}$ denotes the
+partial derivative of the cost function with respect to the $i$-th weight. 
+
+For convenience, we will let $\nabla J(\theta)\in\mathbb{R}^p$
 denote the vector of partial derivatives, known as the gradient, so that
+
 \begin{equation}\label{g1}
-\nabla J(\theta)=\big(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\big)^\intercal
-\end{equation} Then, \begin{equation}\label{g2}
+\nabla J(\theta)=\left(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\right)^\intercal
+\end{equation} 
+
+Now the approximation can be written as:
+
+\begin{equation}\label{g2}
 J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 \end{equation}
 
-Our aim is to reduce the value of the cost function. The relation
-(\ref{g2}) motivates the idea of choosing $\Delta\theta$ to make
-$\nabla J(\theta)^\intercal\Delta\theta$ as negative as possible. We can
-address this problem via the Cauchy-Schwarz inequality, which states
-that for any $f,g\in\mathbb{R}^p$, we have
-$|f^\intercal g|\leq ||f||\cdot ||g||$. Moreover, the two sides are
-equal if and only if $f$ and $g$ are linearly dependent (meaning they
+Recalling that our aim is to reduce the value of the cost function, the Taylor approximation above motivates the idea of choosing $\Delta\theta$ to *make $\nabla J(\theta)^\intercal\Delta\theta$ negative*, because this will make the value of $J(\theta+\Delta\theta)$ smaller. 
+
+The bigger in absolute value we can make this negative expression, the smaller will be the value of the cost function.
+
+Now, how much is it possible to make  $\nabla J(\theta)^\intercal\Delta\theta$ decrease?
+
+The Cauchy-Schwarz inequality, which states
+that for any $f,g\in\mathbb{R}^p$, we have:
+$$
+|f^\intercal g|\leq ||f||\cdot ||g||.
+$$ 
+Moreover, the two sides are equal if and only if $f$ and $g$ are linearly dependent (meaning they
 are parallel).
 
 So the most negative that $f^\intercal g$ can be is $-||f||\cdot||g||$,
-which happens when $f=-g$. Hence we should choose $\Delta\theta$ to lie
-in the direction of $-\nabla J(\theta)$. Keeping in mind that (\ref{g2})
-is an approximation that is relevant only for small $\Delta\theta$, we
-will limit ourselves to a small step in that direction. This leads to
-the update \begin{equation}\label{g3}
+which happens when $f=-g$. Hence we should choose $\Delta\theta$ to lie in the direction of $-\nabla J(\theta)$. 
+
+Keeping in mind that the Taylor linearization of $J(\theta)$ is an approximation that is relevant only for small $\Delta\theta$, we
+will limit ourselves to a small step in that direction. This leads to the update:
+
+\begin{equation}\label{g3}
 \theta \rightarrow \theta-\eta\nabla J(\theta)
 \end{equation}
 
-Here $\eta$ is small step size that, in this context, is known as the
-learning rate. This equation defines the steepest descent method. We
-choose an initial vector and iterate (\ref{g3}) until some stopping
-criterion has been met, or until the number of iterations has exceeded
-the computational budget.
+\underline{This equation defines the steepest descent method}. 
 
-Repeat:
+Here $\eta$ is small step size that, in this context, is known as the *learning rate*. 
 
-$$
-\theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta)
-$$ $$
-\qquad \textrm{ simultaneously update all }\qquad \theta_j
-$$
+In summary, givent a cost function $J(\theta)$ to be optimized the gradient descent optimization proceeds as follows:
 
-$\eta\in (0,1]$ denotes the learning parameter.
 
-We aim to minimize the cost function $$
-\underset{\theta}{\textrm{min }}J(\theta)
-$$
+1. **Initialize** $\theta_0$ randomly or with some predetermined values
+2. **Repeat until convergence:**
+    $$
+    \theta_{t+1} = \theta_{t} - \alpha \nabla J(\theta_{t})
+    $$
+3. **Stop when:** $|J(\theta_{t+1}) - J(\theta_{t})| < \epsilon$
+
+
+Where:
+
+- $\theta_0$ is the initial parameter vector,
+- $\theta_t$ is the parameter vector at iteration $t$,
+- $\alpha$ is the learning rate,
+- $\nabla J(\theta_{t})$ is the gradient of the loss function with respect to $\theta$ at iteration $t$,
+- $\epsilon$ is a small positive value indicating the desired level of convergence.
+
+
+### Computing derivatives
 
 In order to use gradient descent, we need to compute $J(\theta)$ and the
-partial derivative terms $$
+partial derivative terms
+$$
 \frac{\partial}{\partial\theta_j}J(\theta)
 $$
 
 ### Initialization
 
-The input data have to be normalized to have approximately the same
-range. The biases can be initialized to 0. They also cannot be
-initialized with the same values, otherwise, all the neurons of a hidden
-layer would have the same behavior. Perhaps the only property known with
+The input data have to be normalized to have approximately the same range. 
+
+The biases can be initialized to 0. They also cannot be initialized with the same values, otherwise, all the neurons of a hidden
+layer would have the same behavior. 
+
+Perhaps the only property known with
 complete certainty is that the initial parameters need to break symmetry
-between different units. We generally initialize the weights at random:
-the values $\theta_{ij}^{(l)}$ are i.i.d. Uniform on $[-c,c]$ with
-possibly $c= 1/\sqrt{N_l}$ where $N_l$ is the size of the hidden layer
-$l$. We also sometimes initialize the weights with a normal distribution
+between different units. 
+
+We generally initialize the weights at random:
+the values $\theta_{ij}^{(l)}$ are i.i.d. Uniform on $[-c,c]$ with possibly $c= 1/\sqrt{N_l}$ where $N_l$ is the size of the hidden layer
+$l$. 
+
+We also sometimes initialize the weights with a normal distribution
 $N(0,0.01)$.
 
-## Stochastic Gradient
-
-Algorithm for optimization the cost function. When we have a large
-number of parameters and a large number of training points, computing
-the gradient vector (\ref{g1}) at every iteration of the steepest
-descent method (\ref{g3}) can be prohibitively expensive because we have
-to sum across all training points (for instance in Big Data). A much
-cheaper alternative is to replace the mean of the individual gradients
-over all training points by the gradient at a single, randomly chosen,
-training point. This leads to the simplest form of what is called the
-stochastic gradient method. A single step may be summarized as
-
-```{=tex}
-\begin{itemize}
-\item Choose an integer $i$ uniformly at random from $\{1,...,n\}$
-\item update 
-\begin{equation}\label{g4}
-\theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta;x^{(i)})
-\end{equation}
-\end{itemize}
-```
-Notice we have included $x^{(i)}$ in the notation of $J(\theta;x^{(i)})$
-to remark the dependence. In words, at each step, the stochastic
-gradient method uses one randomly chosen training point to represent the
-full training set. As the iteration proceeds, the method sees more
-training points. So there is some hope that this dramatic reduction in
-cost-per-iteration will be worthwhile overall. We note that, even for
-very small $\eta$, the update (\ref{g4}) is not guaranteed to reduce the
-overall cost function we have traded the mean for a single sample.
-Hence, although the phrase stochastic gradient descent is widely used,
-we prefer to use **stochastic gradient**.
-
-The version of the stochastic gradient method that we introduced in
-(\ref{g4}) is the simplest from a large range of possibilities. In
-particular, the index $i$ in (\ref{g4}) was chosen by sampling with
-replacement after using a training point, it is returned to the training
-set and is just as likely as any other point to be chosen at the next
-step. An alternative is to sample without replacement; that is, to cycle
-through each of the $n$ training points in a random order. Performing
-$n$ steps in this manner, refereed to as completing an epoch, may be
-summarized as follows:
-
-```{=tex}
-\begin{itemize}
-\item Shuffle the integers $\{1,...,n\}$ into a new order $\{k_1,...,k_n\}$
-\item for $i$ in  $1:n$ update $\theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta;x^{(k_i)})$
-\end{itemize}
-```
-If we regard the stochastic gradient method as approximating the mean
-over all training points by a single sample, then it is natural to
-consider a compromise where we use a small sample average. For some
-$m<<n$ we could take steps of the following form.
-
-```{=tex}
-\begin{itemize}
-\item Choose $m$ integers $\{k_1,...,k_m\}$ uniformly at random from $\{1,...,n\}$ 
-\item update $\theta_j=\theta_j-\eta\frac{1}{m}\sum_{i=1}^m\frac{\partial}{\partial\theta_j}J(\theta;x^{(k_i)})$
-\end{itemize}
-```
-In this iteration, the set $\{x^{(k_i)}\}_{i=1}^m$ is known as a
-mini-batch. Because the stochastic gradient method is usually
-implemented within the context of a very large scale computation,
-algorithmic choices such as mini-batch size and the form of
-randomization are often driven by the requirements of high performance
-computing architectures. Also, it is, of course, possible to vary these
-choices, along with others, such as the learning rate, dynamically as
-the training progresses in an attempt to accelerate convergence.
 
 # An example
 

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.336">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2023-04-26">
+
+<title>Introduction to neural networks and deep learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="nnet_v2023_files/libs/clipboard/clipboard.min.js"></script>
+<script src="nnet_v2023_files/libs/quarto-html/quarto.js"></script>
+<script src="nnet_v2023_files/libs/quarto-html/popper.min.js"></script>
+<script src="nnet_v2023_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="nnet_v2023_files/libs/quarto-html/anchor.min.js"></script>
+<link href="nnet_v2023_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="nnet_v2023_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="nnet_v2023_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="nnet_v2023_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="nnet_v2023_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#computation-unit" id="toc-computation-unit" class="nav-link active" data-scroll-target="#computation-unit">Computation unit</a></li>
+  <li><a href="#neural-network-formulation" id="toc-neural-network-formulation" class="nav-link" data-scroll-target="#neural-network-formulation">Neural network formulation</a>
+  <ul class="collapse">
+  <li><a href="#the-binary-cross-entropy-loss-function" id="toc-the-binary-cross-entropy-loss-function" class="nav-link" data-scroll-target="#the-binary-cross-entropy-loss-function">The binary cross-entropy loss function</a>
+  <ul class="collapse">
+  <li><a href="#regularized-cost-function" id="toc-regularized-cost-function" class="nav-link" data-scroll-target="#regularized-cost-function">Regularized cost function</a></li>
+  <li><a href="#regression-task" id="toc-regression-task" class="nav-link" data-scroll-target="#regression-task">Regression task</a></li>
+  </ul></li>
+  <li><a href="#gradient-descent" id="toc-gradient-descent" class="nav-link" data-scroll-target="#gradient-descent">Gradient descent</a>
+  <ul class="collapse">
+  <li><a href="#initialization" id="toc-initialization" class="nav-link" data-scroll-target="#initialization">Initialization</a></li>
+  </ul></li>
+  <li><a href="#stochastic-gradient" id="toc-stochastic-gradient" class="nav-link" data-scroll-target="#stochastic-gradient">Stochastic Gradient</a></li>
+  <li><a href="#back-propagation" id="toc-back-propagation" class="nav-link" data-scroll-target="#back-propagation">Back propagation</a>
+  <ul class="collapse">
+  <li><a href="#example-of-backpropagation" id="toc-example-of-backpropagation" class="nav-link" data-scroll-target="#example-of-backpropagation">Example of backpropagation</a></li>
+  <li><a href="#optimizers" id="toc-optimizers" class="nav-link" data-scroll-target="#optimizers">Optimizers</a></li>
+  <li><a href="#regularization" id="toc-regularization" class="nav-link" data-scroll-target="#regularization">Regularization</a></li>
+  </ul></li>
+  <li><a href="#universal-approximation-properties-and-depth" id="toc-universal-approximation-properties-and-depth" class="nav-link" data-scroll-target="#universal-approximation-properties-and-depth">Universal Approximation Properties and Depth</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="nnet_v2023.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Introduction to neural networks and deep learning</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-contents">
+             <p>Esteban Vegas </p>
+             <p>Ferran Reverter </p>
+             <p>Alex Sanchez </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 26, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="computation-unit" class="level2">
+<h2 class="anchored" data-anchor-id="computation-unit">Computation unit</h2>
+<p>Consider a supervised learning problem where we have access to labeled training examples <span class="math inline">\((x^{(i)}, y^{(i)})\)</span>. Neural networks give a way of defining a complex, non-linear form of hypotheses <span class="math inline">\(h_\Theta(x)\)</span>, with parameters <span class="math inline">\(\Theta\)</span> (also called weights) that we can fit to our data. To describe neural networks, we will begin by describing the simplest possible neural network, one which comprises a single . We will use the following diagram (Fig. 1) to denote a single neuron:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="unit.jpg" class="img-fluid figure-img" style="width:40.0%"></p>
+<figcaption class="figure-caption">Computation unit</figcaption>
+</figure>
+</div>
+<p>This is a computational unit that takes as input <span class="math inline">\(x=(x_0,x_1,x_2,x_3)\)</span> (<span class="math inline">\(x_0\)</span> = +1, called bias), and outputs <span class="math inline">\(h_{\theta}(x) = f(\theta^\intercal x) = f(\sum_i \theta_ix_i)\)</span>, where <span class="math inline">\(f:\mathbb{R}\mapsto \mathbb{R}\)</span> is called the . In these notes, we will choose <span class="math inline">\(f(\cdot)\)</span> to be the sigmoid function:</p>
+<p><span class="math display">\[
+f(z)=\frac{1}{1+e^{-z}}
+\]</span></p>
+<p>Although these notes will use the sigmoid function, it is worth noting that another common choice for <span class="math inline">\(f\)</span> is the hyperbolic tangent, or <code>tanh</code>, function:</p>
+<p><span class="math display">\[
+f(z)=\frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}
+\]</span></p>
+<p>The <code>tanh(z)</code> function is a rescaled version of the sigmoid, and its output range is <span class="math inline">\([-1,1]\)</span> instead of <span class="math inline">\([0,1]\)</span>.</p>
+<p>Finally, one identity that will be useful later: If <span class="math inline">\(f(z)=1/(1+e^z)\)</span> is the sigmoid function, then its derivative is given by <span class="math inline">\(f'(z)=f(z)(1-f(z))\)</span>. If <span class="math inline">\(f\)</span> is the <code>tanh</code> function, then its derivative is given by <span class="math inline">\(f'(z)=1-(f(z))^2\)</span>. You can derive this yourself using the definition of the sigmoid (or <code>tanh</code>) function.</p>
+<p>In modern neural networks, the default recommendation is to use the rectified linear unit or ReLU defined by the activation function <span class="math inline">\(f(z)=\max\{0,z\}\)</span> (Fig. 2). However, the function remains very close to linear, in the sense that is a piecewise linear function with two linear pieces. Because rectified linear units are nearly linear, they preserve many of the properties that make linear models easy to optimize with gradient based methods. They also preserve many of the properties that make linear models generalize well.</p>
+<p>Historically, the sigmoid was the mostly used activation function since it is differentiable and allows to keep values in the interval <span class="math inline">\([0,1]\)</span>. Nevertheless, it is problematic since its gradient is very close to 0 when <span class="math inline">\(|x|\)</span> is not close to 0. With neural networks with a high number of layers (which is the case for deep learning), this causes troubles for the backpropagation algorithm to estimate the parameter (backpropagation is explained in the following). This is why the sigmoid function was supplanted by the rectified linear function. This function is not differentiable in 0 but in practice this is not really a problem since the probability to have an entry equal to 0 is generally null. The ReLU function also has a sparsification effect. The ReLU function and its derivative are equal to 0 for negative values, and no information can be obtain in this case for such a unit, this is why it is advised to add a small positive bias to ensure that each unit is active.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="relu.png" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption class="figure-caption">ReLU</figcaption>
+</figure>
+</div>
+</section>
+<section id="neural-network-formulation" class="level1">
+<h1>Neural network formulation</h1>
+<p>A neural network is put together by hooking together many of our simple , so that the output of a can be the input of another. For example, here (Fig.3) is a small neural network</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="nn.jpg" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption class="figure-caption">Small neural network</figcaption>
+</figure>
+</div>
+<p>In this figure, we have used circles to also denote the inputs to the network. The circles labeled +1 are called bias units, and correspond to the intercept term. The leftmost layer of the network is called the input layer, and the rightmost layer the output layer (which, in this example, has only one node). The middle layer of nodes is called the hidden layer, because its values are not observed in the training set. We also say that our example neural network has 3 input units (not counting the bias unit), 3 hidden units, and 1 output unit.</p>
+<p>Observe that (Figure 3):</p>
+<ul>
+<li><p>From input layer to layer 2 we implement a non-linear transformation, getting a new set of complex features.</p></li>
+<li><p>From layer 2 to output layer we implement a logistic regression on the set of .</p></li>
+</ul>
+<p>Then, the ouput of the neural network is of the form:</p>
+<p><span class="math display">\[
+h_{\theta}(x)=\frac{1}{1+e^{-\theta^\intercal x}}
+\]</span></p>
+<p>Recall that, in logistic regression, we use the model <span class="math display">\[
+\log\frac{p(Y=1|x)}{1-p(Y=1|x)}=\theta^\intercal x
+\]</span></p>
+<p>We can isolate <span class="math inline">\(p(Y=1|x)\)</span>. Taking logs in both sides, we have:</p>
+<p><span class="math display">\[
+\frac{p(Y=1|x)}{1-p(Y=1|x)}=e^{\theta^\intercal x}
+\]</span> Thus <span class="math display">\[
+p(Y=1|x)=\frac{e^{\theta^\intercal x}}{1+e^{\theta^\intercal x}}=\frac{1}{1+e^{-\theta^\intercal x}}
+\]</span></p>
+<p>Observe that, when the activation function of the output node is the sigmoid activation function, the output coincides with a logistic regression on complex features which result from passing the input vector through all layers until it reaches the output node.</p>
+<p>Then, with <span class="math inline">\(h_{\theta}(x)\)</span>, the output of the NN, we are estimating <span class="math inline">\(p(Y=1|x)\)</span>.</p>
+<p>We will let <span class="math inline">\(n_l\)</span> denote the number of layers in our network, thus <span class="math inline">\(n_l=3\)</span> in our example. We label layer <span class="math inline">\(l\)</span> as <span class="math inline">\(L_l\)</span>, so layer <span class="math inline">\(L_1\)</span> is the input layer, and layer <span class="math inline">\(L_{n_l}=L_3\)</span> the output layer. Our neural network has parameters <span class="math inline">\(\Theta=(\Theta^{(1)},\Theta^{(2)})\)</span>, where we will write <span class="math inline">\(\theta^{(l)}_{ij}\)</span> to denote the parameter (or weight) associated with the connection between unit <span class="math inline">\(j\)</span> in layer <span class="math inline">\(l\)</span>, and unit <span class="math inline">\(i\)</span> in layer <span class="math inline">\(l+1\)</span>. Thus, in our example, we have <span class="math inline">\(\Theta^{(1)}\in\mathbb{R}^{3\times 4}\)</span>, and <span class="math inline">\(\Theta^{(2)}\in\mathbb{R}^{1\times 4}\)</span>, Note that bias units don’t have inputs or connections going into them, since they always output the value +1. We also let <span class="math inline">\(s_l\)</span> denote the number of nodes in layer <span class="math inline">\(l\)</span> (not counting the bias unit).</p>
+<p>We will write <span class="math inline">\(a^{(l)}_i\)</span> to denote the activation (meaning output value) of unit <span class="math inline">\(i\)</span> in layer <span class="math inline">\(l\)</span>. For <span class="math inline">\(l=1\)</span>, we also use <span class="math inline">\(a^{(1)}_i=x_i\)</span> to denote the <span class="math inline">\(i\)</span>-th input.</p>
+<p>Given a fixed setting of the parameters <span class="math inline">\(\Theta\)</span>, our neural network defines a hypothesis <span class="math inline">\(h_{\Theta}(x)\)</span> that outputs a real number.</p>
+<p>Specifically, the computation that this neural network represents is given by: <span class="math display">\[\begin{eqnarray}
+a_1^{(2)}&amp;=&amp;f(\theta_{10}^{(1)}+\theta_{11}^{(1)}x_1+\theta_{12}^{(1)}x_2+\theta_{13}^{(1)}x_3)\\
+a_2^{(2)}&amp;=&amp;f(\theta_{20}^{(1)}+\theta_{21}^{(1)}x_1+\theta_{22}^{(1)}x_2+\theta_{23}^{(1)}x_3)\\
+a_3^{(2)}&amp;=&amp;f(\theta_{30}^{(1)}+\theta_{31}^{(1)}x_1+\theta_{32}^{(1)}x_2+\theta_{33}^{(1)}x_3)\\
+h_{\Theta}(x)&amp;=&amp;a_1^{(3)}=f(\theta_{10}^{(2)}+\theta_{11}^{(2)}a_1^{(2)}+\theta_{12}^{(2)}a_2^{(2)}+\theta_{13}^{(2)}a_3^{(2)})
+\end{eqnarray}\]</span> In the sequel, we also let <span class="math inline">\(z_i^{(l)}\)</span> denote the total weighted sum of inputs to unit <span class="math inline">\(i\)</span> in layer <span class="math inline">\(l\)</span>, including the bias term (e.g., <span class="math inline">\(z_i^{(2)}=\theta_{i0}^{(1)}+\theta_{i1}^{(1)}x_1+\theta_{i2}^{(1)}x_2+\theta_{i3}^{(1)}x_3\)</span>), so that <span class="math inline">\(a_i^{(l)}=f(z_i^{(l)})\)</span>.</p>
+<p>Note that this easily lends itself to a more compact notation. Specifically, if we extend the activation function <span class="math inline">\(f(\cdot)\)</span> to apply to vectors in an elementwise fashion (i.e., <span class="math inline">\(f([z_1,z_2,z_3]) = [f(z_1), f(z_2),f(z_3)]\)</span>), then we can write Equations (1-4) more compactly as:</p>
+<p><span class="math display">\[\begin{eqnarray}
+z^{(2)}&amp;=&amp;\Theta^{(1)}x\nonumber\\
+a^{(2)}&amp;=&amp;f(z^{(2)})\nonumber\\
+z^{(3)}&amp;=&amp;\Theta^{(2)}a^{(2)}\nonumber\\
+h_{\Theta}(x)&amp;=&amp;a^{(3)}=f(z^{(3)})\nonumber
+\end{eqnarray}\]</span></p>
+<p>More generally, recalling that we also use <span class="math inline">\(a^{(1)}=x\)</span> to also denote the values from the input layer, then given layer <span class="math inline">\(l\)</span>’s activations <span class="math inline">\(a^{(l)}\)</span>, we can compute layer <span class="math inline">\(l+1\)</span>’s activations <span class="math inline">\(a^{(l+1)}\)</span> as: <span class="math display">\[\begin{eqnarray}
+z^{(l+1)}&amp;=&amp;\Theta^{(l)}a^{(l)}\\
+a^{(l+1)}&amp;=&amp;f(z^{(l+1)})
+\end{eqnarray}\]</span></p>
+<p>In matrix notation</p>
+<p><span class="math display">\[
+z^{(l+1)}=
+\begin{bmatrix}
+z_1^{(l+1)}\\
+z_2^{(l+1)}\\
+\vdots\\
+z_{s_{l+1}}^{(l)}
+\end{bmatrix}=
+\begin{bmatrix}
+\theta_{10}^{(l)}&amp; \theta_{11}^{(l)}&amp;\theta_{12}^{(l)}&amp;...&amp;\theta_{1s_{l}}^{(l)}&amp;\\
+\theta_{20}^{(l)}&amp; \theta_{21}^{(l)}&amp;\theta_{22}^{(l)}&amp;...&amp;\theta_{2s_{l}}^{(l)}&amp;\\
+\vdots &amp; \vdots&amp; \vdots &amp; \vdots &amp; \vdots\\
+\theta_{s_{l+1}0}^{(l)}&amp; \theta_{s_{l+1}1}^{(l)}&amp;\theta_{s_{l+1}2}^{(l)}&amp;...&amp;\theta_{s_{l+1}s_{l}}^{(l)}&amp;\\
+\end{bmatrix}
+\cdot\begin{bmatrix}
+1\\
+a_1^{(l)}\\
+a_2^{(l)}\\
+\vdots\\
+a_{s_l}^{(l)}
+\end{bmatrix}
+\]</span> The activation</p>
+<p><span class="math display">\[
+a^{(l+1)}=
+\begin{bmatrix}
+a_1^{(l+1)}\\
+a_2^{(l+1)}\\
+\vdots\\
+a_{s_{l+1}}^{(l)}
+\end{bmatrix}=f(z^{(l+1)})=\begin{bmatrix}
+f(z_1^{(l+1)})\\
+f(z_2^{(l+1)})\\
+\vdots\\
+f(z_{s_{l+1}}^{(l)})
+\end{bmatrix}
+\]</span></p>
+<p>By organizing our parameters in matrices and using matrix-vector operations, we can take advantage of fast linear algebra routines to quickly perform calculations in our network. This process is call forward propagation.</p>
+<p>We have so far focused on one example neural network, but one can also build neural networks with other architectures (meaning patterns of connectivity between neurons), including ones with multiple hidden layers. The most common choice is a <span class="math inline">\(n_l\)</span>-layered network where layer 1 is the input layer, layer <span class="math inline">\(n_l\)</span> is the output layer, and each layer <span class="math inline">\(l\)</span> is densely connected to layer <span class="math inline">\(l+1\)</span>. In this setting, to compute the output of the network, we can successively compute all the activations in layer <span class="math inline">\(L_2\)</span>, then layer <span class="math inline">\(L_3\)</span>, and so on, up to layer <span class="math inline">\(L_{nl}\)</span> , using Equations (5-6). This is one example of a feedforward neural network (FNN), since the connectivity graph does not have any directed loops or cycles.</p>
+<p>Neural networks can also have multiple output units. For example, in (Fig. 4) we can see a network with two hidden layers layers <span class="math inline">\(L_2\)</span> and <span class="math inline">\(L_3\)</span> and four output units in layer <span class="math inline">\(L_4\)</span>, where bias of each layer were omited.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="nn2.jpg" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption class="figure-caption">Neural network</figcaption>
+</figure>
+</div>
+<p>To train this network, we would need training examples <span class="math inline">\((x^{(i)},y^{(i)})\)</span> where <span class="math inline">\(y^{(i)}\in\mathbb{R}^4\)</span>. This sort of network is useful if there’re multiple outputs that you’re interested in predicting. For example, in a medical diagnosis application, the vector <span class="math inline">\(x\)</span> might give the input features of a patient, and the different outputs <span class="math inline">\(y_i\)</span>’s might indicate presence or absence of different diseases.</p>
+<section id="the-binary-cross-entropy-loss-function" class="level2">
+<h2 class="anchored" data-anchor-id="the-binary-cross-entropy-loss-function">The binary cross-entropy loss function</h2>
+<p>As we can say previously, when the activation function of the output node is the sigmoid activation function, the output of the NN is of the form:</p>
+<p><span class="math display">\[
+h_{\theta}(x)=\frac{1}{1+e^{-\theta^\intercal x}}
+\]</span></p>
+<p>We need to use a proper (convex) loss function to fit this kind of output values. We can not use the squared error loss, because the minimization of</p>
+<p><span class="math display">\[
+l(h_\theta(x),y)=(y-\frac{1}{1+e^{-\theta^\intercal x}})^2
+\]</span></p>
+<p>is not a convex problem.</p>
+<p>Alternativelly, we use the loss function <span class="math display">\[
+l(h_\theta(x),y)=\big\{\begin{array}{ll}
+-\log h_\theta(x) &amp; \textrm{if }y=1\\
+-\log(1-h_\theta(x))&amp; \textrm{if }y=0
+\end{array}
+\]</span></p>
+<p>We can take a look on the graphical representation of the loss function.</p>
+<div class="cell" data-hash="nnet_v2023_cache/html/unnamed-chunk-1_13121619530beb58eb136016c52e44d1">
+<div class="cell-output-display">
+<p><img src="nnet_v2023_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>We can write the loss function in a compact formulation <span class="math display">\[
+l(h_\theta(x),y)=-y\log h_\theta(x) - (1-y)\log(1-h_\theta(x))
+\]</span> This loss is called binary cross-entropy loss.</p>
+<p>And, using the cross-entropy loss, the cost function is of the form: <span class="math display">\[
+J(\theta)=-\frac{1}{n}\big[\sum_{i=1}^ny^{(i)}\log h_\theta(x^{(i)})+(1-y^{(i)})\log(1-h_\theta(x^{(i)}))\big]
+\]</span> And is a convex optimization problem.</p>
+<section id="regularized-cost-function" class="level3">
+<h3 class="anchored" data-anchor-id="regularized-cost-function">Regularized cost function</h3>
+<p>Let us suppose a multilabel problem (see Fig. 4). In a neural network (<span class="math inline">\(h_\theta(x)\in\mathbb{R}^K\)</span>, and <span class="math inline">\((h_\theta(x))_k\)</span> denotes the <span class="math inline">\(k\)</span>-th output), the cost function (called binary cross-entropy) is of the form</p>
+<p><span class="math display">\[\begin{equation}\label{nn1}
+J(\Theta)=-\frac{1}{n}\big[\sum_{i=1}^n \sum_{k=1}^K y_k^{(i)}\log( h_\theta(x^{(i)}))_k+(1-y_k^{(i)})\log(1-(h_\theta(x^{(i)}))_k)\big]+\lambda\sum_{l=1}^{L-1}\sum_{i=1}^{s_l}\sum_{j=1}^{s_{l+1}}
+(\theta_{ji}^{(l)})^2
+\end{equation}\]</span></p>
+<p>Notice that, we don’t regularize the bias units are not included in the regularization.</p>
+<p>Algorithm for optimization the cost function.</p>
+</section>
+<section id="regression-task" class="level3">
+<h3 class="anchored" data-anchor-id="regression-task">Regression task</h3>
+<p>When we are addressing a regression problem, a convenient activation function on the output node is linear, here we can use the squared error loss function.</p>
+</section>
+</section>
+<section id="gradient-descent" class="level2">
+<h2 class="anchored" data-anchor-id="gradient-descent">Gradient descent</h2>
+<p>We saw in the previous section that training a network corresponds to choosing the parameters, that is, the weights and biases, that minimize the cost function (see Fig. 5). The weights and biases take the form of matrices and vectors, but at this stage it is convenient to imagine them stored as a single vector that we call <span class="math inline">\(\theta\)</span>. Generally, we will suppose <span class="math inline">\(\theta\in\mathbb{R}^p\)</span>, and write the cost function as <span class="math inline">\(J(\theta)\)</span> to emphasize its dependence on the parameters. So Cost <span class="math inline">\(J: \mathbb{R}^p\rightarrow \mathbb{R}\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="errorsurface.jpg" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption class="figure-caption">Error hypersurface</figcaption>
+</figure>
+</div>
+<p>We now introduce a classical method in optimization that is often referred to as steepest descent or gradient descent. The method proceeds iteratively, computing a sequence of vectors in <span class="math inline">\(\mathbb{R}^p\)</span> with the aim of converging to a vector that minimizes the cost function. Suppose that our current vector is <span class="math inline">\(\theta\)</span>. How should we choose a perturbation, <span class="math inline">\(\Delta\theta\)</span>, so that the next vector, <span class="math inline">\(\theta+\Delta\theta\)</span>, represents an improvement? If <span class="math inline">\(\Delta\theta\)</span> is small, then ignoring terms of order <span class="math inline">\(||\Delta\theta||^2\)</span>, a Taylor series expansion gives</p>
+<p><span class="math display">\[
+J(\theta+\Delta\theta)\approx J(\theta)+\sum_{i=1}^p\frac{\partial J(\theta)}{\partial\theta_i}\Delta\theta_i
+\]</span> Here <span class="math inline">\(\frac{\partial J(\theta)}{\partial\theta_i}\)</span> denotes the partial derivative of the cost function with respect to the <span class="math inline">\(i\)</span>-th weight. For conveniende, we will let <span class="math inline">\(\nabla J(\theta)\in\mathbb{R}^p\)</span> denote the vector of partial derivatives, known as the gradient, so that <span class="math display">\[\begin{equation}\label{g1}
+\nabla J(\theta)=\big(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\big)^\intercal
+\end{equation}\]</span> Then, <span class="math display">\[\begin{equation}\label{g2}
+J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
+\end{equation}\]</span></p>
+<p>Our aim is to reduce the value of the cost function. The relation (<span class="math inline">\(\ref{g2}\)</span>) motivates the idea of choosing <span class="math inline">\(\Delta\theta\)</span> to make <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> as negative as possible. We can address this problem via the Cauchy-Schwarz inequality, which states that for any <span class="math inline">\(f,g\in\mathbb{R}^p\)</span>, we have <span class="math inline">\(|f^\intercal g|\leq ||f||\cdot ||g||\)</span>. Moreover, the two sides are equal if and only if <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are linearly dependent (meaning they are parallel).</p>
+<p>So the most negative that <span class="math inline">\(f^\intercal g\)</span> can be is <span class="math inline">\(-||f||\cdot||g||\)</span>, which happens when <span class="math inline">\(f=-g\)</span>. Hence we should choose <span class="math inline">\(\Delta\theta\)</span> to lie in the direction of <span class="math inline">\(-\nabla J(\theta)\)</span>. Keeping in mind that (<span class="math inline">\(\ref{g2}\)</span>) is an approximation that is relevant only for small <span class="math inline">\(\Delta\theta\)</span>, we will limit ourselves to a small step in that direction. This leads to the update <span class="math display">\[\begin{equation}\label{g3}
+\theta \rightarrow \theta-\eta\nabla J(\theta)
+\end{equation}\]</span></p>
+<p>Here <span class="math inline">\(\eta\)</span> is small stepsize that, in this context, is known as the learning rate. This equation defines the steepest descent method. We choose an initial vector and iterate (<span class="math inline">\(\ref{g3}\)</span>) until some stopping criterion has been met, or until the number of iterations has exceeded the computational budget.</p>
+<p>Repeat:</p>
+<p><span class="math display">\[
+\theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta)
+\]</span> <span class="math display">\[
+\qquad \textrm{ simultaneously update all }\qquad \theta_j
+\]</span></p>
+<p><span class="math inline">\(\eta\in (0,1]\)</span> denotes the learning parameter.</p>
+<p>We aim to minimice the cost function <span class="math display">\[
+\underset{\theta}{\textrm{min }}J(\theta)
+\]</span></p>
+<p>In order to use gradient descent, we need to compute <span class="math inline">\(J(\theta)\)</span> and the partiall derivative terms <span class="math display">\[
+\frac{\partial}{\partial\theta_j}J(\theta)
+\]</span></p>
+<section id="initialization" class="level3">
+<h3 class="anchored" data-anchor-id="initialization">Initialization</h3>
+<p>The input data have to be normalized to have approximately the same range. The biases can be initialized to 0. They also cannot be initialized with the same values, otherwise, all the neurons of a hidden layer would have the same behavior. Perhaps the only property known with complete certainty is that the initial parameters need to break symmetry between different units. We generally initialize the weights at random: the values <span class="math inline">\(\theta_{ij}^{(l)}\)</span> are i.i.d. Uniform on <span class="math inline">\([-c,c]\)</span> with possibly <span class="math inline">\(c= 1/\sqrt{N_l}\)</span> where <span class="math inline">\(N_l\)</span> is the size of the hidden layer <span class="math inline">\(l\)</span>. We also sometimes initialize the weights with a normal distribution <span class="math inline">\(N(0,0.01)\)</span>.</p>
+</section>
+</section>
+<section id="stochastic-gradient" class="level2">
+<h2 class="anchored" data-anchor-id="stochastic-gradient">Stochastic Gradient</h2>
+<p>Algorithm for optimization the cost function. When we have a large number of parameters and a large number of training points, computing the gradient vector (<span class="math inline">\(\ref{g1}\)</span>) at every iteration of the steepest descent method (<span class="math inline">\(\ref{g3}\)</span>) can be prohibitively expensive because we have to sum across all training points (for instance in Big Data). A much cheaper alternative is to replace the mean of the individual gradients over all training points by the gradient at a single, randomly chosen, training point. This leads to the simplest form of what is called the stochastic gradient method. A single step may be summarized as</p>
+<p>Notice we have included <span class="math inline">\(x^{(i)}\)</span> in the notation of <span class="math inline">\(J(\theta;x^{(i)})\)</span> to remark the dependence. In words, at each step, the stochastic gradient method uses one randomly chosen training point to represent the full training set. As the iteration proceeds, the method sees more training points. So there is some hope that this dramatic reduction in cost-per-iteration will be worthwhile overall. We note that, even for very small <span class="math inline">\(\eta\)</span>, the update (<span class="math inline">\(\ref{g4}\)</span>) is not guaranteed to reduce the overall cost function we have traded the mean for a single sample. Hence, although the phrase stochastic gradient descent is widely used, we prefer to use <strong>stochastic gradient</strong>.</p>
+<p>The version of the stochastic gradient method that we introduced in (<span class="math inline">\(\ref{g4}\)</span>) is the simplest from a large range of possibilities. In particular, the index <span class="math inline">\(i\)</span> in (<span class="math inline">\(\ref{g4}\)</span>) was chosen by sampling with replacement after using a training point, it is returned to the training set and is just as likely as any other point to be chosen at the next step. An alternative is to sample without replacement; that is, to cycle through each of the <span class="math inline">\(n\)</span> training points in a random order. Performing <span class="math inline">\(n\)</span> steps in this manner, refered to as completing an epoch, may be summarized as follows:</p>
+<p>If we regard the stochastic gradient method as approximating the mean over all training points by a single sample, then it is natural to consider a compromise where we use a small sample average. For some <span class="math inline">\(m&lt;&lt;n\)</span> we could take steps of the following form.</p>
+<p>In this iteration, the set <span class="math inline">\(\{x^{(k_i)}\}_{i=1}^m\)</span> is known as a mini-batch. Because the stochastic gradient method is usually implemented within the context of a very large scale computation, algorithmic choices such as mini-batch size and the form of randomization are often driven by the requirements of high performance computing architectures. Also, it is, of course, possible to vary these choices, along with others, such as the learning rate, dynamically as the training progresses in an attempt to accelerate convergence.</p>
+</section>
+<section id="back-propagation" class="level2">
+<h2 class="anchored" data-anchor-id="back-propagation">Back propagation</h2>
+<p>Backpropagation is the algorithm used to compute the gradients of the network. This procedure was developed by several authors in the decade of the 60’s but is Paul J. Werbos, (1974) in his thesis when demonstrates the use of this algorithm for ANN. Years later, (David, E. 1986) presents the modern way to apply this technique to ANN, and sets the basis of the algorithm in use today. In this paper, the authors presents a new method capable to change the predictions towards a desired output, they called it the delta rule.</p>
+<p>This rule consist in compute the total error for the network and check how the error changes when certain elements from the network changes its value. How do we compute this changes? differentiating the cost function with regard to each element in the network would give us a measure of how much each element is contributing to the total error of the network, this is, computing the gradient of the cost function we can know how the total error changes with regard to each element, and therefore apply the delta rule.</p>
+<p>The cost function is an intricate composed function which contains the weights of all layers, the problem now is that the computations of this gradients are not straightforward as in a simple function, a node from a layer is the result of the composition of all the nodes from previous layers. To overcome it, Backpropagation uses the chain rule of differential calculus to compute the gradients of each element in the neural network, it contains two main phases referred to as the forward phase and backward phase:</p>
+<section id="example-of-backpropagation" class="level3">
+<h3 class="anchored" data-anchor-id="example-of-backpropagation">Example of backpropagation</h3>
+<p>We aim to minimice the cost function</p>
+<p><span class="math display">\[
+\underset{\Theta}{\textrm{min }}J(\Theta)
+\]</span></p>
+<p>In order to use gradient descent, we need to compute <span class="math inline">\(J(\Theta)\)</span> and the partiall derivative terms <span class="math display">\[
+\frac{\partial}{\partial\theta_{ij}^{(l)}}J(\Theta)
+\]</span></p>
+<p>We compute <span class="math inline">\(J(\Theta)\)</span> from (<span class="math inline">\(\ref{nn1}\)</span>). How can we compute the partial derivative terms? Given a <span class="math inline">\((x,y)\)</span>. The cross entropy error for a single example with <span class="math inline">\(K\)</span> independent targets is given by the sum <span class="math display">\[\begin{eqnarray}
+J(\Theta)&amp;=&amp;-\sum_{k=1}^K\Big(y_k\log\big( h_\theta(x)\big)_k+(1-y_k)\log\big(1-(h_\theta(x)\big)_k\Big)\\
+&amp;=&amp;-\sum_{k=1}^K\Big(y_k\log a_k^{(3)}+(1-y_k)\log(1-a_k^{(3)})\Big)
+\end{eqnarray}\]</span></p>
+<p>where <span class="math inline">\(y=(y_1,...,y_K)^\intercal\)</span> is the target vector and <span class="math inline">\(a^{(3)}=(a_1^{(3)},...,a_K^{(3)})^\intercal\)</span> is the output vector. In this architecture (see figure 5) the outputs are computed by applying the sigmoid function to the weights sums of the hidden layer activations. <span class="math display">\[\begin{eqnarray}
+a_k^{(3)}&amp;=&amp;\frac{1}{1+e^{-z_k^{(3)}}}\\
+z_k^{(3)}&amp;=&amp;\sum_j a_j^{(2)} \theta_{kj}^{(2)}
+\end{eqnarray}\]</span></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="backprop1.jpg" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Backpropagation</figcaption>
+</figure>
+</div>
+<p>We can compute the derivative of the error with respect to each weight connecting the hidden units to the output units using the chain rule. <span class="math display">\[
+\frac{\partial J}{\partial \theta_{kj}^{(2)} }=\frac{\partial J }{\partial a_k^{(3)}}\frac{\partial a_k^{(3)}}{\partial z_k^{(3)}}\frac{\partial z_k^{(3)}}{\partial \theta_{kj}^{(2)}}
+\]</span></p>
+<p>Examining each factor in turn,</p>
+<p><span class="math display">\[\begin{eqnarray}
+\frac{\partial J }{\partial a_k^{(3)}} &amp;=&amp;-\frac{y_k}{a_k^{(3)}}+\frac{1-y_k}{1-a_k^{(3)}}\\
+&amp;=&amp;\frac{a_k^{(3)}-y_k}{a_k^{(3)}(1-a_k^{(3)})}\\
+\frac{\partial a_k^{(3)}}{\partial z_k^{(3)}}&amp;=&amp;a_k^{(3)}(1-a_k^{(3)})\\
+\frac{\partial z_k^{(3)}}{\partial \theta_{kj}^{(2)}}&amp;=&amp;a_j^{(2)}
+\end{eqnarray}\]</span></p>
+<p>Combining things back together, <span class="math display">\[
+\frac{\partial J}{\partial z_k^{(3)}}=a_k^{(3)}-y_k
+\]</span> and <span class="math display">\[
+\frac{\partial J}{\partial \theta_{kj}^{(2)} }=(a_k^{(3)}-y_k)a_j^{(2)}
+\]</span></p>
+<p>The above gives us the gradients of the cost with respect to the weights in the last layer of the network, but computing the gradients with respect to the weights in lower layers of the network (i.e. connecting the inputs to the hidden layer units) requires another application of the chain rule. This is the backpropagation algorithm.</p>
+<p>It is useful to calculate the quantity <span class="math inline">\(\frac{\partial J}{\partial z_j^{(2)}}\)</span> where <span class="math inline">\(j\)</span> indexes the hidden units,</p>
+<p><span class="math display">\[
+z_j^{(2)}=\sum_s a_s^{(1)} \theta_{js}^{(1)}=\sum_s x_s \theta_{js}^{(1)}
+\]</span></p>
+<p>is the weigthed input at hidden unit <span class="math inline">\(j\)</span>, and <span class="math display">\[
+a_j^{(2)}=\frac{1}{1+e^{-z_j^{(2)}}}
+\]</span> is the activation at unit <span class="math inline">\(j\)</span>.</p>
+<p>We have</p>
+<p><span class="math display">\[\begin{eqnarray}
+\frac{\partial J}{\partial z_j^{(2)}}&amp;=&amp;\sum_{k}^K\frac{\partial J}{\partial z_k^{(3)}}\frac{\partial z_k^{(3)}}{\partial  a_j^{(2)}}\frac{\partial  a_j^{(2)}}{\partial z_j^{(2)}}\\
+&amp;=&amp;\sum_{k}^K((a_k^{(3)}-y_k))(\theta_{kj}^{(2)})(a_j^{(2)}(1-a_j^{(2)}))
+\end{eqnarray}\]</span></p>
+<p>Then a weight <span class="math inline">\(\theta_{js}^{(1)}\)</span> connecting input unit <span class="math inline">\(j\)</span> to hidden unit <span class="math inline">\(s\)</span> has gradient</p>
+<p><span class="math display">\[\begin{eqnarray}
+\frac{\partial J}{\partial \theta_{js}^{(1)}}&amp;=&amp;\frac{\partial J}{\partial z_j^{(2)}}\frac{\partial z_j^{(2)}}{\partial \theta_{js}^{(1)}}\\
+&amp;=&amp;\sum_{k}^K((a_k^{(3)}-y_k))(\theta_{kj}^{(2)})(a_j^{(2)}(1-a_j^{(2)}))(x_s)\\
+&amp;=&amp;a_j^{(2)}(1-a_j^{(2)})\Big(\sum_{k}^K(a_k^{(3)}-y_k)\theta_{kj}^{(2)}\Big)x_s
+\end{eqnarray}\]</span></p>
+<p>By recursively computing the gradient of the error with respect to the activity of each neuron, we can compute the gradients for all weights in a network.</p>
+<p></p>
+<p>When a classification task has more than two classes, it is standard to use a softmax output layer. The softmax function provides a way of predicting a discrete probability distribution over the classes. We again use the cross-entropy error function, but it takes a slightly different form. The softmax activation of the <span class="math inline">\(k\)</span>-th output unit is <span class="math display">\[
+a_k^{(3)}=\frac{  e^{z_k^{(3)}}  }{  \sum_j^Ke^{z_j^{(3)}}  }
+\]</span> and the categorical cross entropy cost function for multi-class output is <span class="math display">\[
+J(\Theta)=-\sum_j^Ky_j\log(a_j^{(3)})
+\]</span></p>
+</section>
+<section id="optimizers" class="level3">
+<h3 class="anchored" data-anchor-id="optimizers">Optimizers</h3>
+<p>There are a multitude of “tricks of the trade” in fitting or “learning” a neural network, and many of them are connected with gradient descent. Since the choice of the learning rate is delicate and very influent on the convergence of the SGD algorithm, variations of the algorithm have been proposed. They are less sensitive to the learning rate.</p>
+</section>
+<section id="regularization" class="level3">
+<h3 class="anchored" data-anchor-id="regularization">Regularization</h3>
+<p>To conclude, let us say a few words about regularization. We have already mentioned L2 or L1 penalization; we have also mentioned early stopping. For deep learning, the mostly used method is the dropout. It was introduced by Hinton et al.&nbsp;(2012). With a certain probability <span class="math inline">\(p\)</span>, and independently of the others, each unit of the network is set to 0. The probability <span class="math inline">\(p\)</span> is another hyperparameter. It is classical to set it to <span class="math inline">\(0.5\)</span> for units in the hidden layers, and to <span class="math inline">\(0.2\)</span> for the entry layer. The computational cost is weak since we just have to set to 0 some weights with probability <span class="math inline">\(p\)</span>. This method improves significantly the generalization properties of deep neural networks and is now the most popular regularization method in this context. The disadvantage is that training is much slower (it needs to increase the number of epochs). Ensembling models (aggregate several models) can also be used. It is also classical to use data augmentation or Adversarial examples.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="dropout.png" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption class="figure-caption">Dropout</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="universal-approximation-properties-and-depth" class="level2">
+<h2 class="anchored" data-anchor-id="universal-approximation-properties-and-depth">Universal Approximation Properties and Depth</h2>
+<p>Hornik (1991) showed that any bounded and regular function <span class="math inline">\(\mathbb{R}^d\rightarrow\mathbb{R}\)</span> can be approximated at any given precision by a neural network with one hidden layer containing a finite number of neurons, having the same activation function and one linear output neuron. This result was earlier proved by Cybenko (1989) in the particular case of the sigmoid activation function. More precisely, Hornik’s theorem can be stated as follows.</p>
+<p><strong>THEOREM</strong>. Let <span class="math inline">\(\phi\)</span> be a bounded, continuous and non decreasing (activation) function. Let <span class="math inline">\(K_d\)</span> be some compact set in <span class="math inline">\(\mathbb{R}^d\)</span> and <span class="math inline">\(C(K_d)\)</span> the set of continuous functions on <span class="math inline">\(K_d\)</span>. Let <span class="math inline">\(f\in C(K_d)\)</span>. Then for all <span class="math inline">\(\epsilon&gt;0\)</span>, there exists <span class="math inline">\(N\in\mathbb{N}\)</span>, real numbers <span class="math inline">\(v_i\)</span>, <span class="math inline">\(b_i\)</span> and <span class="math inline">\(\mathbb{R}^d\)</span>-vectors <span class="math inline">\(w_i\)</span> such that, if we define</p>
+<p><span class="math display">\[
+F(x) = \sum_{i=1}^Nv_i\phi\big(w_i^Tx+b_i\big)
+\]</span></p>
+<p>then we have <span class="math display">\[
+\forall x\in K_d, |F(x)-f(x)|\leq\epsilon.
+\]</span></p>
+<p>This theorem is interesting from a theoretical point of view. From a practical point of view, this is not really useful since the number of neurons in the hidden layer may be very large.</p>
+<p>The universal approximation theorem says that there exists a network large enough to achieve any degree of accuracy we desire, but the theorem does not say how large this network will be. In summary, a feedforward network with a single hidden layer is sufficient to represent any function, but the layer may be infeasibly large and may fail to learn and generalize correctly.</p>
+<p>In many circumstances, using deeper models can reduce the number of units required to represent the desired function and can reduce the amount of generalization error. There exist families of functions which can be approximated efficiently by an architecture with depth greater than some value <span class="math inline">\(d\)</span>, but which require a much larger model if depth is restricted to be less than or equal to <span class="math inline">\(d\)</span>. In many cases, the number of hidden units required by the shallow model is exponential in <span class="math inline">\(p\)</span> (input space dimension).</p>
+<p>The strength of deep learning lies in the deep (number of hidden layers) of the networks.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>Aggarwal, Charu C. Neural networks and deep learning. Berlin, Germany. Springer, 2018.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
