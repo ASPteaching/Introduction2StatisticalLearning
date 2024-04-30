@@ -1149,33 +1149,59 @@ J(\theta+\Delta\theta)\approx J(\theta)+\sum_{i=1}^p\frac{\partial J(\theta)}{\p
 </section>
 <section id="gradient-descent-4" class="slide level2 smaller">
 <h2>Gradient Descent</h2>
-<p>For convenience, we will let <span class="math inline">\(\nabla J(\theta)\in\mathbb{R}^p\)</span> denote the vector of partial derivatives, known as the gradient, so that</p>
+<ul>
+<li>Let <span class="math inline">\(\nabla J(\theta)\in\mathbb{R}^p\)</span> denote the <em>gradient</em>, i.e.&nbsp;the vector of partial derivatives.</li>
+</ul>
 <p><span class="math display">\[\begin{equation}\label{g1}
 \nabla J(\theta)=\left(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\right)^\intercal
 \end{equation}\]</span></p>
-<p>Now the approximation can be written as:</p>
+<ul>
+<li>Now the approximation can be written as:</li>
+</ul>
 <p><span class="math display">\[\begin{equation}\label{g2}
 J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 \end{equation}\]</span></p>
 </section>
-<section id="gradient-descent-5" class="slide level2 smaller">
+<section id="gradient-descent-5" class="slide level2">
 <h2>Gradient Descent</h2>
-<p>Recalling that our aim is to reduce the value of the cost function, the Taylor approximation above motivates the idea of choosing <span class="math inline">\(\Delta\theta\)</span> to <em>make <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> negative</em>, because this will make the value of <span class="math inline">\(J(\theta+\Delta\theta)\)</span> smaller.</p>
-<p>The bigger in absolute value we can make this negative expression, the smaller will be the value of the cost function.</p>
-<p>Now, how much is it possible to make <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> decrease?</p>
-<p>The Cauchy-Schwarz inequality, which states that for any <span class="math inline">\(f,g\in\mathbb{R}^p\)</span>, we have: <span class="math display">\[
-|f^\intercal g|\leq ||f||\cdot ||g||.
-\]</span> Moreover, the two sides are equal if and only if <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are linearly dependent (meaning they are parallel).</p>
-<p>So the most negative that <span class="math inline">\(f^\intercal g\)</span> can be is <span class="math inline">\(-||f||\cdot||g||\)</span>, which happens when <span class="math inline">\(f=-g\)</span>. Hence we should choose <span class="math inline">\(\Delta\theta\)</span> to lie in the direction of <span class="math inline">\(-\nabla J(\theta)\)</span>.</p>
+<ul>
+<li><p>Recalling that our aim is to reduce the value of the cost function,</p></li>
+<li><p>Taylor approximation above motivates the idea of choosing <span class="math inline">\(\Delta\theta\)</span> to <em>make <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> negative</em>,</p></li>
+<li><p>because this will make the value of <span class="math inline">\(J(\theta+\Delta\theta)\)</span> smaller.</p></li>
+<li><p>The bigger in absolute value we can make this negative expression, the smaller will be the value of the cost function.</p></li>
+</ul>
 </section>
-<section id="gradient-descent-6" class="slide level2 smaller">
+<section id="the-cauchy-schwarz-inequality" class="slide level2">
+<h2>The Cauchy-Schwarz inequality</h2>
+<ul>
+<li>The Cauchy-Schwarz inequality, which states that for any <span class="math inline">\(f,g\in\mathbb{R}^p\)</span>, we have: <span class="math display">\[
+|f^\intercal g|\leq ||f||\cdot ||g||.
+\]</span></li>
+<li>Moreover, the two sides are equal if and only if <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are linearly dependent (meaning they are parallel).</li>
+</ul>
+</section>
+<section id="back-to-gradient-descent" class="slide level2">
+<h2>Back to gradient descent</h2>
+<ul>
+<li><p>How much can <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> decrease?</p></li>
+<li><p>By Cauchy-Schwarz,biggest possible value for <span class="math inline">\(\nabla J(\theta)^\intercal\Delta\theta\)</span> is the upper bound, <span class="math inline">\(||\nabla J(\theta)||\cdot ||\Delta\theta||\)</span>.</p>
+<ul>
+<li>The equality is only reached when <span class="math inline">\(||\nabla J(\theta)||= ||\Delta\theta||\)</span></li>
+<li>The highest possible negative value will come out when <span class="math inline">\(-\nabla J(\theta)=\Delta\theta\)</span></li>
+</ul></li>
+<li><p>That is, <em>we should choose <span class="math inline">\(\Delta\theta\)</span> to lie in the direction of <span class="math inline">\(-\nabla J(\theta)\)</span></em>.</p></li>
+</ul>
+</section>
+<section id="gradient-descent-6" class="slide level2">
 <h2>Gradient Descent</h2>
-<p>Keeping in mind that the Taylor linearization of <span class="math inline">\(J(\theta)\)</span> is an approximation that is relevant only for small <span class="math inline">\(\Delta\theta\)</span>, we will limit ourselves to a small step in that direction. This leads to the update:</p>
+<ul>
+<li><p>Keeping in mind that the Taylor linearization of <span class="math inline">\(J(\theta)\)</span> is an approximation that is relevant only for small <span class="math inline">\(\Delta\theta\)</span>,</p></li>
+<li><p>We will limit ourselves to a small step in that direction, defined by the <em>learning rate</em>. <span class="math inline">\(\eta\)</span>.</p></li>
+<li><p>This leads to the update formula that defines the steepest descent method.</p></li>
+</ul>
 <p><span class="math display">\[\begin{equation}\label{g3}
 \theta \rightarrow \theta-\eta\nabla J(\theta)
 \end{equation}\]</span></p>
-<p>.</p>
-<p>Here <span class="math inline">\(\eta\)</span> is small step size that, in this context, is known as the <em>learning rate</em>.</p>
 </section>
 <section id="gradient-descent-7" class="slide level2 smaller scrollable">
 <h2>Gradient Descent</h2>
@@ -1183,15 +1209,14 @@ J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 <ol type="1">
 <li><strong>Initialize</strong> <span class="math inline">\(\theta_0\)</span> randomly or with some predetermined values</li>
 <li><strong>Repeat until convergence:</strong> <span class="math display">\[
-\theta_{t+1} = \theta_{t} - \alpha \nabla J(\theta_{t})
+\theta_{t+1} = \theta_{t} - \eta \nabla J(\theta_{t})
 \]</span></li>
 <li><strong>Stop when:</strong> <span class="math inline">\(|J(\theta_{t+1}) - J(\theta_{t})| &lt; \epsilon\)</span></li>
 </ol>
-<p>Where:</p>
 <ul>
 <li><span class="math inline">\(\theta_0\)</span> is the initial parameter vector,</li>
 <li><span class="math inline">\(\theta_t\)</span> is the parameter vector at iteration <span class="math inline">\(t\)</span>,</li>
-<li><span class="math inline">\(\alpha\)</span> is the learning rate,</li>
+<li><span class="math inline">\(\eta\)</span> is the learning rate,</li>
 <li><span class="math inline">\(\nabla J(\theta_{t})\)</span> is the gradient of the loss function with respect to <span class="math inline">\(\theta\)</span> at iteration <span class="math inline">\(t\)</span>,</li>
 <li><span class="math inline">\(\epsilon\)</span> is a small positive value indicating the desired level of convergence.</li>
 </ul>

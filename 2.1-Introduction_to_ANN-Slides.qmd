@@ -841,51 +841,57 @@ partial derivative of the cost function with respect to the $i$-th weight.
 
 ## Gradient Descent {.smaller}
 
-For convenience, we will let $\nabla J(\theta)\in\mathbb{R}^p$
-denote the vector of partial derivatives, known as the gradient, so that
+- Let $\nabla J(\theta)\in\mathbb{R}^p$
+ denote the *gradient*, i.e. the vector of partial derivatives.
 
 \begin{equation}\label{g1}
 \nabla J(\theta)=\left(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\right)^\intercal
 \end{equation} 
 
-Now the approximation can be written as:
+- Now the approximation can be written as:
 
 \begin{equation}\label{g2}
 J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 \end{equation}
 
-## Gradient Descent {.smaller}
+## Gradient Descent 
 
-Recalling that our aim is to reduce the value of the cost function, the Taylor approximation above motivates the idea of choosing $\Delta\theta$ to *make $\nabla J(\theta)^\intercal\Delta\theta$ negative*, because this will make the value of $J(\theta+\Delta\theta)$ smaller. 
+- Recalling that our aim is to reduce the value of the cost function, 
+- Taylor approximation above motivates the idea of choosing $\Delta\theta$ to *make $\nabla J(\theta)^\intercal\Delta\theta$ negative*, 
+- because this will make the value of $J(\theta+\Delta\theta)$ smaller. 
 
-The bigger in absolute value we can make this negative expression, the smaller will be the value of the cost function.
+- The bigger in absolute value we can make this negative expression, the smaller will be the value of the cost function.
 
-Now, how much is it possible to make  $\nabla J(\theta)^\intercal\Delta\theta$ decrease?
+## The Cauchy-Schwarz inequality
 
-The Cauchy-Schwarz inequality, which states
+- The Cauchy-Schwarz inequality, which states
 that for any $f,g\in\mathbb{R}^p$, we have:
 $$
 |f^\intercal g|\leq ||f||\cdot ||g||.
 $$ 
-Moreover, the two sides are equal if and only if $f$ and $g$ are linearly dependent (meaning they
-are parallel).
+-  Moreover, the two sides are equal if and only if $f$ and $g$ are linearly dependent (meaning they are parallel).
 
-So the most negative that $f^\intercal g$ can be is $-||f||\cdot||g||$,
-which happens when $f=-g$. Hence we should choose $\Delta\theta$ to lie in the direction of $-\nabla J(\theta)$. 
+## Back to gradient descent 
+
+- How much can $\nabla J(\theta)^\intercal\Delta\theta$ decrease?
+
+- By Cauchy-Schwarz,biggest possible value for $\nabla J(\theta)^\intercal\Delta\theta$ is the upper bound, $||\nabla J(\theta)||\cdot ||\Delta\theta||$.
+  - The equality is only reached when $||\nabla J(\theta)||= ||\Delta\theta||$
+  - The highest possible negative value will  come out when $-\nabla J(\theta)=\Delta\theta$
+
+- That is, *we should choose $\Delta\theta$ to lie in the direction of $-\nabla J(\theta)$*. 
 
 
-## Gradient Descent {.smaller}
+## Gradient Descent
 
-Keeping in mind that the Taylor linearization of $J(\theta)$ is an approximation that is relevant only for small $\Delta\theta$, we
-will limit ourselves to a small step in that direction. This leads to the update:
+- Keeping in mind that the Taylor linearization of $J(\theta)$ is an approximation that is relevant only for small $\Delta\theta$, 
+- We will limit ourselves to a small step in that direction, defined by the *learning rate*. $\eta$.
+
+- This leads to the update formula that defines the steepest descent method.
 
 \begin{equation}\label{g3}
 \theta \rightarrow \theta-\eta\nabla J(\theta)
 \end{equation}
-
-\underline{This equation defines the steepest descent method}. 
-
-Here $\eta$ is small step size that, in this context, is known as the *learning rate*. 
 
 
 ## Gradient Descent {.smaller}
@@ -897,16 +903,14 @@ In summary, givent a cost function $J(\theta)$ to be optimized the gradient desc
 1. **Initialize** $\theta_0$ randomly or with some predetermined values
 2. **Repeat until convergence:**
     $$
-    \theta_{t+1} = \theta_{t} - \alpha \nabla J(\theta_{t})
+    \theta_{t+1} = \theta_{t} - \eta \nabla J(\theta_{t})
     $$
 3. **Stop when:** $|J(\theta_{t+1}) - J(\theta_{t})| < \epsilon$
 
 
-Where:
-
 - $\theta_0$ is the initial parameter vector,
 - $\theta_t$ is the parameter vector at iteration $t$,
-- $\alpha$ is the learning rate,
+- $\eta$ is the learning rate,
 - $\nabla J(\theta_{t})$ is the gradient of the loss function with respect to $\theta$ at iteration $t$,
 - $\epsilon$ is a small positive value indicating the desired level of convergence.
 
