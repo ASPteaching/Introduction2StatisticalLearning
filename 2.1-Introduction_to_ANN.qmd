@@ -434,14 +434,14 @@ network.
 
 - The leftmost layer of the network is called the *input layer*.
 
-- The rightmost layer of the network is called the output layer.
-
-  - In this example, the output layer has only one node. 
+- The rightmost layer of the network is called the *output* layer.
 
 - The middle layer of nodes is called the *hidden layer*, because its values are not observed in the training set.
 
 
-Bias nodes are not counted when stating the neuron size. In the example above we also say that our example neural network has:
+Bias nodes are not counted when stating the neuron size. 
+
+With all this in mind our example neural network has three layers with:
 
  - 3 input units (not counting the bias unit), 
  - 3 hidden units, and 
@@ -496,9 +496,9 @@ Bias nodes are not counted when stating the neuron size. In the example above we
 
 
 
-An ANN is a predictive model (a *learner) whose properties and behaviour  can be well characterized.
+An ANN is a predictive model (a *learner*) whose properties and behaviour  can be well characterized.
 
-In practice this means:
+<!-- In practice this means: -->
 
 - The ANN operates through a process known as *forward propagation*, which encompasses the entire journey of information flow from the input layer to the output layer.
 
