@@ -825,7 +825,7 @@ J(\Theta)&=&-\frac{1}{n}\big[\sum_{i=1}^n \sum_{k=1}^K y_k^{(i)}\log( h_\theta(x
 \end{eqnarray*}
 ```
 
-### Parameter optimizations with *Gradient Descent*
+## Parameter optimizations with *Gradient Descent*
 
 We saw in the previous section that training a network corresponds to choosing the parameters, that is, the weights and biases, that minimize
 the cost function. 
@@ -927,31 +927,563 @@ Where:
 - $\epsilon$ is a small positive value indicating the desired level of convergence.
 
 
-### Computing derivatives
+## The backpropagation algorithm
 
-In order to use gradient descent, we need to compute $J(\theta)$ and the
-partial derivative terms
+The gradient method provides a way to optimize weights and biases $(\theta =\{W, b\})$ by minimizing the cost function, $J(\theta)$.
+
+This minimization requires, of course, the computation of an important number of partial derivatives
 $$
 \frac{\partial}{\partial\theta_j}J(\theta)
 $$
 
-### Initialization
+The algorithm used to perform these computation is known as the *backpropagation algorithm*
 
-The input data have to be normalized to have approximately the same range. 
+The backpropagation algorithm was originally introduced in the 1970s in a MSc thesis.
 
-The biases can be initialized to 0. They also cannot be initialized with the same values, otherwise, all the neurons of a hidden
-layer would have the same behavior. 
+In 1986 a [paper by Rumelhart, Hinton, and Williams](https://www.nature.com/articles/323533a0) describes several neural networks where backpropagation works far faster than earlier approaches to learning.
 
-Perhaps the only property known with
-complete certainty is that the initial parameters need to break symmetry
-between different units. 
+This improvement in efficiency made it possible to use neural nets to solve problems which had previously been insoluble. 
 
-We generally initialize the weights at random:
-the values $\theta_{ij}^{(l)}$ are i.i.d. Uniform on $[-c,c]$ with possibly $c= 1/\sqrt{N_l}$ where $N_l$ is the size of the hidden layer
-$l$. 
+### Backpropagation intuition
 
-We also sometimes initialize the weights with a normal distribution
-$N(0,0.01)$.
+The name "backpropagation" originates in the expression "Error backpropagation, which does not seem to have anything to do with derivatives.
+
+To grasp an intuition of what we aim at it's good to recall that what the ANN does is a *Foreard calculation* also called *forward propagation*: 
+
+- It takes the input values
+- Successively appliest a series of linear (multiplies by weights and adds biases) and non-linear (activation function) transformations, through the networks layers until the predicted value is produced
+- The predicted value, most likely will be different from the known output value in the train set.
+
+::: {.r-stack}
+
+![](images/img01.gif)
+
+![](images/img02.gif)
+
+![](images/img03.gif)
+
+![](images/img04.gif)
+
+![](images/img05.gif)
+
+![](images/img06.gif)
+
+![](images/img07.gif)
+
+![](images/img08.gif)
+:::
+
+### The delta rule
+
+- How can we use the error to update the weights using the gradient method?
+
+- The idea behind backpropagation is to use the difference between the *real output* and the predicted output ("$\delta$") to update the weights in such a way that in the next iteration the error decrease.
+
+  - This difference is computed first for the output layer
+  - And then is backpropagated to the previous layers until all the weights are recomputed and the process can re-start.
+
+
+::: {.r-stack}
+
+![](images/img09.gif)
+
+![](images/img10.gif)
+
+![](images/img11.gif)
+
+![](images/img12.gif)
+
+![](images/img13.gif)
+
+![](images/img14.gif)
+
+![](images/img15.gif)
+
+![](images/img16.gif)
+
+![](images/img17.gif)
+
+![](images/img18.gif)
+
+![](images/img19.gif)
+
+:::
+
+
+
+## Lafunción delta y la retropropagación del error
+
+La función que nos permite modificar el vector de pesos $w$ a partir de una instancia de entrenamiento $d \in D$ se conoce como la regla delta y se expresa de la siguiente forma:
+
+$$
+\begin{equation*}
+\Delta w=\eta(c-y) d \tag{3.21}
+\end{equation*}
+$$
+
+donde $c$ es el valor que indica la clase en el ejemplo de entrenamiento, $y$ el valor de la función de salida para la instancia $d$, y $\eta$ la tasa o velocidad de aprendizaje (learning rate).
+
+El método utilizado para entrenar este tipo de redes, y basado en la regla delta, se muestra en el algoritmo 1.
+
+Es importante destacar que para que el algoritmo converja es necesario que las clases de los datos sean linealmente separables.
+
+**Algoritmo 1 Seudocódigo del método del descenso del gradiente**
+
+- **Entrada**: $W$ (conjunto de vectores de pesos) y $D$ (conjunto de instancias de entrenamiento) 
+  - mientras $\left(y \not \approx c_{i} \forall\left(d_{i}, c_{i}\right) \in D\right)$ hacer 
+    - para todo $\left(\left(d_{i}, c_{i}\right) \in D\right)$ hacer
+
+      - Calcular la salida $y$ de la red cuando la entrada es $d_{i}$
+
+      - si $\left(y \not \approx c_{i}\right)$ entonces
+        - Modificar el vector de pesos $w^{\prime}=w+\eta(c-y) d_{i}$
+
+     - fin si
+
+    - fin para
+
+  - fin mientras
+
+**Devolver**: El conjunto de vectores de pesos $W$
+
+
+### Retropropagación del error
+
+En las redes multicapa no podemos aplicar el algoritmo de entrenamiento visto en la sección anterior. 
+
+El problema aparece con los nodos de las capas ocultas: no podemos saber a priori cuáles son los valores de salida correctos.
+
+En el caso de una neurona $j$ con función sigmoide, la regla delta es:
+
+$$
+\begin{equation*}
+\Delta w_{i}^{j}=\eta \sigma^{\prime}\left(z^{j}\right)\left(c^{j}-y^{j}\right) x_{i}^{j}, \tag{3.24}
+\end{equation*}
+$$
+
+donde:
+
+- $\sigma^{\prime}\left(z^{j}\right)$ indica la pendiente (derivada) de la función sigmoide, que representa el factor con que el nodo $j$ puede afectar al error. 
+  - Si el valor de $\sigma^{\prime}\left(z^{j}\right)$ es pequeño, nos encontramos en los extremos de la función, donde los cambios no afectan demasiado a la salida. 
+  - Por el contrario, si el valor es grande, nos encontramos en el centro de la función, donde pequeñas variaciones pueden alterar considerablemente la salida.
+- $\left(c^{j}-y^{j}\right)$ representa la medida del error que se produce en la neurona $j$.
+- $x_{i}^{j}$ indica la *responsabilidad* de la entrada $i$ de la neurona $j$ en el error. 
+  - Cuando este valor es igual a cero, no se modifica el peso, mientras que si es superior a cero, se modifica proporcionalmente a este valor.
+
+La delta que corresponde a la neurona $j$ puede expresarse de forma general para toda neurona, simplificando la notación anterior:
+
+$$
+\begin{gather*}
+\delta^{j}=\sigma^{\prime}\left(z^{j}\right)\left(c^{j}-y^{j}\right)  \tag{3.25}\\
+\Delta w_{i}^{j}=\eta \delta^{j} x_{i}^{j} \tag{3.26}
+\end{gather*}
+$$
+
+A partir de aquí debemos determinar qué parte del error total se asigna a cada una de las neuronas de las capas ocultas. Es decir, debemos definir *cómo modificar los pesos y tasas de aprendizaje de las neuronas de las capas ocultas a partir del error observado en la capa de salida*.
+
+El método de retropropagación (backpropagation) se basa en un esquema general de dos pasos:
+
+1. Propagación hacia adelante (feedforward), que consiste en introducir una instancia de entrenamiento y obtener la salida de la red neuronal.
+2. Propagación hacia atrás (backpropagation), que consiste en calcular el error cometido en la capa de salida y propagarlo hacia atrás para calcular los valores delta de las neuronas de las capas ocultas.
+
+El algoritmo siguiente muestra el pseudocódigo del método de retropropagación. Para ver el detalle del método y su derivación matemática se puede consultar el apéndice B (Rumelhart, McClelland y col., 1986).
+
+El entrenamiento del algoritmo se realiza ejemplo a ejemplo, es decir, una instancia de entrenamiento en cada iteración. Para cada una de estas instancias se realizan los siguientes pasos:
+
+1. El primer paso, que es la propagación hacia adelante, consiste en aplicar el ejemplo a la red y obtener los valores de salida (línea 3 ).
+2. A continuación, el método inicia la propagación hacia atrás, empezando por la capa de salida. Para cada neurona $j$ de la capa de salida:
+
+a) Se calcula, en primera instancia, el valor $\delta^{j}$ basado en el valor de salida de la red para la neurona $j$ $\left(y^{j}\right)$, el valor de la clase de la instancia $\left(c^{j}\right)$ y la derivada de la función sigmoide $\left(\sigma^{\prime}\left(z^{j}\right)\right)$ (línea 5).
+
+b) A continuación, se modifica el vector de pesos de la neurona de la capa de salida, a partir de la tasa de aprendizaje $(\eta)$, el valor delta de la neurona
+calculado en el paso anterior $\left(\delta^{j}\right)$ y el factor $x_{i}^{j}$ que indica la responsabilidad de la entrada $i$ de la neurona $j$ en el error (línea 6 ).
+
+
+3. Finalmente, la propagación hacia atrás se aplica a las capas ocultas de la red. Para cada neurona $k$ de las capas ocultas:
+a) En primer lugar, se calcula el valor $\delta^{k}$ basado en la derivada de la función sigmoide $\left(\sigma^{\prime}\left(z^{k}\right)\right)$ y el sumatorio del producto de la delta calculada en el paso anterior $\left(\delta^{k}\right)$ por el valor $w_{k}^{j}$, que indica el peso de la conexión entre la neurona $k$ y la neurona $j$ (línea 9). El conjunto $S_{k}$ está formado por todos los nodos de salida a los que se encuentra conectada la neurona $k$.
+
+b) En el último paso de la iteración, se modifica el vector de pesos de la neurona $k$, a partir de la tasa de aprendizaje $(\eta)$, el valor delta de la neurona calculado en el paso anterior $\left(\delta^{k}\right)$ y el factor $x_{i}^{k}$ que indica la responsabilidad de la entrada $k$ de la neurona $j$ en el error (línea 10).
+
+La idea que subyace a este algoritmo es relativamente sencilla, y se basa en propagar el error de forma proporcional a la influencia que ha tenido cada nodo de las capas ocultas en el error final producido por cada una de las neuronas de la capa de salida.
+
+
+### Pseudocódigo del algoritmo
+
+*El texto siguiente está adaptado del excelente texto  publicado por la UOC [Introducción al Deep Learning](https://www.editorialuoc.com/deep-learning)*
+
+**Algoritmo 2 Seudocódigo del método de retropropagación**
+
+**Entrada**: $W$ (conjunto de vectores de pesos) y $D$ (conjunto de instancias de entrenamiento)
+
+1: **mientras** (error de la red $>\varepsilon$ ) hacer
+
+2: $\quad$ **para todo** $\left(\left(d_{i}, c_{i}\right) \in D\right)$ hacer
+
+3: $\qquad$ Calcular el valor de salida de la red para la entrada $d_{i}$
+
+4: $\qquad$ **para todo** (neurona $j$ en la capa de salida) hacer
+
+5: $\qquad\quad$ Calcular el valor $\delta^{j}$ para esta neurona: $$\delta^{j}=\sigma^{\prime}\left(z^{j}\right)\left(c^{j}-y^{j}\right)$$
+
+6: $\qquad\quad$ Modificar los pesos de la neurona siguiendo el método del gradiente:
+
+$$
+\Delta w_{i}^{j}=\eta \delta^{j} x_{i}^{j}
+$$
+
+7: $\quad$ **fin para**
+
+8: $\quad$ **para todo** (neurona $k$ en las capas ocultas) hacer
+
+9: $\qquad$ Calcular el valor $\delta^{k}$ para esta neurona:
+
+$$
+\delta^{k}=\sigma^{\prime}\left(z^{k}\right) \sum_{j \in S_{k}} \delta^{k} w_{k}^{j}
+$$
+
+10: $\qquad$ Modificar los pesos de la neurona siguiendo el método del gradiente:
+
+$$
+\Delta w_{i}^{k}=\eta \delta^{k} x_{i}^{k}
+$$
+
+11:$\qquad$ **fin para**
+
+12: $\quad$ **fin para**
+
+13: **fin mientras**
+
+## Formalizando el algoritmo 
+
+Supongamos que tenemos una red neuronal de $L$ capas completamente conectadas. Utilizaremos la siguiente notación:
+
+- $n_{l}$ es el número de neuronas de la capa $l$. Por convención consideramos $n_{0}$ la dimensión de los datos de entrada.
+- $X \in \mathcal{M}_{n_{0} \times m}(\mathbb{R})$ es la matriz de datos de entrada, donde cada columna representa un ejemplo y cada fila representa un atributo.
+- $W^{[l]} \in \mathcal{M}_{n_{l} \times n_{l-1}}(\mathbb{R})$ denota la matriz de pesos que conecta la capa $l-1$ con la capa $l$. Más concretamente, el
+elemento de $W^{[l]}$ correspondiente a la fila $j$, columna $k$, denotado $w_{j k}^{[l]}$, es un escalar que representa el peso de la conexión entre la neurona $j$ de la capa $l$ y la neurona $k$ de la capa $l-1$.
+- $b^{[l]} \in \mathcal{M}_{n_{l} \times 1}(\mathbb{R})$ es un vector que denota el bias de la capa $l$. El bias correspondiente a la neurona $j$ de la capa $l$ lo denotamos $b_{j}^{[l]}$.
+- $z^{[l]} \in \mathcal{M}_{n_{l} \times 1}(\mathbb{R})$ denota la combinación lineal de la entrada a la capa $l$ con los parámetros $W^{[l]}$ y $b^{[l]}$.
+- $g: \mathbb{R} \rightarrow \mathbb{R}$ es una función no lineal (como relu o sigmoid). Si $M \in \mathcal{M}_{c \times d}(\mathbb{R})$ es una matriz (o un vector), denotaremos $g(M) \in \mathcal{M}_{c \times d}(\mathbb{R})$ la matriz (o el vector) que se obtiene aplicando la función $g$ a cada coordenada de $M$.
+- $a^{[l]} \in \mathcal{M}_{n_{l} \times 1}(\mathbb{R})$ denota el vector salida de la capa $l$ de la red neuronal. En particular $a^{[L]}$ denota la salida de la red neuronal. Por convención, denotaremos $a^{[0]}$ el vector de atributos de entrada a la red neuronal.
+- Denotaremos el producto de matrices con el símbolo *, el producto de escalares con el símbolo $\cdot$ y el producto componente a componente con el símbolo $\odot$.
+
+### Caso particular con un único ejemplo
+
+Para explicar con detalle la retropropagación empezamos con una red trivial que recibe un único valor (vectorial) como entrada.
+
+#### Propagación hacia delante
+
+Si tenemos un único ejemplo entonces $m=1$ y $X$ es un vector columna de longitud $n_{0}$, el número de atributos, que coincide con la dimensión de la entrada a la red neuronal.
+
+Entonces, según la convención que estamos utilizando, $a^{[0]}=X$.
+
+En este caso, las ecuaciones para la propagación hacia delante son:
+
+$$
+\begin{aligned}
+z_{j}^{[l]} & =\sum_{k=1}^{n_{l-1}} w_{j k}^{[l]} \cdot a_{k}^{[l-1]}+b_{j}^{[l]} \\
+a_{j}^{[l]} & =g\left(z_{j}^{[l]}\right)
+\end{aligned}
+$$
+
+Para poder calcular todas las componentes a la vez es posible escribir las fórmulas anteriores en versión matricial de la siguiente forma:
+
+$$
+\begin{aligned}
+& z^{[l]}=W^{[l]} * a^{[l-1]}+b^{[l]} \\
+& a^{[l]}=g\left(z^{[l]}\right)
+\end{aligned}
+$$
+
+Una vez hemos aplicado las fórmulas anteriores a todas las capas obtenemos la salida de la red, $a^{[L]}$. Para saber si la salida de la red es adecuada podemos definir una función que mida qué error comete la red neuronal en la salida, $\mathcal{L}\left(y, a^{[L]}\right)$, donde $y$ es la etiqueta correcta asociada al ejemplo con el que trabajamos. Si la etiqueta es binaria, es decir siempre vale 0 o 1, entonces la salida de la red neuronal está formada por un único valor (esto es, $n_{L}=1$ ) y una posible función de error es el log-loss:
+
+$$
+\mathcal{L}\left(y, a^{[L]}\right)=-\left(y \cdot \log \left(a^{[L]}\right)+(1-y) \cdot \log \left(1-a^{[L]}\right)\right)
+$$
+
+Es importante notar que hemos multiplicado por -1 la expresión dentro de los paréntesis para que el error sea positivo y minimizar el error se corresponda con minimizar la función de coste.
+
+
+#### Propagación hacia atrás
+
+Observemos que en el cálculo de $a^{[L]}$ intervienen todos los parámetros $W^{[l]}, b^{[l]}$, con $l=1, \ldots, L$. Por lo tanto, la función de coste $\mathcal{L}\left(y, a^{[L]}\right)$ también depende de los parámetros $W^{[l]}, b^{[l]}$, para todo $l=1, \ldots, L$.
+
+Dado que la función de coste mide la distancia entre la salida de la red y la etiqueta correcta podemos intentar minimizar esta función para acercar lo máximo posible los valores predichos a los valores correctos. Para minimizar la función de coste debemos modificar los parámetros de la red de forma adecuada, y para ello podemos calcular el gradiente de la función de coste respecto a los parámetros de la red y utilizarlo para actualizar los valores de los parámetros.
+
+Para calcular el gradiente de la función de coste respecto a los parámetros de la red utilizaremos el algoritmo de la propagación hacia atrás. Este algoritmo se basa en aplicar repetidamente la regla de la cadena para calcular las derivadas parciales de la función de coste respecto cualquier parámetro de la red neuronal.
+
+### Recordatorio (2) La regla de la cadena
+
+Supongamos que tenemos dos funciones de una variable:
+
+$$
+\begin{aligned}
+& f: \mathbb{R} \rightarrow \mathbb{R}, \quad g: \mathbb{R} \rightarrow \mathbb{R}, \\
+& x \mapsto f(x) \\
+& y \mapsto g(y)
+\end{aligned}
+$$
+
+Entonces, por la regla de la cadena, la derivada de la composición $g(f(x))$ respecto $x$ viene dada por el producto:
+
+$$
+\frac{\partial(g \circ f)}{\partial x}=\frac{\partial g}{\partial f} \cdot \frac{\partial f}{\partial x}
+$$
+
+Ahora supongamos que tenemos dos funciones en varias variables como las siguientes:
+
+$$
+\begin{aligned}
+& f: \mathbb{R} \rightarrow \quad \mathbb{R}^{d}, \\
+& x \mapsto\left(f_{1}(x), \ldots, f_{d}(x)\right) . \\
+& g: \mathbb{R}^{d} \quad \rightarrow \quad \mathbb{R}, \\
+& \left(y_{1}, \ldots, y_{d}\right) \mapsto g\left(y_{1}, \ldots, y_{d}\right) .
+\end{aligned}
+$$
+
+Entonces, por la regla de la cadena en varias variables, la derivada de la composición $g(f(x))$ respecto $x$ viene dada por la fórmula:
+
+$$
+\frac{\partial(g \circ f)}{\partial x}=\sum_{c=1}^{d} \frac{\partial g}{\partial f_{c}} \cdot \frac{\partial f_{c}}{\partial x}
+$$
+
+Utilizando la regla de la cadena podemos calcular entonces la derivada parcial de la función de coste con respecto a cualquier parámetro de la red neuronal.
+
+El primer paso es calcular el gradiente respecto a la salida de la red neuronal. Esto dependerá de la función de coste $\mathcal{L}$ que se utilice, pero se puede calcular de forma analítica. Por ejemplo, en el caso de la función de coste log-loss, tenemos:
+
+$$
+\frac{\partial \mathcal{L}}{\partial a^{[L]}}=-\left(\frac{y}{a^{[L]}}-\frac{1-y}{1-a^{[L]}}\right)
+$$
+
+En general, asumiremos que hemos calculado $\frac{\partial L}{\partial a^{[L]}}$ y que lo podemos utilizar en la regla de la cadena. Supongamos que queremos calcular la derivada de la función de coste respecto a un peso concreto de la red neuronal $w_{j k}^{[l]}$. Para ello, asumimos que todos los demás parámetros son constantes y tenemos entonces la siguiente composición de funciones:
+
+$$
+\begin{aligned}
+& \mathbb{R} \rightarrow \mathbb{R} \rightarrow \mathbb{R} \rightarrow \mathbb{R}, \\
+& w_{j k}^{[l]} \mapsto z_{j}^{[l]} \mapsto a_{j}^{[l]} \mapsto \mathcal{L}
+\end{aligned}
+$$
+
+Por lo que, aplicando repetidamente la regla de la cadena en una variable, obtenemos:
+
+$$
+\frac{\partial \mathcal{L}}{\partial w_{j k}^{[l]}}=\frac{\partial \mathcal{L}}{\partial a_{j}^{[l]}} \cdot \frac{\partial a_{j}^{[l]}}{\partial z_{j}^{[l]}} \cdot \frac{\partial z_{j}^{[l]}}{\partial w_{j k}^{[l]}}
+$$
+
+Si estamos trabajando con la última capa, entonces $l=L$ $\mathrm{y}$, por lo tanto, ya tenemos calculado el valor de $\frac{\partial \mathcal{L}}{\partial a_{j}^{(\bar{l}}}$. Asumamos por ahora que, aunque $l$ sea menor que $L$ ya tenemos calculado el valor de $\frac{\partial \mathcal{L}}{\partial a_{j}^{(I)}}$, posteriormente veremos como se calcula. Entonces, utilizando las ecuaciones 2.1 y 2.2 tenemos:
+
+$$
+\begin{gathered}
+\frac{\partial a_{j}^{[l]}}{\partial z_{j}^{[l]}}=g^{\prime}\left(z_{j}^{[l]}\right) \\
+\frac{\partial z_{j}^{[l]}}{\partial w_{j k}^{[l]}}=a_{k}^{[l-1]}
+\end{gathered}
+$$
+
+Supongamos ahora que queremos calcular la derivada $\frac{\partial \mathcal{L}}{\partial b_{j}^{[\tau]}}$. El procedimiento es análogo a lo que hemos hecho hasta ahora, tenemos en este caso la siguiente descomposición:
+
+$$
+\begin{aligned}
+& \mathbb{R} \rightarrow \mathbb{R} \rightarrow \mathbb{R} \rightarrow \mathbb{R}, \\
+& b_{j}^{[l]} \mapsto z_{j}^{[l]} \mapsto a_{j}^{[l]} \mapsto \mathcal{L} .
+\end{aligned}
+$$
+
+Por lo que, de nuevo aplicando la regla de la cadena en una variable, obtenemos:
+
+$$
+\frac{\partial \mathcal{L}}{\partial b_{j}^{[l]}}=\frac{\partial \mathcal{L}}{\partial a_{j}^{[l]}} \cdot \frac{\partial a_{j}^{[l]}}{\partial z_{j}^{[l]}} \cdot \frac{\partial z_{j}^{[l]}}{\partial b_{j}^{[l]}}
+$$
+
+Volviendo a asumir que tenemos calculada la derivada $\frac{\partial \mathcal{L}}{\partial a_{j}^{(I)}}$, podemos calcular $\frac{\partial \mathcal{L}}{\partial b_{j}^{(I)}}$ a partir de:
+
+$$
+\begin{aligned}
+& \frac{\partial a_{j}^{[l]}}{\partial z_{j}^{[l]}}=g^{\prime}\left(z_{j}^{[l]}\right) \\
+& \frac{\partial z_{j}^{[l]}}{\partial b_{j}^{[l]}}=1
+\end{aligned}
+$$
+
+Si queremos calcular las derivadas de la función de coste respecto a todos las componentes de una matriz o un vector a la vez, podemos utilizar la siguiente notación para la matriz de pesos:
+
+$$
+\frac{\partial \mathcal{L}}{\partial W^{[l]}}=\left(\frac{\partial \mathcal{L}}{\partial a^{[l]}} \odot g^{\prime}\left(z^{[l]}\right)\right) *\left(a^{[l-1]}\right)^{T}
+$$
+
+Donde
+
+$$
+\frac{\partial \mathcal{L}}{\partial a^{[l]}}, g^{\prime}\left(z^{[l]}\right) \in \mathcal{M}_{n_{l} \times 1}(\mathbb{R})
+$$
+
+$\mathrm{y}$
+
+$$
+\left(a^{[l-1]}\right)^{T} \in \mathcal{M}_{1 \times n_{l-1}}(\mathbb{R})
+$$
+
+por lo que
+
+$$
+\frac{\partial \mathcal{L}}{\partial W^{[]}} \in \mathcal{M}_{n_{l} \times n_{l-1}}(\mathbb{R})
+$$
+
+Y la siguiente notación para el vector de bias:
+
+$$
+\frac{\partial \mathcal{L}}{\partial b^{[l]}}=\frac{\partial \mathcal{L}}{\partial a^{[l]}} \odot g^{\prime}\left(z^{[l]}\right)=\frac{\partial \mathcal{L}}{\partial z^{[l]}} .
+$$
+
+Donde, en este caso, $\frac{\partial \mathcal{L}}{\partial b[\overline{ }} \in \mathcal{M}_{n_{l} \times 1}(\mathbb{R})$.
+
+Por último, necesitamos poder calcular el valor de $\frac{\partial \mathcal{L}}{\partial a_{j}^{[\overline{ }}}$ para $l<L$. En este caso, la activación de la neurona $j$ en la capa
+$l$ afecta a todas las neuronas de la capa $l+1$, por lo que la descomposición en funciones que tenemos es la siguiente:
+
+$$
+\begin{array}{cccccc}
+\mathbb{R} & \rightarrow \mathbb{R}^{n_{l+1}} & \rightarrow & \mathbb{R}^{n_{l+1}} & \rightarrow \mathbb{R} \\
+a_{j}^{[l]} & \mapsto\left(z_{1}^{[l+1]}, \ldots, z_{n_{l+1}}^{[l+1]}\right) & \mapsto\left(a_{1}^{[l+1]}, \ldots, a_{n_{l+1}}^{[l+1]}\right) & \mapsto \mathcal{L}
+\end{array}
+$$
+
+Y si aplicamos la regla de la cadena en varias variables obtenemos la siguiente fórmula:
+
+$$
+\frac{\partial \mathcal{L}}{\partial a_{j}^{[l]}}=\sum_{c=1}^{n_{l+1}} \frac{\partial \mathcal{L}}{\partial a_{c}^{[l+1]}} \cdot \frac{\partial a_{c}^{[l+1]}}{\partial z_{c}^{[l+1]}} \cdot \frac{\partial z_{c}^{[l+1]}}{\partial a_{j}^{[l]}}
+$$
+
+Ahora sí, por recursividad, podemos suponer que tenemos calculada la derivada $\frac{\partial \mathcal{L}}{\partial a_{c}^{L+1]}}$ para todo $c=1, \ldots, n_{l+1}$. Por lo tanto, podemos calcular completamente la derivada $\frac{\partial \mathcal{L}}{\partial a_{j}^{([)}}$ utilizando:
+
+$$
+\begin{aligned}
+& \frac{\partial a_{c}^{[l+1]}}{\partial z_{c}^{[l+1]}}=g^{\prime}\left(z_{c}^{[l+1]}\right) \\
+& \frac{\partial z_{c}^{[l+1]}}{\partial a_{j}^{[l]}}=w_{c j}^{[l+1]}
+\end{aligned}
+$$
+
+El cálculo de las derivadas respecto a las activaciones de las neuronas también se puede hacer para todas las componentes a la vez utilizando la siguiente notación matricial:
+
+$$
+\frac{\partial \mathcal{L}}{\partial a^{[l]}}=\left(W^{[l+1]}\right)^{T} *\left(\frac{\partial \mathcal{L}}{\partial a^{[l+1]}} \odot g^{\prime}\left(z^{[l+1]}\right)\right)
+$$
+
+Donde
+
+$$
+\left(W^{[l+1]}\right)^{T} \in \mathcal{M}_{n_{l} \times n_{l+1}}(\mathbb{R}) \text { y } \frac{\partial \mathcal{L}}{\partial a^{l++1]}}, g^{\prime}\left(z^{[l+1]}\right) \in \mathcal{M}_{n_{l+1} \times 1}(\mathbb{R})
+$$
+
+por lo que $\frac{\partial \mathcal{L}}{\partial a^{l l}} \in \mathcal{M}_{n_{l} \times 1}(\mathbb{R})$.
+
+Observemos que para hacer los cálculos que hemos especificado necesitamos saber los valores de $z^{[l]}$ y $a^{[l]}$ para todo $l=1, \ldots, L$, que se han calculado anteriormente durante la propagación hacia delante.
+
+A continuación resumimos los pasos para calcular el gradiente con un único ejemplo en el conjunto de datos.
+
+### Algoritmo de propagación hacia atrás con un ejemplo
+
+1. Calcular $\frac{\partial \mathcal{L}}{\partial a[L]}$.
+2. Desde $l=L$ hasta 1 , repetir:
+
+a) Calcular $\frac{\partial \mathcal{L}}{\partial W^{[l]}}=\left(\frac{\partial \mathcal{L}}{\partial a^{l l}} \odot g^{\prime}\left(z^{[l]}\right)\right) *\left(a^{[l-1]}\right)^{T}$.
+
+b) Calcular $\frac{\partial \mathcal{L}}{\partial b^{[l]}}=\frac{\partial \mathcal{L}}{\partial a^{[l]}} \odot g^{\prime}\left(z^{[l]}\right)$.
+
+c) Calcular $\frac{\partial \mathcal{L}}{\partial a^{l l-1]}}=\left(W^{[l]}\right)^{T} *\left(\frac{\partial \mathcal{L}}{\partial a^{[l]}} \odot g^{\prime}\left(z^{[l]}\right)\right)$.
+
+3. Devolver $\frac{\partial \mathcal{L}}{\partial W^{l l}}$ y $\frac{\partial \mathcal{L}}{\partial b^{l l}}$ para todo $l=1, \ldots, L$.
+
+En la descripción del algoritmo se puede ver por qué se llama «de propagación hacia atrás». En efecto, el algoritmo se basa en calcular las derivadas $\frac{\partial \mathcal{L}}{\partial a^{[l}}$ en cada capa y propagar su valor hacia atrás para permitir el cálculo de las derivadas $\frac{\partial \mathcal{L}}{\partial W^{[l]}}$ y $\frac{\partial \mathcal{L}}{\partial b[\text { I] }}$, que son los parámetros de la red neuronal que se pueden modificar.
+
+### Caso general con varios ejemplos
+
+#### Propagación hacia delante
+
+Asumamos ahora que tenemos varios ejemplos en la matriz de datos $X$, por lo que $m>1$. Si nos fijamos en los diferentes
+valores que consideramos en el apartado de notación, veremos que los únicos que dependen de los datos (a parte de $X$ ), son $z^{[l]}$ y $a^{[l]}$, que son vectores columna. Podemos considerar entonces formar matrices colocando los vectores columna correspondientes a varios ejemplos uno al lado del otro. De esta forma, obtenemos:
+
+$$
+\begin{aligned}
+Z^{[l]} & =\left(\begin{array}{llll}
+z^{[l](1)} & z^{[l](2)} & \cdots & z^{[l](m)}
+\end{array}\right) \\
+A^{[l]} & =\left(\begin{array}{llll}
+a^{[l](1)} & a^{[l](2)} & \cdots & a^{[l](m)}
+\end{array}\right)
+\end{aligned}
+$$
+
+Donde $z^{[l](i)}$ y $a^{[l](i)}$ denotan los vectores $z^{[l]}$ y $a^{[l]}$ que corresponden al ejemplo $i$-ésimo, respectivamente, y hemos denotado con $A$ y $Z$ mayúsculas las matrices resultantes.
+
+Utilizando la misma convención que anteriormente tenemos que $A^{[0]}=X$ y las ecuaciones matriciales de la propagación hacia delante se pueden escribir como:
+
+$$
+\begin{aligned}
+Z^{[l]} & =W^{[l]} * A^{[l-1]}+B^{[l]} \\
+A^{[l]} & =g\left(Z^{[l]}\right)
+\end{aligned}
+$$
+
+Donde $B^{[l]}$ es una matriz formada por el vector columna $b^{[l]}$ repetido $m$ veces. De esta forma, $A^{[L]}$ denota la salida de la red, donde cada columna corresponde a la salida para cada ejemplo.
+
+$\mathrm{Al}$ tener varios ejemplos la función de coste global se define como la media de la función de coste para cada error, es decir:
+
+$$
+J=\frac{1}{m} \sum_{i=1}^{m} \mathcal{L}\left(y^{(i)}, a^{[L](i)}\right)
+$$
+
+En este caso entonces nos interesa minimizar la función $J$ para conseguir que la salida de la red se aproxime a las etiquetas correctas de cada ejemplo.
+
+#### Propagación hacia atrás
+
+Dado que la acción de derivar es una transformación lineal, para calcular el gradiente de la función $J$ podemos calcular el gradiente de $\mathcal{L}$ para cada ejemplo por separado como hemos hecho en la sección anterior y posteriormente hacer la media.
+
+Con esta información ya podríamos implementar el algoritmo de propagación hacia atrás completo con varios ejemplos. Sin embargo, dado que los procesadores actuales están diseñados para realizar cálculos en paralelo, es mucho más eficiente calcular el gradiente para todos los ejemplos a la vez utilizando matrices.
+
+Para ello, podemos utilizar las fórmulas 2.15, 2.16 y $2.20 \mathrm{y}$ adecuarlas a las substituciones $a^{[l]} \rightarrow A^{[l]} \mathrm{y} z^{[l]} \rightarrow Z^{[l]}$.
+
+Concretamente, para la derivada $\frac{\partial J}{\partial W^{[J}}$ obtenemos:
+
+$$
+\frac{\partial J}{\partial W^{[l]}}=\frac{1}{m}\left(\frac{\partial \mathcal{L}}{\partial A^{[l]}} \odot g^{\prime}\left(Z^{[l]}\right)\right) *\left(A^{[l-1]}\right)^{T}
+$$
+
+Donde
+
+$$
+\frac{\partial \mathcal{L}}{\partial A^{[]}}, g^{\prime}\left(Z^{[l]}\right) \in \mathcal{M}_{n_{l} \times m}(\mathbb{R}) \text { y }\left(A^{[l-1]}\right)^{T} \in \mathcal{M}_{m \times n_{l-1}}(\mathbb{R})
+$$
+
+por lo que $\frac{\partial J}{\partial W^{[l}} \in \mathcal{M}_{n_{l} \times n_{l-1}}(\mathbb{R})$. Observemos que el producto de matrices provoca que en cada componente se están sumando los valores correspondientes de todos los ejemplos, por lo que simplemente dividiendo por $m$ obtenemos la media que necesitamos.
+
+Para la derivada $\frac{\partial J}{\partial b \text { bil }}$ podemos hacer:
+
+$$
+\frac{\partial J}{\partial b^{[l]}}=\frac{1}{m} \sum_{i=1}^{m} \frac{\partial \mathcal{L}}{\partial A^{[l]}(i)} \odot g^{\prime}\left(Z^{[l](i)}\right)=\frac{1}{m} \sum_{i=1}^{m} \frac{\partial \mathcal{L}}{\partial Z^{[l](i)}}
+$$
+
+Donde, en este caso, estamos obteniendo los valores de cada ejemplo separados en columnas, por lo que debemos hacer la media de las columnas para obtener el valor de $\frac{\partial J}{\partial b[l]} \in \mathcal{M}_{n_{l} \times 1}(\mathbb{R})$.
+
+Por último, en las fórmulas anteriores se puede ver que no es necesario calcular $\frac{\partial J}{\partial A^{[l]}}$ para obtener $\frac{\partial J}{\partial W^{[l]}}$ y $\frac{\partial J}{\partial b b^{[J}}$, pero sí necesitamos las derivadas $\frac{\partial \mathcal{L}}{\partial A^{[]}}$. Para conseguirlas podemos adaptar directamente la fórmula $2.20 \mathrm{y}$ considerar:
+
+$$
+\frac{\partial \mathcal{L}}{\partial A^{[l]}}=\left(W^{[l+1]}\right)^{T} *\left(\frac{\partial \mathcal{L}}{\partial A^{[l+1]}} \odot g^{\prime}\left(Z^{[l+1]}\right)\right)
+$$
+
+Donde los valores correspondientes a cada ejemplo se guardan, también en este caso, separados por columnas, que es exactamente lo que nos interesa.
+
+Finalmente, podemos resumir todo el algoritmo de propagación hacia atrás general, con cualquier número de ejemplos y en formato matricial, con el siguiente procedimiento.
+
+### Algoritmo de propagación hacia atrás con varios ejemplos
+
+1. Calcular $\frac{\partial L}{\partial a^{\lfloor L}}$.
+2. Desde $l=L$ hasta 1 , repetir:
+
+a) Calcular $\frac{\partial J}{\partial W^{[l]}}=\frac{1}{m}\left(\frac{\partial \mathcal{L}}{\partial A^{[l]}} \odot g^{\prime}\left(Z^{[l]}\right)\right) *\left(A^{[l-1]}\right)^{T}$.
+
+b) Calcular $\frac{\partial J}{\partial b[]}=\frac{1}{m} \sum_{i=1}^{m} \frac{\partial L}{\partial A[][(i)} \odot g^{\prime}\left(Z^{[l]}(i)\right)$.
+
+c) Calcular $\frac{\partial \mathcal{L}}{\partial A^{[l]}}=\left(W^{[l+1]}\right)^{T} *\left(\frac{\partial \mathcal{L}}{\partial A^{[l+1]}} \odot g^{\prime}\left(Z^{[l+1]}\right)\right)$.
+
+3. Devolver $\frac{\partial J}{\partial W^{[l}} \mathrm{y} \frac{J}{\partial b b^{T J}}$ para todo $l=1, \ldots, L$.
 
 
 # An example

@@ -893,12 +893,9 @@ $$
 \theta \rightarrow \theta-\eta\nabla J(\theta)
 \end{equation}
 
-
 ## Gradient Descent {.smaller}
 
-
 In summary, givent a cost function $J(\theta)$ to be optimized the gradient descent optimization proceeds as follows:
-
 
 1. **Initialize** $\theta_0$ randomly or with some predetermined values
 2. **Repeat until convergence:**
@@ -907,40 +904,245 @@ In summary, givent a cost function $J(\theta)$ to be optimized the gradient desc
     $$
 3. **Stop when:** $|J(\theta_{t+1}) - J(\theta_{t})| < \epsilon$
 
-
 - $\theta_0$ is the initial parameter vector,
 - $\theta_t$ is the parameter vector at iteration $t$,
 - $\eta$ is the learning rate,
 - $\nabla J(\theta_{t})$ is the gradient of the loss function with respect to $\theta$ at iteration $t$,
 - $\epsilon$ is a small positive value indicating the desired level of convergence.
 
+## Computing gradients {.smaller}
 
-## Computing derivatives
+- The gradient method provides a way to optimize weights and biases $(\theta =\{W, b\})$ by minimizing the cost function, $J(\theta)$.
 
-In order to use gradient descent, we need to compute $J(\theta)$ and the
-partial derivative terms
-$$
+- This minimization requires, of course, the computation of an important number of partial derivatives
+$$ 
 \frac{\partial}{\partial\theta_j}J(\theta)
 $$
+- The algorithm used to perform these computation is known as the *backpropagation algorithm*
 
-## Initialization {.smaller}
+## A short history
 
-The input data have to be normalized to have approximately the same range. 
+- The backpropagation algorithm was originally introduced in the 1970s in a MSc thesis.
+- In 1986 a [paper by Rumelhart, Hinton, and Williams](https://www.nature.com/articles/323533a0) describes several neural networks where backpropagation works far faster than earlier approaches to learning.
+- This improvement in efficiency made it possible to use neural nets to solve problems which had previously been insoluble. 
 
-The biases can be initialized to 0. They also cannot be initialized with the same values, otherwise, all the neurons of a hidden
-layer would have the same behavior. 
 
-Perhaps the only property known with
-complete certainty is that the initial parameters need to break symmetry
-between different units. 
+## Backpropagation intuition {.smaller}
 
-We generally initialize the weights at random:
-the values $\theta_{ij}^{(l)}$ are i.i.d. Uniform on $[-c,c]$ with possibly $c= 1/\sqrt{N_l}$ where $N_l$ is the size of the hidden layer
-$l$. 
+- The name "backpropagation" originates in the expression "Error backpropagation
 
-We also sometimes initialize the weights with a normal distribution
-$N(0,0.01)$.
+- Recall that the ANN computes its output through  *forward propagation*: 
 
+- It takes the input values
+- Successively appliest a series of linear (multiplies by weights and adds biases) and non-linear (activation function) transformations, through the networks layers until the predicted value is produced
+- The predicted value, most likely will be different from the known output value in the train set.
+
+
+## Forward propagation example
+
+
+::: {.r-stack}
+
+![](images/img01.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img02.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img03.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img04.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img05.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img06.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img07.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img08.gif){.fragment .absolute top=100 left=0 width="1000" }
+:::
+
+
+## The delta rule {.smaller}
+
+- How can we use the error to update the weights using the gradient method?
+
+- The idea is to use the difference between the *real output* and the predicted output ("$\delta$") to update the weights in such a way that in the next iteration the error decrease.
+
+  - This difference is computed first for the layer
+  - And then is backpropagated to the previous layers until all the weights are recomputed and the process can re-start.
+
+## Backpropagation illustrated
+
+::: {.r-stack}
+
+![](images/img09.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img10.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img11.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img12.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img13.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img14.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img15.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img16.gif){.fragment .absolute top=100 left=0 width="1000" }
+![](images/img17.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img18.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+![](images/img19.gif){.fragment .absolute top=100 left=0 width="1000" }
+
+:::
+
+## Error backpropagation {.smaller}
+
+
+$$
+\begin{equation*}
+\Delta w=\eta(c-y) d \tag{3.21}
+\end{equation*}
+$$
+
+- La regla delta es la base de la retropropagación:
+
+  - $c$ es el valor que indica la clase en el ejemplo de entrenamiento, 
+   
+  - $y$ el valor de la función de salida para la instancia $d$, y 
+    
+  - $\eta$ la tasa o velocidad de aprendizaje (*learning rate*).
+
+- El método utilizado para entrenar este tipo de redes, y basado en la regla delta, se muestra en el algoritmo siguiente (Algoritmo 1).
+
+  - Para que el algoritmo converja es necesario que las clases de los datos sean linealmente separables.
+  
+## Algoritmo 1 (Gradiente) {.smaller}
+
+
+- **Entrada**: $W$ (conjunto de vectores de pesos) y $D$ (conjunto de instancias de entrenamiento) 
+  - mientras $\left(y \not \approx c_{i} \forall\left(d_{i}, c_{i}\right) \in D\right)$ hacer 
+    - para todo $\left(\left(d_{i}, c_{i}\right) \in D\right)$ hacer
+
+      - Calcular la salida $y$ de la red cuando la entrada es $d_{i}$
+
+      - si $\left(y \not \approx c_{i}\right)$ entonces
+        - Modificar el vector de pesos $w^{\prime}=w+\eta(c-y) d_{i}$
+
+      - fin si
+
+    - fin para
+
+  - fin mientras
+
+**Devolver**: El conjunto de vectores de pesos $W$
+
+
+## Retropropagación del error {.smaller}
+
+- En las redes multicapa no podemos aplicar el algoritmo de entrenamiento visto en la sección anterior. 
+
+- El problema aparece con los nodos de las capas ocultas: no podemos saber a priori cuáles son los valores de salida correctos.
+
+- En el caso de una neurona $j$ con función sigmoide, la regla delta es:
+
+$$
+\begin{equation*}
+\Delta w_{i}^{j}=\eta \sigma^{\prime}\left(z^{j}\right)\left(c^{j}-y^{j}\right) x_{i}^{j}, \tag{3.24}
+\end{equation*}
+$$
+
+donde:
+
+- $\sigma^{\prime}\left(z^{j}\right)$ indica la pendiente (derivada) de la función sigmoide, que representa el factor con que el nodo $j$ puede afectar al error. 
+
+
+## Ajustando los pesos {.smaller}
+
+$$
+\begin{equation*}
+\Delta w_{i}^{j}=\eta \sigma^{\prime}\left(z^{j}\right)\left(c^{j}-y^{j}\right) x_{i}^{j}, \tag{3.24}
+\end{equation*}
+$$
+
+- Si el valor de $\sigma^{\prime}\left(z^{j}\right)$ es pequeño, nos encontramos en los extremos de la función, donde los cambios no afectan demasiado a la salida. 
+- Por el contrario, si el valor es grande, nos encontramos en el centro de la función, donde pequeñas variaciones pueden alterar considerablemente la salida.
+  - $\left(c^{j}-y^{j}\right)$ representa la medida del error que se produce en la neurona $j$.
+  - $x_{i}^{j}$ indica la *responsabilidad* de la entrada $i$ de la neurona $j$ en el error. 
+
+- Cuando este valor es igual a cero, no se modifica el peso, mientras que si es superior a cero, se modifica proporcionalmente a este valor.
+
+## Expresion general de $delta$ {.smaller}
+
+- La $\delta$ que corresponde a la neurona $j$ puede expresarse de forma general para toda neurona, simplificando la notación anterior:
+
+$$
+\begin{gather*}
+\delta^{j}=\sigma^{\prime}\left(z^{j}\right)\left(c^{j}-y^{j}\right)  \tag{3.25}\\
+\Delta w_{i}^{j}=\eta \delta^{j} x_{i}^{j} \tag{3.26}
+\end{gather*}
+$$
+
+- A partir de aquí debemos determinar qué parte del error total se asigna a cada una de las neuronas de las capas ocultas. 
+
+- Es decir, debemos definir *cómo modificar los pesos y tasas de aprendizaje de las neuronas de las capas ocultas a partir del error observado en la capa de salida*.
+
+## La retropropagación {.smaller}
+
+- El método de retropropagación (backpropagation) se basa en un esquema general de dos pasos:
+
+1. Propagación hacia adelante (*feedforward*), que consiste en introducir una instancia de entrenamiento y obtener la salida de la red neuronal.
+
+2. Propagación hacia atrás (*backpropagation*), que consiste en calcular el error cometido en la capa de salida y propagarlo hacia atrás para calcular los valores delta de las neuronas de las capas ocultas.
+
+- La idea que subyace a este método es relativamente sencilla, y se basa en *propagar el error de forma proporcional a la influencia que ha tenido cada nodo de las capas ocultas en el error final producido por cada una de las neuronas de la capa de salida*.
+
+
+## El algoritmo (1) {.smaller}
+
+1. El primer paso, que es la propagación hacia adelante, consiste en aplicar el ejemplo a la red y obtener los valores de salida (línea 3 ).
+
+2. A continuación, el método inicia la propagación hacia atrás, empezando por la capa de salida. Para cada neurona $j$ de la capa de salida:
+
+  2.1 Se calcula, en primera instancia, el valor $\delta^{j}$ basado en el valor de salida de la red para la neurona $j$ $\left(y^{j}\right)$, el valor de la clase de la instancia $\left(c^{j}\right)$ y la derivada de la función sigmoide $\left(\sigma^{\prime}\left(z^{j}\right)\right)$ (línea 5).
+
+  2.2 A continuación, se modifica el vector de pesos de la neurona de la capa de salida, a partir de la tasa de aprendizaje $(\eta)$, el valor delta de la neurona calculado en el paso anterior $\left(\delta^{j}\right)$ y el factor $x_{i}^{j}$ que indica la responsabilidad de la entrada $i$ de la neurona $j$ en el error (línea 6 ).
+
+## El algoritmo (2) {.smaller}
+
+3. Finalmente, la propagación hacia atrás se aplica a las capas ocultas de la red. Para cada neurona $k$ de las capas ocultas:
+
+  3.1 En primer lugar, se calcula el valor $\delta^{k}$ basado en la derivada de la función sigmoide $\left(\sigma^{\prime}\left(z^{k}\right)\right)$ y el sumatorio del producto de la delta calculada en el paso anterior $\left(\delta^{k}\right)$ por el valor $w_{k}^{j}$, que indica el peso de la conexión entre la neurona $k$ y la neurona $j$ (línea 9). 
+  El conjunto $S_{k}$ está formado por todos los nodos de salida a los que se encuentra conectada la neurona $k$.
+
+  3.2  En el último paso de la iteración, se modifica el vector de pesos de la neurona $k$, a partir de la tasa de aprendizaje $(\eta)$, el valor delta de la neurona calculado en el paso anterior $\left(\delta^{k}\right)$ y el factor $x_{i}^{k}$ que indica la responsabilidad de la entrada $k$ de la neurona $j$ en el error (línea 10).
+
+## El algoritmo
+
+
+```{r out.width="150%", fig.align='center'}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_4.png")
+```
+
+# Training a Network
+
+## Hints for optimization
+
+- **Epoch**:  The set of samples used to train the
+ANN can be applied multiple times. One
+iteration of the training set is known as an
+epoch
+
+- **Batch Learning** In batch learning, the training set is first broken up into batches
+
+  - Batch learning allows weights to be updated more frequently per epoch
+  
+## Epochs and Batches
+
+```{r out.width="150%", fig.align='center'}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_5.png")
+```
 
 # An example using R
 
@@ -1093,45 +1295,6 @@ table(actual,prediction)
 
 -   Because the stochastic gradient method is usually implemented within the context of a very large scale computation, algorithmic choices such as mini-batch size and the form of randomization are often driven by the requirements of high performance computing architectures.
 -   Also, it is, of course, possible to vary these choices, along with others, such as the learning rate, dynamically as the training progresses in an attempt to accelerate convergence.
-
-## Back propagation
-
--   Back-propagation is the algorithm used to compute the gradients of the network.
--   This procedure was developed by several authors in the decade of the 60's but is Paul J. Werbos, (1974) in his thesis when demonstrates the use of this algorithm for ANN. - Years later, (David, E.
-
-1986) presents the modern way to apply this technique to ANN, and sets the basis of the algorithm in use today.
-
-## The delta rule
-
--   In this paper, the authors presents a new method capable to change the predictions towards a desired output, they called it the delta rule.
-
--   This rule consist in compute the total error for the network and check how the error changes when certain elements from the network changes its value.
-
--   These changes are computed by differentiating the cost function with regard to each element in the network\
-
--   Which would give us a measure of how much each element is contributing to the total error of the network,
-
--   This is, computing the gradient of the cost function we can know how the total error changes with regard to each element, and therefore apply the delta rule.
-
-## Applying the chain rule
-
--   The cost function is an intricate composed function which contains the weights of all layers,
--   the problem now is that the computations of this gradients are not straightforward as in a simple function,
--   A node from a layer is the result of the composition of all the nodes from previous layers.
--   To overcome it, Back-propagation uses the chain rule of differential calculus to compute the gradients of each element in the neural network,
-
--It contains two main phases referred to as the forward phase and backward phase:
-
-## Back-propagation: **Forward Phase**:
-
--   The inputs for a data example are fed into the FNN.
--   These inputs will be propagated through the network for all the neurons in all the layers using the current set of weights, to finally compute the final output.
-
-## Back-propagation: **Backward Phase**:
-
--   Once the final output and the cost function are computed, we need to compute the gradients for all the weights in all the layers in the FNN to update them in order to reach the minimum.
--   To compute the gradients the chain rule is used, is a backwards a process from output to input,
--   Therefore we will start from the output node, compute all the gradients of the previous layer, and so on until we reach the input layer.
 
 
 # ANN example using Python
@@ -1324,27 +1487,171 @@ knitr::include_graphics("images/ANN-IrisExample11.png")
 ```
 
 
-## Weights and biases inizialization
+## Weights and biases inizialization {.smaller}
 
-- Before training the model, the weights and biases are initialized
-as random values between 0 and 1
+- Before training the model, the weights and biases are initialized as random values between 0 and 1
 
-  - w0 is the set of weights for connections between the input and
-hidden layer
-  - w1 is the set of weights for connections between the hidden and
-output layer
+  - w0 is the set of weights for connections between the input and hidden layer
+  - w1 is the set of weights for connections between the hidden and output layer
 
-- The biases bh and bo are for the hidden and output layers
-respectively
-
-## Initialize weight and biases  {.smaller}
+- The biases bh and bo are for the hidden and output layers respectively
 
 ```{r, fig.align='center', out.width="100%", fig.cap=""}
 knitr::include_graphics("images/initializeweights.png")
 ```
 
+## Determine number of batches {.smaller}
 
-# To be continued ...
+- The number of batches ‘num_batch’ is calculated from the user-determined batch size and training size.
+- The number of batches is corrected in case the
+training set size is not a multiple of the batch size.
 
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_6.png")
+```
+
+## The ANN training loop {.smaller}
+
+- Forward propagation, error determination, back
+propagation, and weight/bias updating are performed for every batch of input data
+
+- This process is repeated for multiple epochs
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_7.png")
+```
+
+## ANN input and output {.smaller}
+
+- The model takes learning rate, batch size, epochs, and the training set as input
+
+- The model will output the weights and biases for the input and hidden layer, as well as training error measurements
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_8.png")
+```
+
+## Forward propagation {.smaller}
+
+- The current batch of data is extracted from the total training set
+- The input is propagated through the layers by
+multiplying by weight matrices, adding biases, and
+running through the activation functions
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_9.png")
+```
+
+## Determine the error {.smaller}
+
+- The labels (true output) corresponding to the current batch of inputs is found
+- These are compared to the forward-propagated output of the model ‘layer2’ ($\delta$ is the derivative of the cost function)
+- This subtraction represents the cost function which, through gradient descent, will be minimized
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_10.png")
+```
+
+## Backpropagation {.smaller}
+
+- 
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_10.png")
+```
+
+## Backpropagation {.smaller}
+
+- 
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_10.png")
+```
+
+## Backpropagation {.smaller}
+
+- 
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_10.png")
+```
+
+## Backpropagation (Layer 2 to 1) {.smaller}
+
+- Using the gradient descent algorithm, the derivative of the cost with respect to weights for layer 2 is calculated
+- This is called “layer2w_delta” as this will later be subtracted from the layer2 weights to find the new set of weights
+- The change in layer2 bias is simply the layer2 error
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_11.png")
+```
+
+## Backpropagation  (Layer 1 to 0){.smaller}
+
+- The cost function must be differentiated with respect to the hidden layer weights
+- The hidden layer partial derivatives are first found
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_12.png")
+```
+
+## Backpropagation (Layer 1 to 0) {.smaller}
+
+- The partial derivatives are then multiplied to get ‘layer1w_delta’, the number used to change the layer1 weights
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_13.png")
+```
+
+## Update weights {.smaller}
+
+- Using the products found earlier, the weight matrices can now be updated
+- The respective delta matrices are multiplied by the learning rate and subtracted from the current weight values 
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_14.png")
+```
+
+## Update biases {.smaller}
+
+- Similarly, the bias deltas are subtracted from the current bias values
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_15.png")
+```
+
+## Training output
+
+- In addition to outputting the trained parameters, the training function will also output all the layer2 errors found during training
+
+- This results in one error measurement per epoch,
+which can then be plotted
+
+
+```{r, fig.align='center', out.width="100%", fig.cap=""}
+knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_16.png")
+```
+
+## Test Set evaluation
+
+![](2.1-Introduction_to_ANN-Slides_insertimage_17.png)
+
+# Coding exerciseS {.smaller}
+
+- Open the program either in its R or Python versions
+
+- Run the program
+
+- Change parameters and see how it affects
+
+  - Change the number of epochs from 1000 to 100
+
+- Run cells 13 through 16 and observe the confusion matrix
+  - The model will misclassify many versicolor samples
+  - Try changing the number of epochs to other numbers
+    -  What is the lowest number of epochs that produces desirable results?
+    - What combination of parameters yields the highest training accuracy?
 
 # References and Resources
+
+
