@@ -673,7 +673,7 @@ $$
     -   All computations are done by Forward propagation
     -   The connectivity graph does not have any directed loops or cycles.
 
-# Optimizing the ANN
+# Training Neural Networks
 
 
 ## Training an ANN {.smaller}
@@ -696,16 +696,18 @@ $$
     - Such high number may be reduced by *Stochastic Gradient Descent*.
     - The evaluation of derivatives is simplified thanks to *Backpropagation*.
 
-
 ## A loss function for optimization
 
-A first idea may be to use *squared error loss*:
+Depending on the form of the activation function we may decide to use one or another form of loss function.
 
+-   At first an idea may be to use *squared error loss*:
 $$
   l(h_\theta(x),y)=\left (y-\frac{1}{1+e^{-\theta^\intercal x}}\right )^2
 $$
 
-However it happens to be that [*this is is not a convex   problem*](https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c)  which means that MSE is not appropriate.
+- However it happens to be that, given a sigmoid activation function, the resulting loss function [* is  not a convex   problem*](https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c)  which means that MSE is not appropriate.
+
+- Quadratic loss may be used, for instance, with ReLu activation.
 
 ## Illustrating non-convexity {.smaller}
 
@@ -799,8 +801,7 @@ J(\Theta)&=&-\frac{1}{n}\big[\sum_{i=1}^n \sum_{k=1}^K y_k^{(i)}\log( h_\theta(x
 
 ## Gradient Descent 
 
-- Training a network corresponds to choosing the parameters, that is, the weights and biases, that minimize
-the cost function. 
+- Training a network corresponds to choosing the parameters, that is, the weights and biases, that minimize the cost function. 
 
 - The weights and biases take the form of
 matrices and vectors, but at this stage it is convenient to imagine them
@@ -846,7 +847,7 @@ partial derivative of the cost function with respect to the $i$-th weight.
 
 \begin{equation}\label{g1}
 \nabla J(\theta)=\left(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\right)^\intercal
-\end{equation} 
+\end{equation}
 
 - Now the approximation can be written as:
 
@@ -864,8 +865,7 @@ J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 
 ## The Cauchy-Schwarz inequality
 
-- The Cauchy-Schwarz inequality, which states
-that for any $f,g\in\mathbb{R}^p$, we have:
+- The [Cauchy-Schwarz inequality](https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality), states that for any $f,g\in\mathbb{R}^p$, we have:
 $$
 |f^\intercal g|\leq ||f||\cdot ||g||.
 $$ 

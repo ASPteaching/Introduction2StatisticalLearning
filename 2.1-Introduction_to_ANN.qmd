@@ -688,15 +688,15 @@ $$
 
 ## Multiple architectures for ANN
 
--   We have so far focused on a single hidden layer neural network of
-    the example.
+- We have so far focused on a single hidden layer neural network of
+  the example.
     
 - Indeed, One can build neural networks with many distinct
-    architectures (meaning patterns of connectivity between neurons),
-    including ones with multiple hidden layers.
+  architectures (meaning patterns of connectivity between neurons),
+  including ones with multiple hidden layers.
 
--   See [here the Neural Network
-    Zoo](https://www.asimovinstitute.org/neural-network-zoo/).
+-   See here [The Neural Network
+    Zoo![](2.1-Introduction_to_ANN-Slides_insertimage_3.png)](https://www.asimovinstitute.org/neural-network-zoo/).
 
 ### Feed Forward Neural networks
 
@@ -706,9 +706,7 @@ densely connected to layer $l+1$.
 
 In this setting, to compute the output of the network, we can
 successively compute all the activations in layer $L_2$, then layer
-$L_3$, and so on, up to layer $L_{nl}$ , using the equations above. This is
-one example of a feed-forward *neural network (FFNN)*, since the
-connectivity graph does not have any directed loops or cycles.
+$L_3$, and so on, up to layer $L_{nl}$ , using the equations above. This is one example of a feed-forward *neural network (FFNN)*, since the connectivity graph does not have any directed loops or cycles.
 
 ### The number of output units
 
@@ -720,26 +718,36 @@ For example, in the image below we can see a network with two hidden layers laye
 
 To train this network, we would need training examples $(x^{(i)},y^{(i)})$ where $y^{(i)}\in\mathbb{R}^4$. 
 
-This type of network is useful if there are multiple outputs that you're interested in
-predicting.
+This type of network is useful if there are multiple outputs that you're interested in predicting.
 
-- For example, in a medical diagnosis application, the vector $x$ might
-give the input features of a patient, and the different outputs $y_i$'s
-might indicate presence or absence of different diseases.
+- For example, in a medical diagnosis application, the vector $x$ might give the input features of a patient, and the different outputs $y_i$'s might indicate presence or absence of different diseases.
 
-## Optimizing the ANN
+# Training Neural Networks
 
-The equations described above show how to use forward propagation to yield a prediction, given an input and a set of parameters (weights and biases).
+- An ANN is a predictive model whose properties and behaviour  can be mathematically characterized.
 
-As with any learning tasks what we want to do is finding a set of parameter's best values that, in some sense provide the best possible prediction.
+- In practice this means:
+  - The ANN acts by composing a series of linear and non-linear (activation) functions.
+  - These are characterized by their *weights* and *biases*, that need to be *learnt*.
+- *Training* the network is done by 
+  - Selecting an appropriate (convex) loss function,
+  - Finding those weights that minimize a the total *cost* function (avg loss).
 
-For this we need two things
+## The tools for training
 
-- A loss function to quantify the difference between reali world and predictions.
-- Some optimization procedure(s) to iteratively tune the parameter' values in order to minimize the loss.
+- Training an ANN is usually done using some iterative optimization procedure such as *Gradient Descent*.
 
+- This requires evaluating derivatives in a huge number of points.
+    - Such high number may be reduced by *Stochastic Gradient Descent*.
+    - The evaluation of derivatives is simplified thanks to *Backpropagation*.
+    
+- It is important to realize that backpropagation is both
+  
+  - The algorithm for training, i.e. for tuning the weights in order to minimize the loss function
+  - A way to train efficientlt thanks to a series of tricks and techniques such as automatic differentiation.
+  
 
-### A loss function for optimization
+## A loss function for optimization
 
 A first idea may be to use *squared error loss*:
 
@@ -747,7 +755,9 @@ $$
   l(h_\theta(x),y)=\left (y-\frac{1}{1+e^{-\theta^\intercal x}}\right )^2
 $$
 
-However it happens to be that [*this is is not a convex   problem*](https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c)  which means that MSE is not appropriate.
+However it happens to be that, given a sigmoid activation function, the resulting loss function [* is is not a convex   problem*](https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c)  which means that MSE is not appropriate.
+
+Quadratic loss may be used, for instance, with ReLu activation.
 
 To illustrate this, we can consider a simple neural network with one input, one hidden layer with a logistic activation function, and one output neuron. 
 
@@ -828,11 +838,10 @@ $J: \mathbb{R}^p\rightarrow \mathbb{R}$.
 
 ![Error hyper-surface](images/errorsurface.jpg){width="60%"}
 
-*Gradient Descent* is a classical method in optimization that is often
+*Gradient Descent* is a classical method in optimization that is often named by one of its variants
 referred to as *steepest descent*.
 
-Given a function $J(\theta)$ to be minimized, the method proceeds iteratively, computing a sequence of vectors $\theta^1, \theta^2, ..., \theta^n$ in $\mathbb{R}^p$ with the
-aim of converging to a vector that minimizes the cost function. 
+Given a function $J(\theta)$ to be minimized, the method proceeds iteratively, computing a sequence of vectors $\theta^1, \theta^2, ..., \theta^n$ in $\mathbb{R}^p$ with the aim of converging to a vector that minimizes the cost function. 
 
 Suppose that our current vector is $\theta$. 
 *How should we choose a perturbation, $\Delta\theta$, so that the next vector, $\theta+\Delta\theta$, represents an improvement, that is: $J(\theta +\Delta\theta) < J(\theta)$?*
@@ -848,8 +857,7 @@ $$
 where ${\displaystyle \frac{\partial J(\theta)}{\partial\theta_i}}$ denotes the
 partial derivative of the cost function with respect to the $i$-th weight. 
 
-For convenience, we will let $\nabla J(\theta)\in\mathbb{R}^p$
-denote the vector of partial derivatives, known as the gradient, so that
+For convenience, we will let $\nabla J(\theta)\in\mathbb{R}^p$ denote the vector of partial derivatives, known as the gradient, so that
 
 \begin{equation}\label{g1}
 \nabla J(\theta)=\left(\frac{\partial J(\theta)}{\partial\theta_1},...,\frac{\partial J(\theta)}{\partial\theta_p}\right)^\intercal
@@ -867,16 +875,26 @@ The bigger in absolute value we can make this negative expression, the smaller w
 
 Now, how much is it possible to make  $\nabla J(\theta)^\intercal\Delta\theta$ decrease?
 
-The Cauchy-Schwarz inequality, which states
-that for any $f,g\in\mathbb{R}^p$, we have:
+The answer to this question can be motivated using the [Cauchy-Schwarz inequality](https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality).
+
+### Interlude: Cauchy-Schwarz
+
+The Cauchy-Schwarz inequality, which states that for any $f,g\in\mathbb{R}^p$, we have:
 $$
 |f^\intercal g|\leq ||f||\cdot ||g||.
 $$ 
 Moreover, the two sides are equal if and only if $f$ and $g$ are linearly dependent (meaning they
 are parallel).
 
-So the most negative that $f^\intercal g$ can be is $-||f||\cdot||g||$,
-which happens when $f=-g$. Hence we should choose $\Delta\theta$ to lie in the direction of $-\nabla J(\theta)$. 
+- How much can $\nabla J(\theta)^\intercal\Delta\theta$ decrease?
+
+- By Cauchy-Schwarz,biggest possible value for $\nabla J(\theta)^\intercal\Delta\theta$ is the upper bound, $||\nabla J(\theta)||\cdot ||\Delta\theta||$.
+  - The equality is only reached when $||\nabla J(\theta)||= ||\Delta\theta||$
+  - The highest possible negative value will  come out when $-\nabla J(\theta)=\Delta\theta$
+
+- That is, *we should choose $\Delta\theta$ to lie in the direction of $-\nabla J(\theta)$*. 
+
+### Going back to gradient
 
 Keeping in mind that the Taylor linearization of $J(\theta)$ is an approximation that is relevant only for small $\Delta\theta$, we
 will limit ourselves to a small step in that direction. This leads to the update:

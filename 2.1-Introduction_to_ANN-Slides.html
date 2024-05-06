@@ -1018,8 +1018,8 @@ f(z_{s_{l+1}}^{(l)})
 </ul>
 </section></section>
 <section>
-<section id="optimizing-the-ann" class="title-slide slide level1 center">
-<h1>Optimizing the ANN</h1>
+<section id="training-neural-networks" class="title-slide slide level1 center">
+<h1>Training Neural Networks</h1>
 
 </section>
 <section id="training-an-ann" class="slide level2 smaller">
@@ -1051,11 +1051,14 @@ f(z_{s_{l+1}}^{(l)})
 </section>
 <section id="a-loss-function-for-optimization" class="slide level2">
 <h2>A loss function for optimization</h2>
-<p>A first idea may be to use <em>squared error loss</em>:</p>
-<p><span class="math display">\[
+<p>Depending on the form of the activation function we may decide to use one or another form of loss function.</p>
+<ul>
+<li><p>At first an idea may be to use <em>squared error loss</em>: <span class="math display">\[
   l(h_\theta(x),y)=\left (y-\frac{1}{1+e^{-\theta^\intercal x}}\right )^2
-\]</span></p>
-<p>However it happens to be that <a href="https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c"><em>this is is not a convex problem</em></a> which means that MSE is not appropriate.</p>
+\]</span></p></li>
+<li><p>However it happens to be that, given a sigmoid activation function, the resulting loss function <a href="https://towardsdatascience.com/why-not-mse-as-a-loss-function-for-logistic-regression-589816b5e03c">* is not a convex problem*</a> which means that MSE is not appropriate.</p></li>
+<li><p>Quadratic loss may be used, for instance, with ReLu activation.</p></li>
+</ul>
 </section>
 <section id="illustrating-non-convexity" class="slide level2 smaller">
 <h2>Illustrating non-convexity</h2>
@@ -1174,7 +1177,7 @@ J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 <section id="the-cauchy-schwarz-inequality" class="slide level2">
 <h2>The Cauchy-Schwarz inequality</h2>
 <ul>
-<li>The Cauchy-Schwarz inequality, which states that for any <span class="math inline">\(f,g\in\mathbb{R}^p\)</span>, we have: <span class="math display">\[
+<li>The <a href="https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality">Cauchy-Schwarz inequality</a>, states that for any <span class="math inline">\(f,g\in\mathbb{R}^p\)</span>, we have: <span class="math display">\[
 |f^\intercal g|\leq ||f||\cdot ||g||.
 \]</span></li>
 <li>Moreover, the two sides are equal if and only if <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are linearly dependent (meaning they are parallel).</li>
