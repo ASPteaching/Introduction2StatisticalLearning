@@ -1,0 +1,93 @@
+---
+title: "Prediction with (shallow) Neural Networks"
+format: html
+editor: visual
+---
+
+# An example using R
+
+## A predictive ANN
+
+We use the `neuralnet` package to build a simple neural network to predict if a type of stock pays dividends or not.
+
+```{r echo=TRUE}
+if (!require(neuralnet)) 
+  install.packages("neuralnet", dep=TRUE)
+```
+
+## Data for the example
+
+And use the `dividendinfo.csv` dataset from <https://github.com/MGCodesandStats/datasets>
+
+```{r echo=TRUE}
+mydata <- read.csv("https://raw.githubusercontent.com/MGCodesandStats/datasets/master/dividendinfo.csv")
+str(mydata)
+```
+
+## Data pre-processing
+
+```{r echo=TRUE}
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+normData <- as.data.frame(lapply(mydata, normalize))
+```
+
+## Test and training sets
+
+Finally we break our data in a test and a training set:
+
+```{r echo=TRUE}
+perc2Train <- 2/3
+ssize <- nrow(normData)
+set.seed(12345)
+data_rows <- floor(perc2Train *ssize)
+train_indices <- sample(c(1:ssize), data_rows)
+trainset <- normData[train_indices,]
+testset <- normData[-train_indices,]
+```
+
+## Training a neural network
+
+We train a simple NN with two hidden layers, with 4 and 2 neurons respectively.
+
+```{r echo=TRUE}
+#Neural Network
+library(neuralnet)
+nn <- neuralnet(dividend ~ fcfps + earnings_growth + de + mcap + current_ratio, 
+                data=trainset, 
+                hidden=c(2,1), 
+                linear.output=FALSE, 
+                threshold=0.01)
+```
+
+## Network plot
+
+The output of the procedure is a neural network with estimated weights
+
+```{r echo=TRUE}
+plot(nn, rep = "best")
+```
+
+## Predictions
+
+```{r echo=TRUE}
+temp_test <- subset(testset, select =
+                      c("fcfps","earnings_growth", 
+                        "de", "mcap", "current_ratio"))
+nn.results <- compute(nn, temp_test)
+results <- data.frame(actual = 
+                  testset$dividend, 
+                  prediction = nn.results$net.result)
+head(results)
+```
+
+## Model evaluation
+
+```{r echo=TRUE}
+roundedresults<-sapply(results,round,digits=0)
+roundedresultsdf=data.frame(roundedresults)
+attach(roundedresultsdf)
+table(actual,prediction)
+```
+
