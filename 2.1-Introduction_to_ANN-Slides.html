@@ -1241,55 +1241,19 @@ J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 <li>In 1986 a <a href="https://www.nature.com/articles/323533a0">paper by Rumelhart, Hinton, and Williams</a> describes several neural networks where backpropagation works far faster than earlier approaches to learning.</li>
 <li>This improvement in efficiency made it possible to use neural nets to solve problems which had previously been insoluble.</li>
 </ul>
-</section>
-<section id="backpropagation-intuition" class="slide level2 smaller">
-<h2>Backpropagation intuition</h2>
-<ul>
-<li><p>The name “backpropagation” originates in the expression “Error backpropagation</p></li>
-<li><p>Recall that the ANN computes its output through <em>forward propagation</em>:</p></li>
-<li><p>It takes the input values</p></li>
-<li><p>Successively appliest a series of linear (multiplies by weights and adds biases) and non-linear (activation function) transformations, through the networks layers until the predicted value is produced</p></li>
-<li><p>The predicted value, most likely will be different from the known output value in the train set.</p></li>
-</ul>
-</section>
-<section id="forward-propagation-example" class="slide level2">
-<h2>Forward propagation example</h2>
-<div class="r-stack">
-<p><img data-src="images/img01.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img02.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img03.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img04.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img05.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img06.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img07.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img08.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-</div>
-</section>
-<section id="the-delta-rule" class="slide level2 smaller">
-<h2>The delta rule</h2>
-<ul>
-<li><p>How can we use the error to update the weights using the gradient method?</p></li>
-<li><p>The idea is to use the difference between the <em>real output</em> and the predicted output (“<span class="math inline">\(\delta\)</span>”) to update the weights in such a way that in the next iteration the error decrease.</p>
-<ul>
-<li>This difference is computed first for the layer</li>
-<li>And then is backpropagated to the previous layers until all the weights are recomputed and the process can re-start.</li>
-</ul></li>
-</ul>
-</section>
-<section id="backpropagation-illustrated" class="slide level2">
-<h2>Backpropagation illustrated</h2>
-<div class="r-stack">
-<p><img data-src="images/img09.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img10.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img11.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img12.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img13.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img14.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img15.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img16.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "> <img data-src="images/img17.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img18.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-<p><img data-src="images/img19.gif" class="fragment absolute" style="top: 100px; left: 0px; width: 1000px; "></p>
-</div>
+<!-- ## Backpropagation intuition {.smaller} -->
+<!-- - A term originated in the expression "Error backpropagation -->
+<!-- - Recall that the ANN computes its output through  *forward propagation*:  -->
+<!--   - It takes the input values -->
+<!--   - It applies a series of linear and non-linear  transformations, through the networks layers, to produce the predicted value. -->
+<!-- - The output will be different from the known output value in the train set -->
+<!--   - The difference (the "error") is used *backwards* to adjust the weights, -->
+<!--   - So that the error decreases as we iterate the process. -->
+<!-- ## The delta rule {.smaller} -->
+<!-- - How can we use the error to update the weights using the gradient method? -->
+<!-- - The idea is to use the difference between the *real output* and the predicted output ("$\delta$") to update the weights in such a way that in the next iteration the error decrease. -->
+<!--   - This difference is computed first for the layer -->
+<!--   - And then is backpropagated to the previous layers until all the weights are recomputed and the process can re-start. -->
 </section>
 <section id="error-backpropagation" class="slide level2 smaller">
 <h2>Error backpropagation</h2>
@@ -1417,26 +1381,228 @@ J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 <section id="el-algoritmo" class="slide level2">
 <h2>El algoritmo</h2>
 
-<img data-src="2.1-Introduction_to_ANN-Slides_insertimage_4.png" class="quarto-figure quarto-figure-center r-stretch" style="width:150.0%"></section></section>
+<img data-src="2.1-Introduction_to_ANN-Slides_insertimage_4.png" class="quarto-figure quarto-figure-center r-stretch" style="width:150.0%"></section>
+<section id="forward-propagation-example" class="slide level2">
+<h2>Forward propagation example</h2>
+<div class="r-stack">
+<p><img data-src="images/img01.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img02.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img03.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img04.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img05.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img06.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img07.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img08.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+</div>
+</section>
+<section id="backpropagation-illustrated" class="slide level2">
+<h2>Backpropagation illustrated</h2>
+<p><img data-src="images/img08.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<div class="r-stack">
+<p><img data-src="images/img09.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img10.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img11.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img12.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img13.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img14.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img15.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img16.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 800px; height: 400px; "></p>
+<p><img data-src="images/img17.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 900px; height: 500px; "></p>
+<p><img data-src="images/img18.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 900px; height: 500px; "></p>
+<p><img data-src="images/img19.gif" class="fragment absolute" style="top: 100px; left: 50px; width: 900px; height: 500px; "></p>
+</div>
+</section></section>
 <section>
-<section id="training-a-network" class="title-slide slide level1 center">
-<h1>Training a Network</h1>
+<section id="improving-the-learning-process" class="title-slide slide level1 center">
+<h1>Improving the learning process</h1>
 
 </section>
-<section id="hints-for-optimization" class="slide level2">
-<h2>Hints for optimization</h2>
+<section id="learning-optimization" class="slide level2">
+<h2>Learning optimization</h2>
 <ul>
-<li><p><strong>Epoch</strong>: The set of samples used to train the ANN can be applied multiple times. One iteration of the training set is known as an epoch</p></li>
-<li><p><strong>Batch Learning</strong> In batch learning, the training set is first broken up into batches</p>
+<li><p>The learning porocess such as it has been derived may be improved in different ways.</p>
 <ul>
-<li>Batch learning allows weights to be updated more frequently per epoch</li>
+<li>Predictions can be be bad and require improvement.</li>
+<li>Computations may be inefficent or slow.</li>
+<li>The network may overfit and lack generalizability.</li>
+</ul></li>
+<li><p>This can be partially soved applying distinct approaches.</p></li>
+</ul>
+</section>
+<section id="network-architechture" class="slide level2">
+<h2>Network architechture</h2>
+<ul>
+<li><p>Network performance is affected by many hyperparameters</p>
+<ul>
+<li>Network topology</li>
+<li>Number of layers</li>
+<li>Number of neurons per layer</li>
+<li>Activation function(s)</li>
+<li>Weights initialization procedure</li>
+<li>etc.</li>
 </ul></li>
 </ul>
 </section>
-<section id="epochs-and-batches" class="slide level2">
-<h2>Epochs and Batches</h2>
+<section id="hyperparameter-tuning" class="slide level2">
+<h2>Hyperparameter tuning</h2>
+<ul>
+<li>Hyperparameters selection and tuning may be hard, due simply to dimensionality.</li>
+<li>Standard approaches to search for best parameters combinations are used.</li>
+</ul>
 
-<img data-src="2.1-Introduction_to_ANN-Slides_insertimage_5.png" class="quarto-figure quarto-figure-center r-stretch" style="width:150.0%"></section></section>
+<img data-src="images/GridVsRandomSearch.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="how-many-hidden-layers" class="slide level2">
+<h2>How many (hidden) layers</h2>
+<ul>
+<li><p>Traditionally considered that one layer may be enough</p>
+<ul>
+<li><em>Shallow Networks</em></li>
+</ul></li>
+<li><p>Posterior research showed that adding more layers increases efficency</p>
+<ul>
+<li>Number of neurons per layer decreases exponentially</li>
+</ul></li>
+<li><p>Although there is also risk of overfitting</p></li>
+</ul>
+</section>
+<section id="epochs-and-iterations" class="slide level2">
+<h2>Epochs and iterations</h2>
+<ul>
+<li><p>It has been shown that using the whole training set only once may not be enough for training an ANN.</p></li>
+<li><p>One iteration of the training set is known as an <em>epoch</em>.</p></li>
+<li><p>The number of epochs <span class="math inline">\(N_E\)</span>, defines how many times we iterate along the whole training set.</p></li>
+<li><p><span class="math inline">\(N_E\)</span> can be fixed, determined by cross-validation or left open and stop the training when it does not improve anymore.</p></li>
+</ul>
+</section>
+<section id="iterations-and-batches" class="slide level2">
+<h2>Iterations and batches</h2>
+<ul>
+<li><p>A complementary strategy to increasing the number of epochs is decreasing the number of instances in each iteration.</p></li>
+<li><p>That is, the training set is broken in a number of <em>batches</em> that are trained separately.</p>
+<ul>
+<li><p>Batch learning allows weights to be updated more frequently per epoch.</p></li>
+<li><p>The advantage of batch learning is related to the gradient descent approach used.</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="training-in-batches" class="slide level2">
+<h2>Training in batches</h2>
+
+<img data-src="2.1-Introduction_to_ANN-Slides_insertimage_5.png" class="quarto-figure quarto-figure-center r-stretch" style="width:150.0%"></section>
+<section id="gradient-descent-drawbacks" class="slide level2">
+<h2>Gradient descent drawbacks</h2>
+<ul>
+<li>With many parameters and many training points, computing the gradient vector at every iteration of the steepest descent method can be time consuming.
+<ul>
+<li>It is mainly due to that we have <em>to sum across all training points</em>.</li>
+<li>With big data this becomes prohibitive.</li>
+</ul></li>
+<li>Several alternatives exist (many indeed).</li>
+</ul>
+</section>
+<section id="stochastic-gradient" class="slide level2 smaller">
+<h2>Stochastic Gradient</h2>
+<ul>
+<li><p>A much cheaper alternative is to replace the mean of the individual gradients over all training points <em>by the gradient at a single, randomly chosen, point</em>.</p></li>
+<li><p>This leads to the simplest form of the <em>stochastic gradient method</em>:</p></li>
+<li><p>Choose an integer <span class="math inline">\(i\)</span> uniformly at random from <span class="math inline">\(\{1,...,n\}\)</span> and update <span class="math display">\[\begin{equation}\label{g4}
+    \theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta;x^{(i)})
+    \end{equation}\]</span></p></li>
+<li><p><span class="math inline">\(x^{(i)}\)</span> incuded in the notation of <span class="math inline">\(J(\theta;x^{(i)})\)</span> to remark the dependence.</p></li>
+</ul>
+</section>
+<section id="rationale-for-sgd" class="slide level2 smaller">
+<h2>Rationale for SGD</h2>
+<ul>
+<li>At each step, the SGD method uses one randomly chosen training point to represent the full training set.</li>
+<li>As the iteration proceeds, the method sees more training points.</li>
+<li>So <em>there is some hope</em> that this dramatic reduction in cost-per-iteration will be worthwhile overall.</li>
+<li>Note that, even for very small <span class="math inline">\(\eta\)</span>, the update is not guaranteed to reduce the overall cost function because we traded the mean for a single sample.</li>
+<li>Hence, although the phrase stochastic gradient descent is widely used, we prefer to use <strong>stochastic gradient</strong>.</li>
+</ul>
+</section>
+<section id="batch-gradient-descent" class="slide level2">
+<h2>Batch Gradient Descent</h2>
+<ul>
+<li><p>Batch Gradient Descent computes the error for each example in the training dataset but the model is updated only after evaluating all examples.</p></li>
+<li><p>As a benefits there is computational efficiency, which produces a stable error gradient and a stable convergence.</p></li>
+<li><p>As drawbacks, the stable error gradient can sometimes result in a state of convergence that isn’t the best the model can achieve. It also requires the entire training dataset to be in memory and available to the algorithm.</p></li>
+</ul>
+</section>
+<section id="mini-batch-gd" class="slide level2">
+<h2>Mini-Batch GD</h2>
+<ul>
+<li><p>Mini-batch Gradient Descent (MBGD) divides the training dataset into small batches to compute error and update model coefficients.</p></li>
+<li><p>MBGD balances the robustness of stochastic gradient descent with the efficiency of batch gradient descent, making it a prevalent implementation in deep learning.</p></li>
+<li><p>A common batch size for MBGD is 32, although it can vary based on the specific problem and data.</p></li>
+</ul>
+</section>
+<section id="types-of-gradient-descent" class="slide level2">
+<h2>Types of Gradient Descent</h2>
+
+<img data-src="images/GradientDescentTypes.png" class="quarto-figure quarto-figure-center r-stretch" style="width:150.0%"><p><a href="https://www.analyticsvidhya.com/blog/2022/07/gradient-descent-and-its-types/">Source: Gradient Descent and its Types</a></p>
+</section>
+<section id="alternative-optimizers" class="slide level2">
+<h2>Alternative optimizers</h2>
+<ul>
+<li><p>Gradient descent can be improved adopting different strategies</p></li>
+<li><p>Other optimizers exist that may make the training faster with strategies such as accumulating velocity in relevant directions or adjusting learning rates based on parameter frequency.</p></li>
+<li><p>Overall these optimizers enable quicker convergence and better handling of various data characteristics, making them favorable choices over traditional gradient descent.</p></li>
+</ul>
+</section>
+<section id="momentum" class="slide level2">
+<h2>Momentum</h2>
+<ul>
+<li>Accelerates SGD by accumulating momentum in relevant directions, akin to a rolling ball gaining speed downhill.</li>
+<li>Increases acceleration for dimensions with consistent gradients, reducing updates for changing gradients, leading to faster convergence and reduced oscillation.</li>
+</ul>
+</section>
+<section id="adagrad" class="slide level2">
+<h2>Adagrad</h2>
+<ul>
+<li>Adapts learning rate based on parameter frequency, making smaller updates for frequent features and larger updates for rare ones, suitable for sparse data.</li>
+<li>Efficient for handling sparse data due to its adaptive learning rates.</li>
+</ul>
+</section>
+<section id="adadelta" class="slide level2">
+<h2>Adadelta</h2>
+<ul>
+<li>An extension of Adagrad aiming to mitigate its aggressive, monotonically decreasing learning rate.</li>
+<li>Restricts accumulated past gradients to a fixed-size window, avoiding over-accumulation.</li>
+</ul>
+</section>
+<section id="adam" class="slide level2">
+<h2>Adam</h2>
+<ul>
+<li>Combines momentum optimization with adaptive learning rates, tracking both past gradients’ exponential decay and a moving average of gradients.</li>
+<li>Recent studies suggest caution with adaptive optimization methods like Adam due to potential generalization issues, prompting exploration of alternatives such as Momentum optimization.</li>
+</ul>
+</section>
+<section id="optimizing-the-training-speed" class="slide level2">
+<h2>Optimizing the training speed</h2>
+<ul>
+<li><p>Training speed optimization cab be based on</p>
+<ul>
+<li><p>Weight inizialization</p></li>
+<li><p>Changing learning rate</p></li>
+<li><p>Using efficient cost functions</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="optimizing-to-avoid-overfiotting" class="slide level2">
+<h2>Optimizing to avoid overfiotting</h2>
+<p>In order to fight overfitting distinct strategies are common</p>
+<ul>
+<li><p>L2 regularization</p></li>
+<li><p>Early stopping</p></li>
+<li><p>Dropout</p></li>
+<li><p>Data augmentation</p></li>
+</ul>
+</section>
+<section id="summarizing-optimization" class="slide level2">
+<h2>Summarizing optimization</h2>
+
+<img data-src="2.1-Introduction_to_ANN-Slides_insertimage_18.png" class="r-stretch quarto-figure-center"><p class="caption">Source: Introducción al Deep Learning (UOC)</p></section></section>
 <section>
 <section id="an-example-using-r" class="title-slide slide level1 center">
 <h1>An example using R</h1>
@@ -1509,7 +1675,7 @@ J(\theta+\Delta\theta)\approx J(\theta)+\nabla J(\theta)^\intercal\Delta\theta
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">plot</span>(nn, <span class="at">rep =</span> <span class="st">"best"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="2.1-Introduction_to_ANN-Slides_files/figure-revealjs/unnamed-chunk-22-1.png" width="960" class="r-stretch"></section>
+<img data-src="2.1-Introduction_to_ANN-Slides_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section>
 <section id="predictions" class="slide level2">
 <h2>Predictions</h2>
 <div class="cell">
@@ -1546,67 +1712,6 @@ actual  0  1
      1  4 27</code></pre>
 </div>
 </div>
-</section></section>
-<section>
-<section id="some-extensions" class="title-slide slide level1 center">
-<h1>Some Extensions</h1>
-
-</section>
-<section id="gradient-descent-drawbacks" class="slide level2">
-<h2>Gradient descent drawbacks</h2>
-<ul>
-<li>When we have a large number of parameters and a large number of training points, computing the gradient vector (<span class="math inline">\(\ref{g1}\)</span>) at every iteration of the steepest descent method can be time consuming.</li>
-<li>It is mainly due to that we have <em>to sum across all training points</em>.</li>
-<li>This becomes prohibitively expensive when we have Big Data.</li>
-</ul>
-</section>
-<section id="stochastic-gradient" class="slide level2 smaller">
-<h2>Stochastic Gradient</h2>
-<ul>
-<li><p>A much cheaper alternative is to replace the mean of the individual gradients over all training points</p></li>
-<li><p>by the gradient at a single, randomly chosen, training point.</p></li>
-<li><p>This leads to the simplest form of the <em>stochastic gradient method</em>.</p></li>
-<li><p>Choose an integer <span class="math inline">\(i\)</span> uniformly at random from <span class="math inline">\(\{1,...,n\}\)</span> and update <span class="math display">\[\begin{equation}\label{g4}
-\theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta;x^{(i)})
-\end{equation}\]</span></p></li>
-<li><p>Notice we have included <span class="math inline">\(x^{(i)}\)</span> in the notation of <span class="math inline">\(J(\theta;x^{(i)})\)</span> to remark the dependence.</p></li>
-</ul>
-</section>
-<section id="rationale-for-sgd" class="slide level2">
-<h2>Rationale for SGD</h2>
-<p>-At each step, the stochastic gradient method uses one randomly chosen training point to represent the full training set.</p>
-<ul>
-<li><p>As the iteration proceeds, the method sees more training points.</p></li>
-<li><p>So <em>there is some hope</em> that this dramatic reduction in cost-per-iteration will be worthwhile overall.</p></li>
-<li><p>Note that, even for very small <span class="math inline">\(\eta\)</span>, the update (<span class="math inline">\(\ref{g4}\)</span>) is not guaranteed to reduce the overall cost function we have traded the mean for a single sample.</p></li>
-<li><p>Hence, although the phrase stochastic gradient descent is widely used, we prefer to use <strong>stochastic gradient</strong>.</p></li>
-</ul>
-</section>
-<section id="sgd-variants" class="slide level2">
-<h2>SGD variants</h2>
-<ul>
-<li>The version of the stochastic gradient method that we introduced in (<span class="math inline">\(\ref{g4}\)</span>) is the simplest from a large range of possibilities.</li>
-<li>In particular, the index <span class="math inline">\(i\)</span> in (<span class="math inline">\(\ref{g4}\)</span>) was chosen by sampling with replacement after using a training point, it is returned to the training set and is just as likely as any other point to be chosen at the next step.</li>
-<li>An alternative is to sample without replacement; that is, to cycle through each of the <span class="math inline">\(n\)</span> training points in a random order.</li>
-<li>Performing <span class="math inline">\(n\)</span> steps in this manner, referred to as completing an epoch, may be summarized as follows:</li>
-</ul>
-</section>
-<section id="sgd-variants-3" class="slide level2">
-<h2>SGD variants (3)</h2>
-<ul>
-<li>If we regard the stochastic gradient method as approximating the mean over all training points by a single sample, then</li>
-<li>It is natural to consider a compromise where we use a small sample average. For some <span class="math inline">\(m&lt;&lt;n\)</span> we could take steps of the following form.</li>
-</ul>
-<ul>
-<li>In this iteration, the set <span class="math inline">\(\{x^{(k_i)}\}_{i=1}^m\)</span> is known as a mini-batch.</li>
-</ul>
-</section>
-<section id="improving-sgd" class="slide level2">
-<h2>Improving SGD</h2>
-<ul>
-<li>Because the stochastic gradient method is usually implemented within the context of a very large scale computation, algorithmic choices such as mini-batch size and the form of randomization are often driven by the requirements of high performance computing architectures.</li>
-<li>Also, it is, of course, possible to vary these choices, along with others, such as the learning rate, dynamically as the training progresses in an attempt to accelerate convergence.</li>
-</ul>
 </section></section>
 <section>
 <section id="ann-example-using-python" class="title-slide slide level1 center">
@@ -1795,27 +1900,6 @@ actual  0  1
 <li>The labels (true output) corresponding to the current batch of inputs is found</li>
 <li>These are compared to the forward-propagated output of the model ‘layer2’ (<span class="math inline">\(\delta\)</span> is the derivative of the cost function)</li>
 <li>This subtraction represents the cost function which, through gradient descent, will be minimized</li>
-</ul>
-
-<img data-src="2.1-Introduction_to_ANN-Slides_insertimage_10.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="backpropagation" class="slide level2 smaller">
-<h2>Backpropagation</h2>
-<ul>
-<li></li>
-</ul>
-
-<img data-src="2.1-Introduction_to_ANN-Slides_insertimage_10.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="backpropagation-1" class="slide level2 smaller">
-<h2>Backpropagation</h2>
-<ul>
-<li></li>
-</ul>
-
-<img data-src="2.1-Introduction_to_ANN-Slides_insertimage_10.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="backpropagation-2" class="slide level2 smaller">
-<h2>Backpropagation</h2>
-<ul>
-<li></li>
 </ul>
 
 <img data-src="2.1-Introduction_to_ANN-Slides_insertimage_10.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>

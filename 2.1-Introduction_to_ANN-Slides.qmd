@@ -927,75 +927,30 @@ $$
 - This improvement in efficiency made it possible to use neural nets to solve problems which had previously been insoluble. 
 
 
-## Backpropagation intuition {.smaller}
+<!-- ## Backpropagation intuition {.smaller} -->
 
-- The name "backpropagation" originates in the expression "Error backpropagation
+<!-- - A term originated in the expression "Error backpropagation -->
 
-- Recall that the ANN computes its output through  *forward propagation*: 
+<!-- - Recall that the ANN computes its output through  *forward propagation*:  -->
 
-- It takes the input values
-- Successively appliest a series of linear (multiplies by weights and adds biases) and non-linear (activation function) transformations, through the networks layers until the predicted value is produced
-- The predicted value, most likely will be different from the known output value in the train set.
+<!--   - It takes the input values -->
+<!--   - It applies a series of linear and non-linear  transformations, through the networks layers, to produce the predicted value. -->
 
-
-## Forward propagation example
-
-
-::: {.r-stack}
-
-![](images/img01.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img02.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img03.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img04.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img05.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img06.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img07.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img08.gif){.fragment .absolute top=100 left=0 width="1000" }
-:::
+<!-- - The output will be different from the known output value in the train set -->
+<!--   - The difference (the "error") is used *backwards* to adjust the weights, -->
+<!--   - So that the error decreases as we iterate the process. -->
 
 
-## The delta rule {.smaller}
 
-- How can we use the error to update the weights using the gradient method?
+<!-- ## The delta rule {.smaller} -->
 
-- The idea is to use the difference between the *real output* and the predicted output ("$\delta$") to update the weights in such a way that in the next iteration the error decrease.
+<!-- - How can we use the error to update the weights using the gradient method? -->
 
-  - This difference is computed first for the layer
-  - And then is backpropagated to the previous layers until all the weights are recomputed and the process can re-start.
+<!-- - The idea is to use the difference between the *real output* and the predicted output ("$\delta$") to update the weights in such a way that in the next iteration the error decrease. -->
 
-## Backpropagation illustrated
+<!--   - This difference is computed first for the layer -->
+<!--   - And then is backpropagated to the previous layers until all the weights are recomputed and the process can re-start. -->
 
-::: {.r-stack}
-
-![](images/img09.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img10.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img11.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img12.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img13.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img14.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img15.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img16.gif){.fragment .absolute top=100 left=0 width="1000" }
-![](images/img17.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img18.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-![](images/img19.gif){.fragment .absolute top=100 left=0 width="1000" }
-
-:::
 
 ## Error backpropagation {.smaller}
 
@@ -1125,24 +1080,246 @@ $$
 knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_4.png")
 ```
 
-# Training a Network
+## Forward propagation example
 
-## Hints for optimization
+```{r echo=FALSE}
+Top = 100
+Left = 50
+Width =800
+Height = 400
+```
 
-- **Epoch**:  The set of samples used to train the
-ANN can be applied multiple times. One
-iteration of the training set is known as an
-epoch
 
-- **Batch Learning** In batch learning, the training set is first broken up into batches
+::: {.r-stack}
 
-  - Batch learning allows weights to be updated more frequently per epoch
+![](images/img01.gif){.fragment .absolute top=100 left=50 width="800" height="400" }
+
+![](images/img02.gif){.fragment .absolute top=100 left=50 width="800" height="400" }
+
+![](images/img03.gif){.fragment .absolute top=100 left=50 width="800" height="400" }
+
+![](images/img04.gif){.fragment .absolute top=100 left=50 width="800" height="400" }
+
+![](images/img05.gif){.fragment .absolute top=100 left=50 width="800" height="400" }
+
+![](images/img06.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img07.gif){.fragment .absolute top=100 left=50 width="800" height="400" }
+
+![](images/img08.gif){.fragment .absolute top=100 left=50 width="800" height="400" }
+:::
+
+
+
+## Backpropagation illustrated
+
+![](images/img08.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+::: {.r-stack}
+
+![](images/img09.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img10.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img11.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img12.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img13.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img14.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img15.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img16.gif){.fragment .absolute top=100 left=50 width="800" height="400"}
+
+![](images/img17.gif){.fragment .absolute top=100 left=50 width="900" height="500"}
+
+![](images/img18.gif){.fragment .absolute top=100 left=50 width="900" height="500"}
+
+![](images/img19.gif){.fragment .absolute top=100 left=50 width="900" height="500"}
+
+:::
+
+
+
+# Improving the learning process
+
+## Learning optimization
+
+- The learning porocess such as it has been derived may be improved in different ways.
   
-## Epochs and Batches
+  - Predictions can be be bad and require improvement.
+  - Computations may be inefficent or slow.
+  - The network may overfit and lack generalizability.
+
+- This can be partially soved applying distinct approaches.
+
+## Network architechture
+
+- Network performance is affected by many hyperparameters
+
+  - Network topology
+  - Number of layers
+  - Number of neurons per layer
+  - Activation function(s)
+  - Weights initialization procedure
+  - etc.
+  
+
+## Hyperparameter tuning
+
+- Hyperparameters selection and tuning may be hard, due simply to dimensionality.
+- Standard approaches to search for best parameters combinations are used.
+
+```{r fig.align='center'}
+knitr::include_graphics("images/GridVsRandomSearch.png")
+```
+
+## How many (hidden) layers
+
+- Traditionally considered that one layer may be enough
+
+  - *Shallow Networks*
+  
+- Posterior research showed that adding more layers increases efficency
+  - Number of neurons per layer decreases exponentially
+- Although there is also risk of overfitting
+
+
+## Epochs and iterations
+
+- It has been shown that using the whole training set only once may not be enough for training an ANN.
+
+- One iteration of the training set is known as an *epoch*.
+
+- The number of epochs $N_E$, defines how many times we iterate along the whole training set.
+
+- $N_E$ can be fixed, determined by cross-validation or left open and stop the training when it does not improve anymore.
+
+
+## Iterations and batches
+
+- A complementary strategy to increasing the number of epochs is decreasing the number of instances in each iteration.
+
+- That is, the training set is broken in a number of *batches* that are trained separately.
+
+  - Batch learning allows weights to be updated more frequently per epoch.
+  
+  - The advantage of batch learning is related to the gradient descent approach used.
+  
+## Training in batches
 
 ```{r out.width="150%", fig.align='center'}
 knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_5.png")
 ```
+
+
+## Gradient descent drawbacks
+
+-   With many parameters and many training points, computing the gradient vector at every iteration of the steepest descent method can be time consuming.
+    - It is mainly due to that we have *to sum across all training points*.
+    - With big data this becomes prohibitive.
+
+- Several alternatives exist (many indeed).
+
+## Stochastic Gradient {.smaller}
+
+-   A much cheaper alternative is to replace the mean of the individual gradients over all training points *by the gradient at a single, randomly chosen, point*.
+
+-   This leads to the simplest form of the *stochastic gradient method*:
+  -   Choose an integer $i$ uniformly at random from $\{1,...,n\}$ and update \begin{equation}\label{g4}
+    \theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta;x^{(i)})
+    \end{equation}
+
+-   $x^{(i)}$ incuded in the notation of $J(\theta;x^{(i)})$ to remark the dependence.
+
+## Rationale for SGD  {.smaller}
+
+- At each step, the SGD method uses one randomly chosen training point to represent the full training set.
+-   As the iteration proceeds, the method sees more training points.
+-   So *there is some hope* that this dramatic reduction in cost-per-iteration will be worthwhile overall.
+-   Note that, even for very small $\eta$, the update is not guaranteed to reduce the overall cost function because we traded the mean for a single sample.
+  -  Hence, although the phrase stochastic gradient descent is widely used, we prefer to use **stochastic gradient**.
+
+## Batch Gradient Descent
+
+- Batch Gradient Descent computes the error for each  example in the training dataset but the model is updated only after evaluating all examples.
+
+- As a benefits there is computational efficiency, which produces a stable error gradient and a stable convergence. 
+
+- As drawbacks, the stable error gradient can sometimes result in a state of convergence that isn’t the best the model can achieve. It also requires the entire training dataset to be in memory and available to the algorithm.
+
+
+## Mini-Batch GD
+
+- Mini-batch Gradient Descent (MBGD) divides the training dataset into small batches to compute error and update model coefficients.
+
+- MBGD balances the robustness of stochastic gradient descent with the efficiency of batch gradient descent, making it a prevalent implementation in deep learning.
+
+- A common batch size for MBGD is 32, although it can vary based on the specific problem and data.
+
+
+## Types of Gradient Descent
+
+```{r out.width="150%", fig.align='center'}
+knitr::include_graphics("images/GradientDescentTypes.png")
+```
+[Source: Gradient Descent and its Types](https://www.analyticsvidhya.com/blog/2022/07/gradient-descent-and-its-types/)
+
+## Alternative optimizers
+
+- Gradient descent can be improved adopting different strategies
+
+- Other optimizers exist that may make the training faster with strategies such as accumulating velocity in relevant directions or adjusting learning rates based on parameter frequency.
+
+-  Overall these optimizers enable quicker convergence and better handling of various data characteristics, making them favorable choices over traditional gradient descent.
+
+## Momentum
+
+  - Accelerates SGD by accumulating momentum in relevant directions, akin to a rolling ball gaining speed downhill.
+  - Increases acceleration for dimensions with consistent gradients, reducing updates for changing gradients, leading to faster convergence and reduced oscillation.
+
+## Adagrad
+
+  - Adapts learning rate based on parameter frequency, making smaller updates for frequent features and larger updates for rare ones, suitable for sparse data.
+  - Efficient for handling sparse data due to its adaptive learning rates.
+
+## Adadelta
+
+  - An extension of Adagrad aiming to mitigate its aggressive, monotonically decreasing learning rate.
+  - Restricts accumulated past gradients to a fixed-size window, avoiding over-accumulation.
+
+## Adam
+
+  - Combines momentum optimization with adaptive learning rates, tracking both past gradients' exponential decay and a moving average of gradients.
+  - Recent studies suggest caution with adaptive optimization methods like Adam due to potential generalization issues, prompting exploration of alternatives such as Momentum optimization.
+
+## Optimizing the training speed
+
+- Training speed optimization cab be based on
+
+  - Weight inizialization
+  
+  - Changing learning rate
+  
+  - Using efficient cost functions
+  
+## Optimizing to avoid overfiotting
+
+In order to fight overfitting distinct strategies are common
+
+- L2 regularization
+
+- Early stopping
+
+- Dropout
+
+- Data augmentation
+
+## Summarizing optimization
+
+![Source: Introducción al Deep Learning (UOC)](2.1-Introduction_to_ANN-Slides_insertimage_18.png)
 
 # An example using R
 
@@ -1232,69 +1409,6 @@ table(actual,prediction)
 ```
 
 
-# Some Extensions
-## Gradient descent drawbacks
-
--   When we have a large number of parameters and a large number of training points, computing the gradient vector (\ref{g1}) at every iteration of the steepest descent method can be time consuming.
--   It is mainly due to that we have *to sum across all training points*.
--   This becomes prohibitively expensive when we have Big Data.
-
-## Stochastic Gradient {.smaller}
-
--   A much cheaper alternative is to replace the mean of the individual gradients over all training points
-
--   by the gradient at a single, randomly chosen, training point.
-
--   This leads to the simplest form of the *stochastic gradient method*.
-
--   Choose an integer $i$ uniformly at random from $\{1,...,n\}$ and update \begin{equation}\label{g4}
-    \theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta;x^{(i)})
-    \end{equation}
-
--   Notice we have included $x^{(i)}$ in the notation of $J(\theta;x^{(i)})$ to remark the dependence.
-
-## Rationale for SGD
-
--At each step, the stochastic gradient method uses one randomly chosen training point to represent the full training set.
-
--   As the iteration proceeds, the method sees more training points.
-
--   So *there is some hope* that this dramatic reduction in cost-per-iteration will be worthwhile overall.
-
--   Note that, even for very small $\eta$, the update (\ref{g4}) is not guaranteed to reduce the overall cost function we have traded the mean for a single sample.
-
--   Hence, although the phrase stochastic gradient descent is widely used, we prefer to use **stochastic gradient**.
-
-## SGD variants
-
--   The version of the stochastic gradient method that we introduced in (\ref{g4}) is the simplest from a large range of possibilities.
--   In particular, the index $i$ in (\ref{g4}) was chosen by sampling with replacement after using a training point, it is returned to the training set and is just as likely as any other point to be chosen at the next step.
--   An alternative is to sample without replacement; that is, to cycle through each of the $n$ training points in a random order.
--   Performing $n$ steps in this manner, referred to as completing an epoch, may be summarized as follows:
-
-```{=tex}
-\begin{itemize}
-\item Shuffle the integers $\{1,...,n\}$ into a new order $\{k_1,...,k_n\}$
-\item for $i$ in  $1:n$ update $\theta_j=\theta_j-\eta\frac{\partial}{\partial\theta_j}J(\theta;x^{(k_i)})$
-\end{itemize}
-```
-## SGD variants (3)
-
--   If we regard the stochastic gradient method as approximating the mean over all training points by a single sample, then
--   It is natural to consider a compromise where we use a small sample average. For some $m<<n$ we could take steps of the following form.
-
-```{=tex}
-\begin{itemize}
-\item Choose $m$ integers $\{k_1,...,k_m\}$ uniformly at random from $\{1,...,n\}$ 
-\item update $\theta_j=\theta_j-\eta\frac{1}{m}\sum_{i=1}^m\frac{\partial}{\partial\theta_j}J(\theta;x^{(k_i)})$
-\end{itemize}
-```
--   In this iteration, the set $\{x^{(k_i)}\}_{i=1}^m$ is known as a mini-batch.
-
-## Improving SGD
-
--   Because the stochastic gradient method is usually implemented within the context of a very large scale computation, algorithmic choices such as mini-batch size and the form of randomization are often driven by the requirements of high performance computing architectures.
--   Also, it is, of course, possible to vary these choices, along with others, such as the learning rate, dynamically as the training progresses in an attempt to accelerate convergence.
 
 
 # ANN example using Python
@@ -1552,29 +1666,6 @@ knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_9.png")
 knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_10.png")
 ```
 
-## Backpropagation {.smaller}
-
-- 
-
-```{r, fig.align='center', out.width="100%", fig.cap=""}
-knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_10.png")
-```
-
-## Backpropagation {.smaller}
-
-- 
-
-```{r, fig.align='center', out.width="100%", fig.cap=""}
-knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_10.png")
-```
-
-## Backpropagation {.smaller}
-
-- 
-
-```{r, fig.align='center', out.width="100%", fig.cap=""}
-knitr::include_graphics("2.1-Introduction_to_ANN-Slides_insertimage_10.png")
-```
 
 ## Backpropagation (Layer 2 to 1) {.smaller}
 
