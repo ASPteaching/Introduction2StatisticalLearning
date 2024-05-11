@@ -6,7 +6,6 @@ authors:
 - Alex Sanchez
 date: "`r Sys.Date()`"
 format:
-    
     html: 
       toc: true
       toc-depth: 3
@@ -48,6 +47,14 @@ editor:
   markdown: 
     wrap: 72
 ---
+
+```{r eval=FALSE, echo=FALSE}
+# This document can be rendered either by clicking "Render" in Rstudio or
+# by running this chnk of code, which allows the rendering to be tunned 
+#using the quarto::quarto_render() function
+
+quarto::quarto_render(input="2.1-Introduction_to_ANN.qmd", output_format="all")
+```
 
 ```{r echo=FALSE}
 options(width=100) 
