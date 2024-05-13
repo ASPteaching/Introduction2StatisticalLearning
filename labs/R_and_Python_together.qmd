@@ -1,0 +1,94 @@
+---
+title: "R_and_Python_together"
+author: "Alex Sanchez"
+format: html
+editor: visual
+---
+
+
+# Training a Neural Network with Python
+
+```{python}
+# Importación de las librerías necesarias
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import train_test_split
+
+# Carga del conjunto de datos
+diabetes = load_diabetes()
+X = diabetes.data
+y = diabetes.target
+
+# División de los datos en conjuntos de entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Definición del modelo de red neuronal
+model = Sequential()
+model.add(Dense(5, input_dim=X_train.shape[1], activation='relu'))
+model.add(Dense(3, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+# Compilación del modelo
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Entrenamiento del modelo
+model.fit(X_train, y_train, epochs=100, batch_size=10)
+
+# Evaluación del modelo
+loss, accuracy = model.evaluate(X_test, y_test)
+print("Loss:", loss)
+print("Accuracy:", accuracy)
+
+```
+
+
+# Training a Neural Network with R
+
+```{r}
+# Instalación y carga de la librería
+install.packages("keras")
+library(keras)
+
+# Carga del conjunto de datos
+data <- datasets::diabetes
+X <- data[, -ncol(data)]
+y <- data[, ncol(data)]
+
+# División de los datos en conjuntos de entrenamiento y prueba
+set.seed(42)
+indices <- sample(1:nrow(data), 0.8 * nrow(data))
+X_train <- X[indices, ]
+y_train <- y[indices]
+X_test <- X[-indices, ]
+y_test <- y[-indices]
+
+# Definición del modelo de red neuronal
+model <- keras_model_sequential() %>%
+  layer_dense(units = 5, activation = "relu", input_shape = ncol(X_train)) %>%
+  layer_dense(units = 3, activation = "relu") %>%
+  layer_dense(units = 1, activation = "sigmoid")
+
+# Compilación del modelo
+model %>% compile(
+  optimizer = "adam",
+  loss = "binary_crossentropy",
+  metrics = c("accuracy")
+)
+
+# Entrenamiento del modelo
+history <- model %>% fit(
+  X_train, y_train,
+  epochs = 100,
+  batch_size = 10,
+  validation_split = 0.2
+)
+
+# Evaluación del modelo
+metrics <- model %>% evaluate(X_test, y_test)
+print("Loss:", metrics$loss)
+print("Accuracy:", metrics$accuracy)
+
+```
+

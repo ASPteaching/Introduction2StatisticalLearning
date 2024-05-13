@@ -1,6 +1,6 @@
 ---
 title:  "Introduction to Artificial Neural Networks"
-author: "A. Sanchez, F. Reverter and E. Vegas"
+author: "Alex Sanchez, Ferran Reverter and Esteban Vegas"
 format:
   revealjs: 
     incremental: false  
@@ -34,7 +34,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# From Artificial Neural Networks to ARtifial Intelligence
+# From Artificial Neural Networks to Artifial Intelligence
 
 ## Historical Background (1)
 
@@ -1297,7 +1297,7 @@ knitr::include_graphics("images/GradientDescentTypes.png")
 
 ## Optimizing the training speed
 
-- Training speed optimization cab be based on
+- Training speed optimization can be based on
 
   - Weight inizialization
   
@@ -1305,7 +1305,7 @@ knitr::include_graphics("images/GradientDescentTypes.png")
   
   - Using efficient cost functions
   
-## Optimizing to avoid overfiotting
+## Optimizing to avoid overfitting
 
 In order to fight overfitting distinct strategies are common
 

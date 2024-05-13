@@ -73,6 +73,7 @@ body {
 
 .title-slide .inverse .remark-slide-content {
   background-color: #FFFFFF;
+  font-size: 4.5em;
 }
 
 .inverse {
@@ -83,7 +84,7 @@ body {
 .remark-slide-content > h1 {
   font-family: 'Fira Sans', serif;
   font-weight: normal;
-  font-size: 45px;
+  font-size: 35px;
   margin-top: -95px;
   margin-left: -00px;
   color: #FAFAFA;
@@ -113,12 +114,12 @@ position: absolute;
 }
 
 .remark-slide-content > h2, .pull-left > h2, .pull-right > h2 {
-  font-size: 35px;
+  font-size: 39px;
 }
 
 .remark-slide-content > h3, .remark-slide-content > h4,
 .pull-left > h3, .pull-left > h4, .pull-right > h3, .pull-right > h4 {
-  font-size: 30px;
+  font-size: 25px;
 }
 
 
