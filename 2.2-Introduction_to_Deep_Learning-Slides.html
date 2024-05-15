@@ -866,39 +866,25 @@ a^{(l)}_{p,j} =max(0, z^(l)_{p,j}).
 </ul></li>
 </ul>
 </section>
-<section id="convolutional-layers-1" class="slide level2">
-<h2>Convolutional Layers</h2>
-<p>For each neuron (<span class="math inline">\(p\)</span>, <span class="math inline">\(q\)</span>) in the hidden layer:</p>
+<section id="filtering-increases-dimension" class="slide level2">
+<h2>Filtering increases dimension</h2>
 <ul>
-<li>Take a 4x4 filter, a matrix of weights: <span class="math inline">\(w_{ij}\)</span>.</li>
-<li>Compute linear combinations; <span class="math display">\[
-\sum_{i=1}^4\sum_{j=1}^4 w_{ij} x_{i+p,j+q}+b
-\]</span></li>
-<li>Activate with non-linear function.</li>
-</ul>
-</section>
-<section id="cnns-output-volume" class="slide level2">
-<h2>CNNs output volume</h2>
-<ul>
-<li>Multiple filters can be applied on the same image.
+<li>Multiple filters can be applied on the same image.</li>
+<li>Adding filters increases the dimensionality of the filtered output
 <ul>
 <li>Think of the output as a volume.</li>
 </ul></li>
 </ul>
 
 <img data-src="images/aminiCV33.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
-<section id="non-linear-activation" class="slide level2">
-<h2>Non linear activation</h2>
-
-<img data-src="images/aminiCV34.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
-<section id="pooling" class="slide level2">
-<h2>Pooling</h2>
-
-<img data-src="images/aminiCV35.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p><div class="font80">
+<section id="pooling-decreases-dimension" class="slide level2">
+<h2>Pooling decreases dimension</h2>
+<div class="font80">
 <p>Pooling downsamples feature maps to reduce the spatial dimensions of the feature maps while retaining the essential information.</p>
 </div>
-</section>
-<section id="pooling-1" class="slide level2 scrollable">
+
+<img data-src="images/aminiCV35.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<section id="pooling" class="slide level2 scrollable">
 <h2>Pooling</h2>
 <p>Key objectives of pooling in CNNs:</p>
 <ol type="1">
@@ -922,10 +908,6 @@ a^{(l)}_{p,j} =max(0, z^(l)_{p,j}).
 </ul></li>
 </ul>
 </section>
-<section id="putting-cnns-to-work" class="slide level2">
-<h2>Putting CNNs to work</h2>
-
-<img data-src="images/aminiCV36.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="summary-cnns-for-classification" class="slide level2">
 <h2>Summary: CNNs for classification</h2>
 

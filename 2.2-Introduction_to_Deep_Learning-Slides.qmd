@@ -472,21 +472,10 @@ a^{(l)}_{p,j} =max(0, z^(l)_{p,j}).
 $$
   
 
-
-## Convolutional Layers
-
-For each neuron ($p$, $q$) in the hidden layer:
-
-- Take a 4x4 filter, a matrix of weights: $w_{ij}$.
-- Compute linear combinations;
-$$
-\sum_{i=1}^4\sum_{j=1}^4 w_{ij} x_{i+p,j+q}+b
-$$
-- Activate with non-linear function.
-
-## CNNs output volume
+## Filtering increases dimension
 
 - Multiple filters can be applied on the same image.
+- Adding filters increases the dimensionality of the filtered output
   - Think of the output as a volume.
 
 
@@ -495,21 +484,17 @@ knitr::include_graphics("images/aminiCV33.png")
 ```
 
 
-## Non linear activation
+## Pooling decreases dimension
 
-```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
-knitr::include_graphics("images/aminiCV34.png")
-```
+:::{.font80}
+Pooling downsamples feature maps to reduce the spatial dimensions of the feature maps while retaining the essential information.
+:::
 
-## Pooling
 
 ```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
 knitr::include_graphics("images/aminiCV35.png")
 ```
 
-:::{.font80}
-Pooling downsamples feature maps to reduce the spatial dimensions of the feature maps while retaining the essential information.
-:::
 
 ## Pooling
 
@@ -531,12 +516,6 @@ Key objectives of pooling in CNNs:
   - selects the maximum value within each pooling region, 
 - **Average pooling**
   - calculates the average value. 
-
-## Putting CNNs to work
-
-```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
-knitr::include_graphics("images/aminiCV36.png")
-```
 
 ## Summary: CNNs for classification
 
