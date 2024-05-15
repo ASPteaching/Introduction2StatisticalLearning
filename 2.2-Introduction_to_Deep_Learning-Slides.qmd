@@ -382,6 +382,7 @@ knitr::include_graphics("images/aminiCV22.png")
 knitr::include_graphics("images/aminiCV23.png")
 ```
 :::
+
 ::: {.fragment .fade-in-then-out}
 ```{r  , fig.align ='center', out.width="100%"}
 knitr::include_graphics("images/aminiCV24.png")
@@ -402,6 +403,7 @@ knitr::include_graphics("images/aminiCV26.png")
 knitr::include_graphics("images/aminiCV27.png")
 ```
 :::
+
 ::: {.fragment .fade-in}
 ```{r  , fig.align ='center', out.width="100%"}
 knitr::include_graphics("images/aminiCV28.png")
@@ -413,15 +415,14 @@ knitr::include_graphics("images/aminiCV28.png")
 ## A filter for each pattern?
 
 :::{.font90}
-- By applying differnt filters, i.e. changing the weights,
+- By applying different filters, i.e. changing the weights,
 - We can achieve completely different results
 :::
 
-::: {.fragment .fade-in}
+
 ```{r  , fig.align ='center', out.width="100%"}
 knitr::include_graphics("images/aminiCV29.png")
 ```
-:::
 
 
 ## Can filters be learned?
@@ -439,16 +440,14 @@ knitr::include_graphics("images/aminiCV29.png")
 
 ## CNNs: Overview
 
-```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
-knitr::include_graphics("images/aminiCV31.png")
-```
+:::{.font90}
 
-:::{.font80}
-**1. Convolution:** Apply filters to generate feature maps.
+- *Convolutional Neural Networks* are a type of DNN that implement the ideas previously introduced
 
-**2. Non linearity:** E.g. (ReLU) to deal with non linear data.
-
-**3. Pooling**: Downsampling operations on feature maps.
+  - Uses convolutions to learn spatial features.
+  - Intended to identify increasingly complex traits by concatenating multiple *convolutional layers*.
+  - Convolutional layers combined with dense layers that perform "classification" as usual from the  output of convolutional layers.
+  
 :::
 
 ## Another CNN outline
@@ -458,39 +457,20 @@ knitr::include_graphics("images/aminiCV31.png")
 knitr::include_graphics("images/cnn.png")
 ```
 
-## Convolutional Layers
+## Convolutional Layers {.smaller}
 
+- The layers implementing convolutions.
 
-:::: {.columns}
-::: {.column width='60%'}
-```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
-knitr::include_graphics("images/aminiCV30.png")
-```
-
-:::
-
-::: {.column width='40%'}
-:::{.font80}
-Each neuron in the hidden layer:
-
-- Takes inputs from the patch
-- Computes weighted sum of elementwise products ("convolution")
-  - *not dot operation*
-- Applies a bias.
-:::
-:::
-::::
-
-::: {.notes}
-- The single convolution operation can be extended from one neuron to one or more entire (hidden) layers of convolutions
-- Remember: convolution does not interconnect all the neurons but only those in a patch.
-:::
-
-<br>
-
-:::{.font80}
-- **Local connectivity**: Every single neuron only sees its patch
-:::
+- Besides this, they proceed as usual for hidden layer
+  - Weighted linear combination of (convoluted) values
+$$
+z^{(l)}_{p,j}=\sum_{i=1}^4\sum_{j=1}^4 w_{ij} x_{i+p,j+q}+b
+$$
+  - Followed by non-linear transformation (ReLU)
+$$
+a^{(l)}_{p,j} =max(0, z^(l)_{p,j}).
+$$
+  
 
 
 ## Convolutional Layers
@@ -727,6 +707,126 @@ knitr::include_graphics("images/reshape4MNIST.png")
 
 See [Deep learning with R](https://livebook.manning.com/book/deep-learning-with-r-second-edition) for more.
 
+
+# Deep Learning Software
+
+## Which programs for DL?
+
+1. [TensorFlow](https://www.tensorflow.org/)
+2. [PyTorch](https://pytorch.org/)
+3. [Keras](https://keras.io/)
+4. [MXNet](https://mxnet.apache.org/)
+5. [Caffe](https://caffe.berkeleyvision.org/)
+6. [Theano](https://github.com/Theano/Theano)
+7. [Microsoft Cognitive Toolkit (CNTK)](https://docs.microsoft.com/en-us/cognitive-toolkit/)
+
+## [TensorFlow](https://www.tensorflow.org/)
+
+:::: {.columns}
+
+::: {.column width='60%'}
+
+- Open-source DL framework developed by Google. 
+- Flexible model development
+- Optimized for distributed computing and performance
+- High level APIS like Keras, in Python and R.
+
+:::
+
+::: {.column width='40%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/tensorflow.png")
+```
+
+:::
+
+::::
+
+## [PyTorch](https://pytorch.org/)
+
+:::: {.columns}
+
+::: {.column width='60%'}
+
+- Open-source DL framework developed by facebook.
+- User-friendly interface and dynamic computational graph features with intuitive debugging and experimentation. 
+- Highly integrated with Numpy
+
+:::
+
+::: {.column width='40%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/pytorch.png")
+```
+
+:::
+
+::::
+
+## [Keras](https://keras.io/)
+
+:::: {.columns}
+
+::: {.column width='60%'}
+
+- High-level neural networks API 
+running on top of TensorFlow, CNTK, or Theano,
+- Emphasizes simplicity and ease of use.
+- AVailable in Python and R
+
+:::
+
+::: {.column width='40%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/keras.png")
+```
+
+:::
+
+::::
+
+
+
+## The Keras pipeline
+
+- Training and using a model in keras is intended to be done through the usual steps of a ML worfflow
+
+
+```{r}
+knitr::include_graphics("images/kerasPipeline.png")
+```
+
+<!-- ## Example 1 - A Simple NN -->
+
+<!-- :::: {.columns} -->
+
+<!-- ::: {.column width='55%'} -->
+
+<!-- ```{r, fig.align='center', out.width="100%"} -->
+<!-- knitr::include_graphics("images/ASimpleNN-Layers.png") -->
+<!-- ``` -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width='45%'} -->
+
+<!-- ```{r, fig.align='center', out.width="80%"} -->
+<!-- knitr::include_graphics("images/ASimpleNN-Code.png") -->
+<!-- ``` -->
+
+<!-- ::: -->
+
+<!-- :::: -->
+
+## A keras cheat sheet
+
+```{r, fig.align='left', out.width="100%"}
+knitr::include_graphics("images/kerasCheatSheet1.png")
+```
+[Available at rstudio github repo](https://github.com/rstudio/cheatsheets/blob/main/keras.pdf)
 
 
 # A toy example

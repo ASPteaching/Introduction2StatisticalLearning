@@ -8,7 +8,7 @@
 <link href="2.2-Introduction_to_Deep_Learning-Slides_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="2.2-Introduction_to_Deep_Learning-Slides_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="2.2-Introduction_to_Deep_Learning-Slides_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.549">
+  <meta name="generator" content="quarto-1.4.554">
 
   <meta name="author" content="Alex Sanchez, Ferran Reverter and Esteban Vegas">
   <title>Introduction to Deep Learning</title>
@@ -502,27 +502,27 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <h2>We want computers that can <em>see</em></h2>
 <p>Goal: Computer systems able to see what is present in the world, <strong>but also</strong> to predict and anticipate events.</p>
 
-<img data-src="images/aminiCV1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV1.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="dnn-in-computer-vision-systems" class="slide level2 smaller">
 <h2>DNN in computer vision systems</h2>
 <p>Deep Learning enables many systems to undertake a variety of computer vision related tasks.</p>
 
-<img data-src="images/aminiCV2.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV2.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="facial-detection-and-recognition" class="slide level2 smaller">
 <h2>Facial detection and recognition</h2>
 <p>In particular it enables <em>automatic</em> feature extraction.</p>
 
-<img data-src="images/aminiCV3.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV3.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="autonomous-driving" class="slide level2 smaller">
 <h2>Autonomous driving</h2>
 <p>Autonomus Driving would not be possible without the possibility of performing Automatic Feature Extraction</p>
 
-<img data-src="images/aminiCV4.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV4.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="medicine-biology-self-care" class="slide level2 smaller">
 <h2>Medicine, biology, self care</h2>
 <p>Neither would systems for automatic disease detection be able to distinguish healthy from affected people though images.</p>
 
-<img data-src="images/aminiCV5.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section></section>
+<img data-src="images/aminiCV5.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section></section>
 <section>
 <section id="what-computers-see" class="title-slide slide level1 center">
 <h1>What computers see?</h1>
@@ -535,7 +535,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <li><p>An RGB image is a NxNx3 matrix of numbers [0,255]</p></li>
 </ul>
 
-<img data-src="images/aminiCV6.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV6.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="main-tasks-in-computer-vision" class="slide level2">
 <h2>Main tasks in Computer Vision:</h2>
 <ul>
@@ -543,7 +543,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <li><strong>Classification</strong>: Output variable takes class labels. E.g. <em>Probability of belonging to a class</em></li>
 </ul>
 
-<img data-src="images/aminiCV7.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV7.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="high-level-feature-detection" class="slide level2 smaller">
 <h2>High level feature detection</h2>
 <ul>
@@ -551,7 +551,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <li><p>Before attempting to build a computer vision system, we need to be aware of <em>what feature keys are in our data that need to be <strong>identified</strong> and <strong>detected</strong></em>.</p></li>
 </ul>
 
-<img data-src="images/aminiCV8.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV8.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="how-to-do-feature-extraction" class="slide level2 smaller">
 <h2>How to do feature extraction</h2>
 <ul>
@@ -560,7 +560,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <li><p>Deep Neural networks can do this in a hierarchichal fashion!</p></li>
 </ul>
 
-<img data-src="images/aminiCV10.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section></section>
+<img data-src="images/aminiCV10.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section></section>
 <section>
 <section id="learning-visual-features" class="title-slide slide level1 center">
 <h1>Learning visual features</h1>
@@ -572,7 +572,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <li>Fully connected NN could, in principle, be used to learn visual features</li>
 </ul>
 
-<img data-src="images/aminiCV11.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV11.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="accounting-for-spatial-structure" class="slide level2 smaller">
 <h2>Accounting for spatial structure</h2>
 <ul>
@@ -580,11 +580,11 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <li>How can this be used to inform the architecture of the Network?</li>
 </ul>
 
-<img data-src="images/aminiCV12.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV12.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="extending-the-idea-with-patches" class="slide level2">
 <h2>Extending the idea with <em>patches</em></h2>
 
-<img data-src="images/aminiCV13.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV13.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="use-filters-to-extract-features" class="slide level2">
 <h2>Use filters to extract features</h2>
 <ul>
@@ -607,7 +607,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/aminiCV14.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+<p><img data-src="images/aminiCV14.png" style="width:100.0%"></p>
 <figcaption>source: MIT Course, http://introtodeeplearning.com/, L3</figcaption>
 </figure>
 </div>
@@ -627,7 +627,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <section id="example-x-or-x" class="slide level2">
 <h2>Example: “X or X”?</h2>
 
-<img data-src="images/aminiCV15.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p><ul>
+<img data-src="images/aminiCV15.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p><ul>
 <li>Images are represented by matrices of pixels, so</li>
 <li>Literally speaking these images are different.</li>
 </ul>
@@ -644,11 +644,11 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </ul>
 </div>
 
-<img data-src="images/aminiCV16.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV16.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="filters-can-detect-x-features" class="slide level2">
 <h2>Filters can detect X features</h2>
 
-<img data-src="images/aminiCV17.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV17.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="is-a-given-patch-in-the-image" class="slide level2">
 <h2>Is a given patch in the image?</h2>
 <ul>
@@ -664,7 +664,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <section id="the-convolution-operation" class="slide level2">
 <h2>The Convolution Operation</h2>
 
-<img data-src="images/aminiCV18.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p><aside class="notes">
+<img data-src="images/aminiCV18.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p><aside class="notes">
 <ul>
 <li>Convolution <em>matches</em> the patch and the image by elementwise multiplication, followed by a sum.</li>
 <li>Given the filters used (+1/-1) if there is absolute coincidence, as in the example, all multiplications will yield 1, and the sum will be 9.</li>
@@ -689,7 +689,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </ul>
 
 <!-- - We will slide the 3x3 filter over the input image, elementwise multiply and add the outputs -->
-<img data-src="images/aminiCV19.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV19.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="the-convolution-operation-2" class="slide level2 scrollable">
 <h2>The Convolution Operation</h2>
 <div class="font70">
@@ -700,7 +700,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </ol>
 </div>
 
-<img data-src="images/aminiCV19.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV19.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="the-convolution-operation-3" class="slide level2">
 <h2>The Convolution Operation</h2>
 <div class="r-stack">
@@ -809,22 +809,12 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <h2>A filter for each pattern?</h2>
 <div class="font90">
 <ul>
-<li>By applying differnt filters, i.e.&nbsp;changing the weights,</li>
+<li>By applying different filters, i.e.&nbsp;changing the weights,</li>
 <li>We can achieve completely different results</li>
 </ul>
 </div>
-<div class="fragment fade-in">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/aminiCV29.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</section>
+
+<img data-src="images/aminiCV29.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="can-filters-be-learned" class="slide level2">
 <h2>Can filters be learned?</h2>
 <ul>
@@ -846,67 +836,35 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </section>
 <section id="cnns-overview" class="slide level2">
 <h2>CNNs: Overview</h2>
-
-<img data-src="images/aminiCV31.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p><div class="font80">
-<p><strong>1. Convolution:</strong> Apply filters to generate feature maps.</p>
-<p><strong>2. Non linearity:</strong> E.g. (ReLU) to deal with non linear data.</p>
-<p><strong>3. Pooling</strong>: Downsampling operations on feature maps.</p>
+<div class="font90">
+<ul>
+<li><p><em>Convolutional Neural Networks</em> are a type of DNN that implement the ideas previously introduced</p>
+<ul>
+<li>Uses convolutions to learn spatial features.</li>
+<li>Intended to identify increasingly complex traits by concatenating multiple <em>convolutional layers</em>.</li>
+<li>Convolutional layers combined with dense layers that perform “classification” as usual from the output of convolutional layers.</li>
+</ul></li>
+</ul>
 </div>
 </section>
 <section id="another-cnn-outline" class="slide level2">
 <h2>Another CNN outline</h2>
 
-<img data-src="images/cnn.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">Source: Generative Deep Learning. David Foster (Fig. 2.13)</p></section>
-<section id="convolutional-layers" class="slide level2">
+<img data-src="images/cnn.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">Source: Generative Deep Learning. David Foster (Fig. 2.13)</p></section>
+<section id="convolutional-layers" class="slide level2 smaller">
 <h2>Convolutional Layers</h2>
-<div class="columns">
-<div class="column" style="width:60%;">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/aminiCV30.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
-<figcaption>source: MIT Course, http://introtodeeplearning.com/, L3</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:40%;">
-<div class="font80">
-<p>Each neuron in the hidden layer:</p>
 <ul>
-<li>Takes inputs from the patch</li>
-<li>Computes weighted sum of elementwise products (“convolution”)
+<li><p>The layers implementing convolutions.</p></li>
+<li><p>Besides this, they proceed as usual for hidden layer</p>
 <ul>
-<li><em>not dot operation</em></li>
+<li>Weighted linear combination of (convoluted) values <span class="math display">\[
+z^{(l)}_{p,j}=\sum_{i=1}^4\sum_{j=1}^4 w_{ij} x_{i+p,j+q}+b
+\]</span></li>
+<li>Followed by non-linear transformation (ReLU) <span class="math display">\[
+a^{(l)}_{p,j} =max(0, z^(l)_{p,j}).
+\]</span></li>
 </ul></li>
-<li>Applies a bias.</li>
 </ul>
-</div>
-</div>
-</div>
-<aside class="notes">
-<ul>
-<li>The single convolution operation can be extended from one neuron to one or more entire (hidden) layers of convolutions</li>
-<li>Remember: convolution does not interconnect all the neurons but only those in a patch.</li>
-</ul>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-<p><br></p>
-<div class="font80">
-<ul>
-<li><strong>Local connectivity</strong>: Every single neuron only sees its patch</li>
-</ul>
-</div>
 </section>
 <section id="convolutional-layers-1" class="slide level2">
 <h2>Convolutional Layers</h2>
@@ -928,15 +886,15 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </ul></li>
 </ul>
 
-<img data-src="images/aminiCV33.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV33.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="non-linear-activation" class="slide level2">
 <h2>Non linear activation</h2>
 
-<img data-src="images/aminiCV34.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV34.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="pooling" class="slide level2">
 <h2>Pooling</h2>
 
-<img data-src="images/aminiCV35.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p><div class="font80">
+<img data-src="images/aminiCV35.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p><div class="font80">
 <p>Pooling downsamples feature maps to reduce the spatial dimensions of the feature maps while retaining the essential information.</p>
 </div>
 </section>
@@ -967,15 +925,15 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <section id="putting-cnns-to-work" class="slide level2">
 <h2>Putting CNNs to work</h2>
 
-<img data-src="images/aminiCV36.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV36.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="summary-cnns-for-classification" class="slide level2">
 <h2>Summary: CNNs for classification</h2>
 
-<img data-src="images/aminiCV37.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
+<img data-src="images/aminiCV37.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section>
 <section id="summary-cnns-for-classification-1" class="slide level2">
 <h2>Summary: CNNs for classification</h2>
 
-<img data-src="images/aminiCV38.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section></section>
+<img data-src="images/aminiCV38.png" style="width:100.0%" class="r-stretch quarto-figure-center"><p class="caption">source: MIT Course, http://introtodeeplearning.com/, L3</p></section></section>
 <section>
 <section id="a-short-mathematical-digression-tensors" class="title-slide slide level1 center">
 <h1>A short mathematical digression: <em>Tensors</em></h1>
@@ -1136,6 +1094,115 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </ul>
 
 <img data-src="images/reshape4MNIST.png" width="605" class="r-stretch"><p>See <a href="https://livebook.manning.com/book/deep-learning-with-r-second-edition">Deep learning with R</a> for more.</p>
+</section></section>
+<section>
+<section id="deep-learning-software" class="title-slide slide level1 center">
+<h1>Deep Learning Software</h1>
+
+</section>
+<section id="which-programs-for-dl" class="slide level2 scrollable">
+<h2>Which programs for DL?</h2>
+<ol type="1">
+<li><a href="https://www.tensorflow.org/">TensorFlow</a></li>
+<li><a href="https://pytorch.org/">PyTorch</a></li>
+<li><a href="https://keras.io/">Keras</a></li>
+<li><a href="https://mxnet.apache.org/">MXNet</a></li>
+<li><a href="https://caffe.berkeleyvision.org/">Caffe</a></li>
+<li><a href="https://github.com/Theano/Theano">Theano</a></li>
+<li><a href="https://docs.microsoft.com/en-us/cognitive-toolkit/">Microsoft Cognitive Toolkit (CNTK)</a></li>
+</ol>
+</section>
+<section id="tensorflow" class="slide level2">
+<h2><a href="https://www.tensorflow.org/">TensorFlow</a></h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<ul>
+<li>Open-source DL framework developed by Google.</li>
+<li>Flexible model development</li>
+<li>Optimized for distributed computing and performance</li>
+<li>High level APIS like Keras, in Python and R.</li>
+</ul>
+</div><div class="column" style="width:40%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="images/tensorflow.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="pytorch" class="slide level2">
+<h2><a href="https://pytorch.org/">PyTorch</a></h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<ul>
+<li>Open-source DL framework developed by facebook.</li>
+<li>User-friendly interface and dynamic computational graph features with intuitive debugging and experimentation.</li>
+<li>Highly integrated with Numpy</li>
+</ul>
+</div><div class="column" style="width:40%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="images/pytorch.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="keras" class="slide level2">
+<h2><a href="https://keras.io/">Keras</a></h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<ul>
+<li>High-level neural networks API running on top of TensorFlow, CNTK, or Theano,</li>
+<li>Emphasizes simplicity and ease of use.</li>
+<li>AVailable in Python and R</li>
+</ul>
+</div><div class="column" style="width:40%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="images/keras.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-keras-pipeline" class="slide level2">
+<h2>The Keras pipeline</h2>
+<ul>
+<li>Training and using a model in keras is intended to be done through the usual steps of a ML worfflow</li>
+</ul>
+
+<!-- ## Example 1 - A Simple NN -->
+<!-- :::: {.columns} -->
+<!-- ::: {.column width='55%'} -->
+<!-- ```{r, fig.align='center', out.width="100%"} -->
+<!-- knitr::include_graphics("images/ASimpleNN-Layers.png") -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: {.column width='45%'} -->
+<!-- ```{r, fig.align='center', out.width="80%"} -->
+<!-- knitr::include_graphics("images/ASimpleNN-Code.png") -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
+<img data-src="images/kerasPipeline.png" width="410" class="r-stretch"></section>
+<section id="a-keras-cheat-sheet" class="slide level2">
+<h2>A keras cheat sheet</h2>
+
+<img data-src="images/kerasCheatSheet1.png" class="quarto-figure quarto-figure-left r-stretch" style="width:100.0%"><p><a href="https://github.com/rstudio/cheatsheets/blob/main/keras.pdf">Available at rstudio github repo</a></p>
 </section></section>
 <section>
 <section id="a-toy-example" class="title-slide slide level1 center">
@@ -1518,42 +1585,80 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
       });
     </script>
     
+
     <script>
+
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
       // slide changes (different for each slide format).
+
       (function () {
+
         // dispatch for htmlwidgets
+
         function fireSlideEnter() {
+
           const event = window.document.createEvent("Event");
+
           event.initEvent("slideenter", true, true);
+
           window.document.dispatchEvent(event);
+
         }
+
+    
 
         function fireSlideChanged(previousSlide, currentSlide) {
+
           fireSlideEnter();
 
+    
+
           // dispatch for shiny
+
           if (window.jQuery) {
+
             if (previousSlide) {
+
               window.jQuery(previousSlide).trigger("hidden");
+
             }
+
             if (currentSlide) {
+
               window.jQuery(currentSlide).trigger("shown");
+
             }
+
           }
+
         }
+
+    
 
         // hookup for slidy
+
         if (window.w3c_slidy) {
+
           window.w3c_slidy.add_observer(function (slide_num) {
+
             // slide_num starts at position 1
+
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
           });
+
         }
 
+    
+
       })();
+
     </script>
+
+    
 
     <script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1631,6 +1736,24 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
         // clear code selection
         e.clearSelection();
       });
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
       function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
         const config = {
           allowHTML: true,
@@ -1667,7 +1790,11 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
           try { href = new URL(href).hash; } catch {}
           const id = href.replace(/^#\/?/, "");
           const note = window.document.getElementById(id);
-          return note.innerHTML;
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
         });
       }
       const findCites = (el) => {
