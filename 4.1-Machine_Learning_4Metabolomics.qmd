@@ -1,0 +1,914 @@
+---
+title: "Machine Learning 4 Metabolomics"
+subtitle: 'Decision Trees, Random Forests and SVMs'
+author: "Alex Sanchez"
+institute: "Genetics Microbiology and Statistics Department. University of Barcelona"
+format:
+  revealjs: 
+    incremental: false  
+    # transition: slide
+    # background-transition: fade
+    # transition-speed: slow
+    scrollable: true
+    menu:
+      side: left
+      width: half
+      numbers: true
+    slide-number: c/t
+    show-slide-number: all
+    progress: true
+    css: "css4NN.css"
+    theme: sky
+    embed-resources: false
+#    suppress-bibliography: true
+bibliography: "StatisticalLearning.bib"
+editor_options: 
+  chunk_output_type: console
+---
+
+## Outline {visibility="hidden"}
+
+```{r packages, echo=FALSE}
+if (!require(mlbench)) install.packages("mlbench", dep=TRUE)
+```
+
+1.  Introduction to decision trees
+2.  Classification and Regression trees
+3.  Iproving the classification: Ensembles of Trees
+4.  Support Vector Machines
+
+# Introduction to Decision Trees
+
+## Motivation
+
+-   In many real-world applications, decisions need to be made based on complex, multi-dimensional data.
+-   One goal of statistical analysis is to provide insights and guidance to support these decisions.
+-   Decision trees provide a way to organize and summarize information in a way that is easy to understand and use in decision-making.
+
+
+## Examples
+
+-   A bank needs to have a way to decide if/when a customer can be granted a loan.
+
+-   A doctor may need to decide if a patient has to undergo a surgery or a less aggressive treatment.
+
+-   A company may need to decide about investing in new technologies or stay with the traditional ones.
+
+In all those cases a decision tree may provide a structured approach to decision-making that is based on data and can be easily explained and justified.
+
+## An intuitive approach
+
+::: columns
+::: {.column width="40%"}
+Decisions are often based on asking several questions on available information whose answers induce binary splits on data that end up with some grouping or classification.
+:::
+
+::: {.column width="60%"}
+
+```{r fig.align='center', out.width="80%", fig.cap='A doctor may classify patients at high or low cardiovascular risk using some type of decision tree'}
+knitr::include_graphics("images/decTree4HypertensionNew.png")
+```
+:::
+:::
+
+## So, what is a decision tree?
+
+-   A decision tree is a graphical representation of a series of decisions and their potential outcomes.
+
+-   It is obtained by recursively *stratifying* or *segmenting* the *feature space* into a number of simple regions.
+
+-   Each region (decision) corresponds to a *node* in the tree, and each potential outcome to a *branch*.
+
+-   The tree structure can be used to guide decision-making based on data.
+
+<!-- ## A first look at pros and cons   (CREC QUE NO CAL)(-->
+
+<!-- -   Trees provide an simple approach to classification and prediction for both categorical or numerical outcomes. -->
+
+<!-- -   The results are intuitive and easy to explain and interpret. -->
+
+<!-- -   They are, however, not very accurate, but -->
+
+<!-- -   Aggregation of multiple trees built on the same data can result on dramatic improvements in prediction accuracy, at the expense of some loss of interpretation. -->
+
+## What do we need to learn?
+
+-   We need **context**: 
+
+    -   When is it appropriate to rely on decision trees?
+
+    -   When would other approaches be preferable?
+
+    -   What type of decision trees can be used?
+
+-   We need to know how to **build good trees**
+
+    -   How do we *construct* a tree?
+    -   How do we *optimize* the tree?
+    -   How do we *evaluate* it?
+
+## More about context
+
+-   Decision trees are non parametric, data guided predictors, well suited in many situations such as:
+    -   Non-linear relationships.
+    -   High-dimensional data.
+    -   Interaction between variables exist.
+    -   Mixed data types.
+-   They are not so appropriate for complex datasets, or complex problems, that require expert knowledge.
+
+- [See here some examples of each situation!](https://g.co/gemini/share/781b7d88e03a)
+
+## Types of decision trees
+
+- **Classification Trees** are built when the response variable is categorical.
+
+    -   They aim to *classify a new observation* based on the values of the predictor variables.
+
+- **Regression Trees** are used when the response variable is numerical.
+
+    -   They aim to *predict the value* of a continuous response variable based on the values of the predictor variables.
+
+
+
+## Tree building with R {.smaller}
+
+<br>
+
+:::{.font90}
+
+| **Package** | **Algorithm** | **Dataset size** | **Missing data handling** | **Ensemble methods** | **Visual repr** | **User interface** |
+|-------------|---------------|------------------|---------------------------|----------------------|----------------------------|--------------------|
+| [**`rpart`**](https://cran.r-project.org/web/packages/rpart/index.html) | RPART         | Medium to large  | Poor                      | No                   | Yes                        | Simple             |
+| [**`caret`**](https://topepo.github.io/caret/) | Various       | Various          | Depends on algorithm      | Yes                  | Depends on algorithm       | Complex            |
+| [**`tree`**](https://cran.r-project.org/web/packages/tree/index.html)  | CART          | Small to medium  | Poor                      | No                   | Yes                        | Simple             |
+
+:::
+
+## Tree building with Python
+
+:::{.font50}
+
+| **Package**        | **Algorithm**        | **Dataset size** | **Missing data handling** | **Ensemble methods** | **Visual repr** | **User interface** |
+|-------------------|----------------------|------------------|---------------------------|----------------------|----------------------------|--------------------|
+| **`scikit-learn`** | CART (DecisionTreeClassifier) | Small to large | Can handle NaN | Yes | Yes (using Graphviz) | Simple |
+| **`dtreeviz`**     | CART (DecisionTree) | Small to large | Can handle NaN | No | Yes | Simple |
+| **`xgboost`**      | Gradient Boosting    | Medium to large  | Requires imputation       | Yes                  | No                         | Complex            |
+| **`lightgbm`**     | Gradient Boosting    | Medium to large  | Requires imputation       | Yes                  | No                         | Complex            |
+
+:::
+
+## Starting with an example
+
+- The Pima Indian Diabetes dataset contains 768 individuals (female) and 9 clinical variables.
+
+```{r}
+data("PimaIndiansDiabetes2", package = "mlbench")
+dplyr::glimpse(PimaIndiansDiabetes2)
+```
+
+## Looking at the data
+
+- These Variables are known to be related with cardiovascular diseases.
+- It seems intuitive to use these variables to decide if a person is affected by diabetes
+
+
+```{r}
+library(magrittr)
+descAll <- as.data.frame(skimr::skim(PimaIndiansDiabetes2))
+desc <- descAll[,c(10:15)]
+rownames(desc) <- descAll$skim_variable
+colnames(desc) <- colnames(desc) %>% stringr::str_replace("numeric.", "")
+desc
+```
+
+
+
+## Predicting Diabetes onset
+
+- We wish to predict the probability of individuals in being diabete-positive or negative.
+
+  - We start building a tree with all the variables
+```{r echo=TRUE}
+library(rpart)
+model1 <- rpart(diabetes ~., data = PimaIndiansDiabetes2)
+```
+
+  - A simple visualization illustrates how it proceeds
+  
+
+```{r echo=TRUE, eval=FALSE}
+plot(model1)
+text(model1, digits = 3, cex=0.7)
+```
+
+## Viewing the tree as text
+
+:::{.font40}
+```{r}
+model1
+```
+:::
+:::{.small}
+- This representation shows the variables and split values that have been selected by the algorithm.
+- It can be used to classify (new) individuals following the decisions (splits) from top to bottom.
+:::
+
+## Plotting the tree (1)
+
+```{r fig.cap="Even without domain expertise the model seems *reasonable*",out.height="10cm"}
+plot(model1)
+text(model1, digits = 3, cex=0.7)
+```
+
+## Plotting the tree (Nicer)
+
+```{r fig.cap="The tree plotted with the `rpart.plot` package."}
+require(rpart.plot)
+rpart.plot(model1, cex=.7)
+```
+:::{.small}
+Each node shows: (1) the predicted class ('neg' or 'pos'), (2) the predicted probability, (3) the percentage of observations in the node. 
+:::
+
+## Individual prediction
+
+Consider individuals 521 and 562
+
+```{r}
+(aSample<- PimaIndiansDiabetes2[c(521,562),])
+```
+
+```{r}
+predict(model1, aSample, "class")
+```
+
+- If we follow individuals 521 and 562 along the tree, we reach the same prediction.
+
+- The tree provides not only a classification but also an explanation.
+
+
+
+## How accurate is the model?
+
+- It is straightforward to obtain a simple performance measure.
+
+
+```{r echo=TRUE}
+predicted.classes<- predict(model1, PimaIndiansDiabetes2, "class")
+mean(predicted.classes == PimaIndiansDiabetes2$diabetes)
+```
+
+- The question becomes harder when we go back and ask if *we obtained the best possible tree*.
+
+- In order to answer this question we must study tree construction in more detail.
+
+<!-- ## Always use train/test sets! -->
+
+<!-- -   A better strategy is to use train dataset to build the model and a test dataset to check how it works. -->
+
+<!-- ```{r echo=TRUE} -->
+<!-- set.seed(123) -->
+<!-- ssize <- nrow(PimaIndiansDiabetes2) -->
+<!-- propTrain <- 0.8 -->
+<!-- training.indices <-sample(1:ssize, floor(ssize*propTrain)) -->
+<!-- train.data  <- PimaIndiansDiabetes2[training.indices, ] -->
+<!-- test.data <- PimaIndiansDiabetes2[-training.indices, ] -->
+<!-- ``` -->
+
+<!-- ## Build on train, Estimate on test -->
+
+<!-- -   First, build the model on the train data  -->
+
+<!-- ```{r echo=TRUE} -->
+<!-- model2 <- rpart(diabetes ~., data = train.data) -->
+<!-- ``` -->
+
+<!-- - Then check its accuracy on the test data. -->
+
+<!-- ```{r echo=TRUE} -->
+<!-- predicted.classes.test<- predict(model2, test.data, "class") -->
+<!-- mean(predicted.classes.test == test.data$diabetes) -->
+<!-- ``` -->
+
+## Building the trees
+
+- As with any model, we aim not only at construting trees.
+
+- We wish to build good trees and, if possible, optimal trees in some sense we decide.
+
+-   In order to **build good trees** we must decide
+
+    - How to *construct* a tree?
+  
+    - How to *optimize* the tree?
+  
+    - How to *evaluate* it?
+
+
+## Prediction with Trees
+
+- The decision tree classifies new data points as follows.
+
+  - We let a data point pass down the tree and see which leaf node it lands in.
+  - The class of the leaf node is assigned to the new data point. Basically, all the points that land in the same leaf node will be given the same class. 
+    
+  - This is similar to k-means or any prototype method.
+
+
+## Regression modelling with trees
+
+- When the response variable is numeric, decision trees are *regression trees*.
+
+- Option of choice for distinct reasons
+
+  - The relation between response and potential explanatory variables is not linear.
+  - Perform automatic variable selection.
+  - Easy to interpret, visualize, explain.
+  - Robust to outliers and can handle missing data
+
+## Classification vs Regression Trees 
+
+:::{.font50}
+
+| **Aspect**            | **Regression Trees**                                  | **Classification Trees**                            |
+|:-----------------|:--------------------------|:--------------------------|
+| Outcome var. type     | Continuous                                            | Categorical                                         |
+| Goal                  | To predict a numerical value                          | To predict a class label                            |
+| Splitting criteria    | Mean Squared Error, Mean Abs. Error                    | Gini Impurity, Entropy, etc.                        |
+| Leaf node prediction  | Mean or median of the target variable in that region  | Mode or majority class of the target variable \...  |
+| Examples of use cases | Predicting housing prices, predicting stock prices    | Predicting customer churn, predicting high/low risk in diease  |
+| Evaluation metric     | Mean Squared Error, Mean Absolute Error, R-square | Accuracy, Precision, Recall, F1-score, etc.         |
+
+:::
+
+
+## Regression tree example
+
+- The `airquality` dataset from the `datasets` package contains daily air quality measurements
+in New York from May through September of 1973 (153 days).
+- The main variables include:
+  - Ozone: the mean ozone (in parts per billion) ...
+  - Solar.R: the solar radiation (in Langleys) ...
+  - Wind: the average wind speed (in mph) ...
+  - Temp: the maximum daily temperature (ºF) ...
+  
+- Main goal : Predict ozone concentration.
+
+## Non linear relationships! {.smaller}
+
+```{r eval=FALSE, echo=TRUE}
+aq <- datasets::airquality
+color <- adjustcolor("forestgreen", alpha.f = 0.5)
+ps <- function(x, y, ...) {  # custom panel function
+  panel.smooth(x, y, col = color, col.smooth = "black", cex = 0.7, lwd = 2)
+}
+pairs(aq, cex = 0.7, upper.panel = ps, col = color)
+```
+
+```{r echo=FALSE, fig.align='center'}
+aq <- datasets::airquality
+color <- adjustcolor("forestgreen", alpha.f = 0.5)
+ps <- function(x, y, ...) {  # custom panel function
+  panel.smooth(x, y, col = color, col.smooth = "black", 
+               cex = 0.7, lwd = 2)
+}
+pairs(aq, cex = 0.7, upper.panel = ps, col = color)
+
+```
+
+## Building the tree (1): Splitting
+::: font80
+- Consider:
+  - all predictors $X_1, \dots, X_n$, and 
+  - all values of cutpoint $s$ for each predictor and 
+- For each predictor find boxes 
+ $R_1, \ldots, R_J$ that minimize the RSS, given by:
+ 
+
+$$
+\sum_{j=1}^J \sum_{i \in R_j}\left(y_i-\hat{y}_{R_j}\right)^2
+$$
+
+
+where $\hat{y}_{R_j}$ is the mean response for the training observations within the $j$ th box.
+
+:::
+
+## Building the tree (2): Splitting
+
+::: font80
+- To do this, define the pair of half-planes
+
+$$
+R_1(j, s)=\left\{X \mid X_j<s\right\} \text { and } R_2(j, s)=\left\{X \mid X_j \geq s\right\}
+$$
+
+and seek the value of $j$ and $s$ that minimize the equation:
+
+$$
+\sum_{i: x_i \in R_1(j, s)}\left(y_i-\hat{y}_{R_1}\right)^2+\sum_{i: x_i \in R_2(j, s)}\left(y_i-\hat{y}_{R_2}\right)^2.
+$$
+:::
+
+## Building the tree (3): Prediction{.smaller}
+
+:::: {.columns}
+
+::: {.column width='40%'}
+
+- Once the regions have been created we predict the response using the mean of the trainig observations *in the region to which that observation belongs*.
+
+- In the example, for an observation belonging to the shaded region, the prediction would be:
+
+$$
+\hat{y} =\frac{1}{4}(y_2+y_3+y_5+y_9)
+$$
+:::
+
+::: {.column width='60%'}
+
+```{r fig.align='center', out.width="100%"}
+knitr::include_graphics("images/RegressionTree-Prediction1.png")
+```
+:::
+
+::::
+
+
+## Example: A regression tree  
+
+```{r echo=TRUE}
+set.seed(123)
+train <- sample(1:nrow(aq), size = nrow(aq)*0.7)
+aq_train <- aq[train,]
+aq_test  <- aq[-train,]
+aq_regresion <- tree::tree(formula = Ozone ~ ., 
+                           data = aq_train, split = "deviance")
+summary(aq_regresion)
+```
+
+## Example: Plot the tree
+
+```{r}
+par(mar = c(1,1,1,1))
+plot(x = aq_regresion, type = "proportional")
+text(x = aq_regresion, splits = TRUE, pretty = 0, cex = 0.8, col = "firebrick")
+```
+
+
+## Trees have many advantages
+
+- Trees are very easy to explain to people. 
+
+- Decision trees may be seen as good mirrors of human decision-making.
+
+- Trees can be displayed graphically, and are easily interpreted even by a non-expert.
+
+- Trees can easily handle qualitative predictors without the need to create dummy variables.
+
+## But they come at a price
+
+- Trees generally do not have the same level of predictive accuracy as sorne of the other regression and classification approaches.
+
+-  Additionally, trees can be very non-robust: a small change in the data can cause a large change in the final estimated tree.
+
+
+
+# Introduction to Ensembles
+
+## Weak learners
+
+- Models that perform only slightly better than random guessing are called *weak learners* [@Bishop2007].
+
+- Weak learners low predictive accuracy may be due, to the predictor having high bias or high variance.
+
+![](images/1.2-EnsembleMethods_insertimage_1.png)
+
+
+## Trees may be *weak* learners
+
+- May be sensitive to small changes in training data that lead to very different tree structure.
+- High sensitivity implies predictions are highly variable
+- They are *greedy* algorithms making locally optimal decisions at each node without considering the global optimal solution. 
+  - This can lead to suboptimal splits and ultimately a weaker predictive performance.
+
+## There's room for improvement
+
+- In many situations  trees may be a good option (e.g. for simplicity and interpretability)
+
+- But there are issues that, if solved, may improve performance.
+
+- It is to be noted, too, that these problems are not unique to trees. 
+
+  - Other simple models such as linear regression may be considered as weakl learners in may situations.
+
+
+## The bias-variance trade-off
+
+- When we try to improve weak learners we need to deal with the bias-variance trade-off.
+
+
+![The bias-variance trade-off. ](images/1.2-Ensemble_Methods-Slides_insertimage_1.png)
+[The bias-variance trade-off cheatsheet](https://sites.google.com/view/datascience-cheat-sheets#h.pc6lrwop0hai)
+
+## How to deal with such trade-off 
+
+- How can a model be made less variable or less biased without this increasing its bias or variance?
+
+- There are distinct appraches to deal with this problem
+  - Regularization, 
+  - Feature engineering,
+  - Model selection
+  - Ensemble learning
+
+## Ensemble learners
+
+- Ensemble learning takes a distinct based on "*the wisdom of crowds*".
+
+- Predictors, also called, **ensembles** are built by fitting repeated (weak learners) models on the same data and combining them to form a single result.
+
+- As a general rule, ensemble learners tend to improve the results obtained with the weak learners they are made of.
+
+
+## Ensemble methods
+
+- If we rely on how they deal with the bias-variance trade-off we can consider distinct groups of ensemble methods:
+
+  - Bagging
+  
+  - Boosting
+  
+  - Hybrid learners
+  
+[Emnsemble methods cheatsheet](https://sites.google.com/view/datascience-cheat-sheets#h.t1jchxvxlgr2)
+  
+## Bagging
+
+- **Bagging**,  **Random forests** and **Random patches** yield a smaller variance than simple trees by building multiple trees based on aggregating trees built on a subset of 
+  - individual (1), 
+  - features (2) or 
+  - both (3).
+
+## Boosting & Stacking
+
+- **Boosting** or **Stacking** combine distinct predictors to yield a model with an increasingly smaller error, and so reduce the bias. 
+
+- They differ on if do the combination
+
+  - sequentially (1) or 
+  
+  - using a meta-model (2) .
+
+## Hybrid Techniques 
+
+- **Hybrid techniques** combine approaches in order to deal with both variance and bias. 
+
+- The approach should be clear from their name:
+
+  - *Gradient Boosted Trees with Bagging* 
+  
+  - *Stacked bagging* 
+
+  
+## Bagging: bootstrap aggregation
+
+- Decision trees suffer from high variance when compared with other methods such as linear regression, especially when $n/p$ is moderately large.
+
+- Given that this is intrinsic to trees,  @Breiman1996 sugested to build multiple trees derived from the same dataset and, somehow, average them.
+
+## Averaging decreases variance
+
+- Bagging relies, informally, on the idea that:
+
+  - given $X\sim F()$, s.t. $Var_F(X)=\sigma^2$, 
+  - given a s.r.s. $X_1, ..., X_n$ from $F$ then 
+  - if $\overline{X}=\frac{1}{N}\sum_{i=1}^n X_i$ then $var_F(\overline{X})=\sigma^2/n$.
+
+- That is, *relying on the sample mean instead of on simple observations, decreases variance by a factor of $n$*.
+
+- BTW this idea is still (approximately) valid for more general statistics where the CLT applies.
+
+## What means *averaging trees*?
+
+Two questions arise here:
+
+1. How to go from $X$ to $X_1, ..., X_n$?
+  - This will be done using *bootstrap resampling*.
+
+2. What means "averaging" in this context.
+  - Depending on the type of tree:
+    - Average predictions for regression trees.
+    - Majority voting for classification trees.
+
+## Random forests: decorrelating predictors
+
+- Bagged trees, based on re-samples (of the same sample) tend to be highly correlated. 
+- Leo Breimann, again, introduced a modification to bagging, he called *Random forests*, that aims at decorrelating trees as follows:
+  - When growing a tree from one bootstrap sample, 
+  - At each split use only a randomly selected *subset of predictors*.
+  
+## Split variable randomization
+
+- While growing a decision tree, during the bagging process, 
+
+- Random forests perform *split-variable randomization*:
+  - each time a split is to be performed, 
+  - the search for the split variable is limited to a random subset of $m_{try}$  of the original $p$ features. 
+  
+
+## Random forests
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/RandomForests2.png")
+```
+Source: [AIML.com research](https://aiml.com/what-is-random-forest-2/)
+
+## How many variables per split?
+
+- $m$ can be chosen using cross-validation, but
+- The usual recommendation for random selection of variables at each split has been studied by simulation:
+  - For regression default value is $m=p/3$
+  - For classification default value is $m=\sqrt{p}$.
+- If $m=p$, we have bagging instead of RF.
+
+
+## Random forest algorithm (1)
+
+```{r, out.width="100%", fig.cap="Random Forests Algorithm, from chapter 11 in [@Boehmke2020]"}
+knitr::include_graphics("images/RandomForestsAlgorithm1.png")
+```
+
+
+## Out-of-the box performance
+
+- Random forests tend to provide very good out-of-the-box performance, that is:
+  - Although several hyperparameters can be tuned, 
+  - Default values tend to produce good results. 
+- Moreover, among the more popular machine learning algorithms, RFs have the least variability in their prediction accuracy when tuning [@Probst2019].
+
+## Out of the box performance
+
+- A random forest trained with all hyperparameters set to their default values can yield an OOB RMSE that is better than many other classifiers, with or without tuning.
+- This combined with good stability and ease-of-use has made it the option of choice for many problems.
+
+## Out of the box performance example
+
+```{r eval=FALSE, echo=TRUE}
+# number of features
+n_features <- length(setdiff(names(ames_train), "Sale_Price"))
+
+# train a default random forest model
+ames_rf1 <- ranger(
+  Sale_Price ~ ., 
+  data = ames_train,
+  mtry = floor(n_features / 3),
+  respect.unordered.factors = "order",
+  seed = 123
+)
+
+# get OOB RMSE
+(default_rmse <- sqrt(ames_rf1$prediction.error))
+## [1] 24859.27
+```
+
+## Tuning hyperparameters
+
+There are several parameters that, appropriately tuned, can improve RF performance.
+
+:::{.font90}
+
+1. Number of trees in the forest.
+2. Number of features to consider at any given split ($m_{try}$).
+3. Complexity of each tree.
+4. Sampling scheme.
+5. Splitting rule to use during tree construction.
+:::
+
+1 & 2 usually have largest impact on predictive accuracy.
+
+<!-- ## 1. Number of trees -->
+
+
+<!-- ```{r, out.width="100%", fig.cap=""} -->
+<!-- knitr::include_graphics("images/RandomForestsHyperparameters1.png") -->
+<!-- ``` -->
+
+<!-- :::{.small} -->
+<!-- - The number of trees needs to be sufficiently large to stabilize the error rate. -->
+<!-- -  More trees provide more robust and stable error estimates -->
+<!-- - But impact on computation time increases linearly with $n_tree$ -->
+<!-- ::: -->
+
+<!-- ## 2. Number of features ($m_{try}$). -->
+
+<!-- ```{r, out.width="100%", fig.cap=""} -->
+<!-- knitr::include_graphics("images/RandomForestsHyperparameters2.png") -->
+<!-- ``` -->
+
+<!-- :::{.small} -->
+<!-- - $m_{try}$ helps to balance low tree correlation with reasonable predictive strength. -->
+<!-- - Sensitive to total number of variables. If high /low, better increase/decrease it. -->
+<!-- ::: -->
+
+<!-- ## 3. Complexity of each tree. -->
+
+<!-- ```{r, out.width="100%", fig.cap=""} -->
+<!-- knitr::include_graphics("images/RandomForestsHyperparameters3.png") -->
+<!-- ``` -->
+
+<!-- :::{.small} -->
+<!-- - The complexity of underlying trees influences RF performance.  -->
+<!-- - Node size has strong influence on error and time. -->
+<!-- ::: -->
+
+<!-- ## 4. Sampling scheme. -->
+
+<!-- ```{r, out.width="100%", fig.cap=""} -->
+<!-- knitr::include_graphics("images/RandomForestsHyperparameters4.png") -->
+<!-- ``` -->
+
+<!-- :::{.small} -->
+<!-- - Default: Bootstrap sampling with replacement on 100% observations. - Sampling size and replacement or not can affect diversity and reduce bias. -->
+<!-- - Node size has strong influence on error and time. -->
+<!-- ::: -->
+
+<!-- ## 5. Splitting rule  -->
+
+<!-- - *Default splitting rules* favor features with many splits, potentially biasing towards certain variable types. -->
+<!-- - *Conditional inference trees* offer an alternative to reduce bias, but may not always improve predictive accuracy and have longer training times. -->
+<!-- - *Randomized splitting rules*, like *extremely randomized trees* (which draw split points completely randomly), improve computational efficiency but may not enhance predictive accuracy and can even reduce it. -->
+
+
+
+## Random forests in bioinformatics
+
+- Random forests have been thoroughly used in Bioinformatics  [@Boulesteix2012].
+- Bioinformatics data are often high dimensional with 
+  - dozens or (less often) hundreds of samples/individuals
+  - thousands (or hundreds of thousands) of variables.
+
+## Application of Random forests
+
+- Random forests provide robust classifiers for:
+  - Distinguishing cancer from non cancer,
+  - Predicting tumor type in cancer of unknown origin,
+  - Selecting variables (SNPs) in Genome Wide Association Studies...
+  
+- Some variation of Random forests are used only for variable selection
+
+# Support Vector Machines
+
+- A Support Vector Machine (SVM) is a discriminative classifier which 
+
+  - intakes training data and, 
+  
+  - outputs an optimal hyperplane 
+  
+which categorizes new examples.
+
+## Linear separability
+
+
+Data are said to be *linearly separable* if one can draw a line (plane, etc.) that separates well the groups
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/4.1-Machine_Learning_4Metabolomics_insertimage_1.png")
+```
+
+
+## Linear vs non linear separability
+
+![](images/4.1-Machine_Learning_4Metabolomics_insertimage_2.png)
+
+## Making data separable
+
+Projecting the data in a high-er dimensional space can turn it from non-separable to separable.
+
+```{r, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/4.1-Machine_Learning_4Metabolomics_insertimage_3.png")
+```
+
+
+## Finding the separating hyperplane
+
+- For a binary classification problem, the goal of SVM is to find the hyperplane that best separates the data points of the two classes. 
+
+- This separation should maximize *the margin*, which is the distance between the hyperplane and the nearest data points from each class. 
+
+- These nearest points are called *support vectors*.
+
+## Maximizing the margins
+
+```{r, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/4.1-Machine_Learning_4Metabolomics_insertimage_4.png")
+```
+
+## Parameters (1): Regularization {.smaller}
+
+:::: {.columns}
+
+::: {.column width='50%'}
+
+- **Purpose:** Controls the trade-off between maximizing the margin and minimizing classification error.
+
+ - **Effect:** 
+ 
+    - Low C: Larger margin, more misclassifications;
+    - High C: Smaller margin, fewer misclassifications.
+
+:::
+
+::: {.column width='50%'}
+
+```{r, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/4.1-Machine_Learning_4Metabolomics_insertimage_5.png")
+```
+
+:::
+
+::::
+
+
+## Parameters (2): Kernel {.smaller}
+
+
+:::: {.columns}
+
+::: {.column width='50%'}
+
+ - **Purpose:** Defines the hyperplane type for separation.
+
+ - **Types & Effect:**
+ 
+   - Linear: For linearly separable data.
+   - Polynomial: Adds polynomial terms for non-linear data.
+   - RBF: Maps to higher dimensions for complex non-linear data.
+
+:::
+
+::: {.column width='50%'}
+
+
+```{r, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/4.1-Machine_Learning_4Metabolomics_insertimage_7.png")
+```
+:::
+
+::::
+
+## Parameters (3): Gamma {.smaller}
+
+:::: {.columns}
+
+::: {.column width='50%'}
+
+- **Purpose:** Controls the influence of a single training example.
+
+- **Effect:** 
+  -   Low : Broad influence; 
+  -   High: Narrow influence.
+
+:::
+
+::: {.column width='50%'}
+
+```{r, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/4.1-Machine_Learning_4Metabolomics_insertimage_6.png")
+```
+
+:::
+
+::::
+
+
+
+# References and Resources
+
+## References{.smaller}
+
+-   [A. Criminisi, J. Shotton and E. Konukoglu (2011) Decision Forests for Classifcation, Regression ... Microsoft Research technical report TR-2011-114](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/decisionForests_MSR_TR_2011_114.pdf)
+
+-   Efron, B., Hastie T. (2016) Computer Age Statistical Inference. Cambridge University Press. [Web site](https://hastie.su.domains/CASI/index.html)
+
+-   Hastie, T., Tibshirani, R., & Friedman, J. (2009). The elements of statistical learning: Data mining, inference, and prediction. Springer.
+
+-   James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (Vol. 112). Springer. [Web site](https://www.statlearning.com/)
+
+## Complementary references
+
+-   Breiman, L., Friedman, J., Stone, C. J., & Olshen, R. A. (1984). Classification and regression trees. CRC press.
+
+-   Brandon M. Greenwell (202) Tree-Based Methods for Statistical Learning in R. 1st Edition. Chapman and Hall/CRC DOI: https://doi.org/10.1201/9781003089032
+
+-   Genuer R., Poggi, J.M. (2020) Random Forests with R. Springer ed. (UseR!)
+
+
+## Resources
+
+-   [Applied Data Mining and Statistical Learning (Penn Statte-University)](https://online.stat.psu.edu/stat508/)
+
+-   [R for statistical learning](https://daviddalpiaz.github.io/r4sl/)
+
+-   [CART Model: Decision Tree Essentials](http://www.sthda.com/english/articles/35-statistical-machine-learning-essentials/141-cart-model-decision-tree-essentials/#example-of-data-set)
+
+-   [An Introduction to Recursive Partitioning Using the RPART Routines](https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf)

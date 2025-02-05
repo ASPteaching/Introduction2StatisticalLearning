@@ -1,0 +1,968 @@
+---
+title:  "Introduction to Deep Learning"
+author: "Alex Sanchez, Ferran Reverter and Esteban Vegas"
+format:
+  pptx: 
+    incremental: false  
+    transition: slide
+    background-transition: fade
+    transition-speed: slow
+    scrollable: true
+    menu:
+      side: left
+      width: half
+      numbers: true
+    slide-number: c/t
+    show-slide-number: all
+    progress: true
+    css: "css4CU.css"
+    theme: sky
+
+knit:
+  quarto:
+    chunk_options:
+      echo: true
+      cache: false
+      prompt: false
+      tidy: true
+      comment: NA
+      message: false
+      warning: false
+    knit_options:
+      width: 75
+bibliography: "DeepLearning.bib"
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction
+
+## Session Outline
+
+1. Towards Deep learning
+
+2. Learning visual features 
+
+    <!-- Convolution and Padding -->
+    <!-- Filters, Strides, and Channels -->
+
+3. Convolutional Neural Networks
+  <!-- Max Pooling and Average Pooling -->
+  <!-- Downsampling and Translation Invariance -->
+
+4. Building and Training CNNs
+  <!-- Architecture Design and Hyperparameter Tuning -->
+  <!-- Transfer Learning and Fine-Tuning -->
+
+5. Applications of CNNs
+  <!-- Object Detection and Segmentation -->
+  <!-- Image Classification and Captioning -->
+  <!-- Face Recognition and Style Transfer -->
+  
+
+## Deep Neural Networks {.smaller}
+
+- Neural Networks may have distinct levels of *complexity*.
+
+```{r echo=FALSE, fig.cap="Source: 'Deep Learning' course, by Andrew Ng in Coursera & deeplearning.ai"}
+knitr::include_graphics("images/Shallow2Deep_NN.png")
+```
+
+## From Shallow to Deep NNs {.smaller}
+
+- "Deep Neural networks" are NNs with several hidden layers.
+- The real shift, from Shallow to Deep NNs, is not (only) the number of layers.
+
+- The difference comes from realizing that
+  - Some tasks as digit recognition, could be solved decently well using a "brute force" approach
+  - Other more complex tasks, such as distinguishing a human face in an image, where hard to solve witht that "brute" force approach.
+  
+- This is often associated to working with structured vs unstructured data
+
+## Structured-Unstructured data
+
+```{r echo=FALSE, fig.cap="'Source: Generative Deep Learning. David Foster (Fig. 2.1)'"}
+knitr::include_graphics("images/structuredVsUnstructuredData.png")
+```
+
+## Images are unstructured data
+
+*Task: Distinguish human from non-human in an image*
+
+```{r echo=FALSE, fig.cap="Source: 'Neural Networkls and Deep Learning' course, by Michael Nielsen" }
+knitr::include_graphics("images/HumanvsNonHuman.png")
+```
+
+
+## Face recognition problem {.smaller}
+
+- This can be attacked as the digit recognition problem (output of "yes" and "no"), although the cost of training the network would be much higher.
+
+- An alternative approach may be to try to solve the problem hierarchically.
+
+  - We start by tying to find edges in the figure
+  - In the parts with edges we "look around" to find face pieces, a nose, an eye, an eyebrow ...
+  - As we locate the pieces we look for their optimal combination.
+
+## A hierarchy of complexity
+
+```{r echo=FALSE, fig.cap="Source: 'Deep Learning' course, by Andrew Ng in Coursera & deeplearning.ai"}
+knitr::include_graphics("images/FaceRecognitionIntuiotion.png")
+```
+
+## A hierarchy of complexity {.smaller}
+
+- Each layer has a more complex task, but it receives better information.
+  - If we can solve the sub-problems using ANNs, 
+  - Perhaps we can build a neural network for face-detection, by combining the networks for the sub-problems. 
+
+<!-- - If we are able to break the questions down, further and further through multiple layers we end-up working with sub-networks that answer questions so simple they can easily be answered at the level of single pixels.  -->
+
+<!-- - This is done through a series of many layers, with early layers answering very simple and specific questions about the input, and later layers building up a hierarchy of ever more complex and abstract concepts.  -->
+
+- Networks with this kind of many-layer structure - two or more hidden layers - are called *deep neural networks*.
+
+## Automatic tuning {.smaller}
+
+- In order for these networks to succeed it is important not having to hand-craft the complicated structure of weights and biases required for such hierarchy of layers and functions. 
+
+- In 2006  techniques enabling learning in Deep Neural Nets were developed. 
+
+- These deep learning techniques are based on stochastic gradient descent and backpropagation, but also introduce new ideas.
+
+- It turns out that equiped with such techniques, deep neural networks perform much better on many problems than shallow neural networks.
+
+## Shallow vs Deep NNs
+
+```{r echo=FALSE, fig.cap="Source: 'Deep Learning' course, by Andrew Ng in Coursera & deeplearning.ai"}
+knitr::include_graphics("images/ShallowVSDeepNN.png")
+```
+
+
+# What do we mean by computers vision?
+
+## We want computers that can *see*  {.smaller}
+
+Goal: Computer systems able to see what is present in the world, **but also** to predict and anticipate events.
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV1.png")
+```
+
+## DNN in computer vision systems  {.smaller}
+
+Deep Learning enables many systems to undertake a variety of computer vision related tasks.
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV2.png")
+```
+
+## Facial detection and recognition {.smaller}
+
+In particular it enables *automatic* feature extraction.
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV3.png")
+```
+
+## Autonomous driving {.smaller}
+
+Autonomus Driving would not be possible without the possibility of performing Automatic Feature Extraction
+
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV4.png")
+```
+
+## Medicine, biology, self care  {.smaller}
+
+Neither would systems for automatic disease detection be able to distinguish healthy from affected people though images.
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV5.png")
+```
+
+# What computers see?
+
+## Images are numbers
+
+- To a computer images, of course, are numbers.
+
+- An RGB image is a NxNx3 matrix of numbers [0,255]
+
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV6.png")
+```
+
+## Main tasks in Computer Vision:
+
+- **Regression**: Output variable takes continuous value. E.g. *Distance to target*
+- **Classification**: Output variable takes class labels. E.g. *Probability of belonging to a class*
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV7.png")
+```
+
+
+## High level feature detection {.smaller}
+
+- A different set of features characterize each image
+
+- Before attempting to build a computer vision system, we need to be aware of *what feature keys are in our data that need to be __identified__ and __detected__*.
+
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV8.png")
+```
+
+
+## How to do feature extraction {.smaller}
+
+- Manual feature extraction is hard!
+
+- Feature characterization needs to define a hierarchy of features allowing an increasing level of detail.
+
+- Deep Neural networks can do this in a hierarchichal fashion!
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV10.png")
+```
+
+# Learning visual features
+
+## Feature extraction with dense NN
+
+- Fully connected NN could, in principle, be used to learn visual features
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV11.png")
+```
+
+## Accounting for spatial structure {.smaller}
+
+- Images have a **spatial structure**.
+- How can this be used to inform the architecture of the Network?
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV12.png")
+```
+
+## Extending the idea with *patches*
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV13.png")
+```
+
+## Use filters to extract features
+
+- Filters can be used to extract *local* features
+  - A filter is a set of weights
+
+- Different filters can extract different .
+
+- Filters that matter in one part of the input should matter elsewhere so:
+  - Parameters of each filter are *spatially shared*.
+  
+
+## Shifting filters for Extraction
+
+:::: {.columns}
+
+::: {.column width='50%'}
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV14.png")
+```
+:::
+
+::: {.column width='50%'}
+:::{.font80}
+- A 4x4: 16 distinct weights filter is applied to *define the state of the neuron* in the next layer.
+- Same filter applied to 4x4 patches in input
+- Shift by 2 pixels for next patch.
+:::
+
+:::
+
+::::
+
+## Example: "X or X"?
+
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV15.png")
+```
+
+- Images are represented by matrices of pixels, so
+- Literally speaking these images are different.
+
+## What are the *features* of X
+
+:::{.font90}
+- Look for a set of features that:
+  - characterize the images, and
+  - and are the same in both cases.
+:::
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV16.png")
+```
+
+## Filters can detect X features
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV17.png")
+```
+
+## Is a given patch in the image?
+
+- The key question is *how to pick-up the operation* that can take
+  - a patch and 
+  - an image and
+- An decide if the patch is in the image.
+
+- This operation is the *convolution*.
+
+## The Convolution Operation
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV18.png")
+```
+
+::: {.notes}
+- Convolution *matches* the patch and the image by elementwise multiplication, followed by a sum.
+- Given the filters used (+1/-1) if there is absolute coincidence, as in the example, all multiplications will yield 1, and the sum will be 9.
+- Two completely different patches would add -9.
+:::
+
+## The Convolution Operation
+
+- Suppose we want to compute the convolution of a 5x5 image and a 3x3 filter.
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV19.png")
+```
+
+<!-- - We will slide the 3x3 filter over the input image, elementwise multiply and add the outputs -->
+
+## The Convolution Operation 
+
+:::{.font70}
+(i) Slide the 3x3 filter over the input image,
+(ii) Elementwise multiply and
+(iii) Add the outputs
+:::
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV19.png")
+```
+
+## The Convolution Operation
+
+
+::: {.r-stack}
+::: {.fragment .fade-in-then-out}
+```{r , fig.align ='center',   out.width="100%"}
+knitr::include_graphics("images/aminiCV20.png")
+```
+:::
+::: {.fragment .fade-in-then-out}
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV21.png")
+```
+:::
+::: {.fragment .fade-in-then-out}
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV22.png")
+```
+:::
+
+::: {.fragment .fade-in-then-out}
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV23.png")
+```
+:::
+
+::: {.fragment .fade-in-then-out}
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV24.png")
+```
+:::
+::: {.fragment .fade-in-then-out}
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV25.png")
+```
+:::
+::: {.fragment .fade-in-then-out}
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV26.png")
+```
+:::
+::: {.fragment .fade-in-then-out}
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV27.png")
+```
+:::
+
+::: {.fragment .fade-in}
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV28.png")
+```
+:::
+
+:::
+
+## A filter for each pattern?
+
+:::{.font90}
+- By applying different filters, i.e. changing the weights,
+- We can achieve completely different results
+:::
+
+
+```{r  , fig.align ='center', out.width="100%"}
+knitr::include_graphics("images/aminiCV29.png")
+```
+
+
+## Can filters be learned?
+
+- Different filters can be used to extract different characteristics from the image.
+  - Building filters by trial-and-error can be slow.
+  
+- If a NN can *learn these filters from the data*, then
+  -  They can be used to classify new images.
+
+- This is what *Convolutional Neural Networks* is about.
+  
+
+# Convolutional Neural Networks
+
+## CNNs: Overview
+
+:::{.font90}
+
+- *Convolutional Neural Networks* are a type of DNN that implement the ideas previously introduced
+
+  - Uses convolutions to learn spatial features.
+  - Intended to identify increasingly complex traits by concatenating multiple *convolutional layers*.
+  - Convolutional layers combined with dense layers that perform "classification" as usual from the  output of convolutional layers.
+  
+:::
+
+## Another CNN outline
+
+
+```{r  fig.align='center', out.width='100%', fig.cap='Source: Generative Deep Learning. David Foster (Fig. 2.13)'}
+knitr::include_graphics("images/cnn.png")
+```
+
+## Convolutional Layers {.smaller}
+
+- The layers implementing convolutions.
+
+- Besides this, they proceed as usual for hidden layer
+  - Weighted linear combination of (convoluted) values
+$$
+z^{(l)}_{p,j}=\sum_{i=1}^4\sum_{j=1}^4 w_{ij} x_{i+p,j+q}+b
+$$
+  - Followed by non-linear transformation (ReLU)
+$$
+a^{(l)}_{p,j} =max(0, z^(l)_{p,j}).
+$$
+  
+
+## Filtering increases dimension
+
+- Multiple filters can be applied on the same image.
+- Adding filters increases the dimensionality of the filtered output
+  - Think of the output as a volume.
+
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV33.png")
+```
+
+
+## Pooling decreases dimension
+
+:::{.font80}
+Pooling downsamples feature maps to reduce the spatial dimensions of the feature maps while retaining the essential information.
+:::
+
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV35.png")
+```
+
+
+## Pooling
+
+Key objectives of pooling in CNNs:
+
+1. Dimensionality Reduction:
+
+2. Translation Invariance:
+
+3. Robustness to Variations:
+
+4. Extraction of Salient Features:
+
+5. Spatial Hierarchy:
+
+## Common types of pooling 
+
+- **Max pooling**
+  - selects the maximum value within each pooling region, 
+- **Average pooling**
+  - calculates the average value. 
+
+## Summary: CNNs for classification
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV37.png")
+```
+
+## Summary: CNNs for classification
+
+```{r, echo=FALSE, fig.align='center', out.width="100%",fig.cap="source: MIT Course, http://introtodeeplearning.com/, L3 "}
+knitr::include_graphics("images/aminiCV38.png")
+```
+
+# A short mathematical digression: *Tensors*
+
+## Tensors {.smaller}
+
+- Deep learning is filled with the word "tensor",
+
+- What are Tensors any way?
+
+  - R users: familiar with  vectors (1-d arrays) and matrices (2-d arrays). 
+  - Tensors extend this concept to higher dimensions.
+  - Can be seen as multi-dimensional arrays that generalize matrices. 
+  
+- See the Wikipedia for a [nice article on tensors](https://en.wikipedia.org/wiki/Tensor)
+
+
+## Why tensors?
+
+- Working with tensors has many benefits:
+
+  - **Generalization**: Tensors generalize vectors and matrices to an arbitary number of dimensions,
+  - **Flexibility**: can hold a wide range of data types.
+  - **Speed**: Use of tensors facilitates fast, parallel processing computations.
+  
+## One and two dimensional tensors
+
+:::: {.columns}
+
+::: {.column width='50%'}
+
+Vectors:rank-1 tensors.
+
+<br>
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/tensors1D.png")
+```
+
+:::
+
+::: {.column width='50%'}
+
+Matrices: rank-2 tensors.
+
+<br>
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/tensors2D.png")
+```
+
+:::
+
+::::
+
+## Rank three tensors{.smaller}
+
+:::: {.columns}
+
+::: {.column width='50%'}
+
+- Arrays in layers.
+
+- Typic use: Sequence data
+  - time series, text
+  - dim = (observations, seq steps, features)
+
+Examples
+
+:::{.font90}
+  - 250 days of high, low, and current stock price for 390 minutes of trading in a day; 
+    - dim = c(250, 390, 3)
+  - 1M tweets that can be 140 characters long and include 128 unique characters; 
+    - dim = c(1M, 140, 128)
+
+:::
+
+:::
+
+::: {.column width='50%'}
+
+<br>
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/tensors3D.png")
+```
+
+:::
+
+::::
+
+
+## Rank four tensors{.smaller}
+
+:::: {.columns}
+
+::: {.column width='50%'}
+- Layers of groups of arrays
+
+- Typic use: Image data
+
+  - RGB channels
+  - dim = (observations, height, width, color_depth)
+  - MNIST data could be seen as a 4D tensor where color_depth = 1
+
+
+:::
+
+::: {.column width='50%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/tensors4D.png")
+```
+
+:::
+
+::::
+
+
+## Rank five tensors {.smaller}
+
+:::: {.columns}
+
+::: {.column width='50%'}
+
+- Typic use: Video data
+
+  - samples: 4 (each video is 1 minute long)
+  - frames: 240 (4 frames/second)
+  - width: 256 (pixels)
+  - height: 144 (pixels)
+  - channels: 3 (red, green, blue)
+
+- Tensor shape (4, 240, 256, 144, 3)
+
+:::
+
+::: {.column width='50%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/tensors5D.png")
+```
+
+:::
+
+::::
+
+## One can always *reshape*
+
+- Each DNN model has a given architecture which usually requires 2D/3D tensors.
+
+- If data is not in the expected form it can be *reshaped*.
+
+```{r}
+knitr::include_graphics("images/reshape4MNIST.png")
+```
+
+See [Deep learning with R](https://livebook.manning.com/book/deep-learning-with-r-second-edition) for more.
+
+
+# Deep Learning Software
+
+## Which programs for DL?
+
+1. [TensorFlow](https://www.tensorflow.org/)
+2. [PyTorch](https://pytorch.org/)
+3. [Keras](https://keras.io/)
+4. [MXNet](https://mxnet.apache.org/)
+5. [Caffe](https://caffe.berkeleyvision.org/)
+6. [Theano](https://github.com/Theano/Theano)
+7. [Microsoft Cognitive Toolkit (CNTK)](https://docs.microsoft.com/en-us/cognitive-toolkit/)
+
+## [TensorFlow](https://www.tensorflow.org/)
+
+:::: {.columns}
+
+::: {.column width='60%'}
+
+- Open-source DL framework developed by Google. 
+- Flexible model development
+- Optimized for distributed computing and performance
+- High level APIS like Keras, in Python and R.
+
+:::
+
+::: {.column width='40%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/tensorflow.png")
+```
+
+:::
+
+::::
+
+## [PyTorch](https://pytorch.org/)
+
+:::: {.columns}
+
+::: {.column width='60%'}
+
+- Open-source DL framework developed by facebook.
+- User-friendly interface and dynamic computational graph features with intuitive debugging and experimentation. 
+- Highly integrated with Numpy
+
+:::
+
+::: {.column width='40%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/pytorch.png")
+```
+
+:::
+
+::::
+
+## [Keras](https://keras.io/)
+
+:::: {.columns}
+
+::: {.column width='60%'}
+
+- High-level neural networks API 
+running on top of TensorFlow, CNTK, or Theano,
+- Emphasizes simplicity and ease of use.
+- AVailable in Python and R
+
+:::
+
+::: {.column width='40%'}
+
+```{r, out.width="100%"}
+knitr::include_graphics("images/keras.png")
+```
+
+:::
+
+::::
+
+
+
+## The Keras pipeline
+
+- Training and using a model in keras is intended to be done through the usual steps of a ML worfflow
+
+
+```{r}
+knitr::include_graphics("images/kerasPipeline.png")
+```
+
+<!-- ## Example 1 - A Simple NN -->
+
+<!-- :::: {.columns} -->
+
+<!-- ::: {.column width='55%'} -->
+
+<!-- ```{r, fig.align='center', out.width="100%"} -->
+<!-- knitr::include_graphics("images/ASimpleNN-Layers.png") -->
+<!-- ``` -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width='45%'} -->
+
+<!-- ```{r, fig.align='center', out.width="80%"} -->
+<!-- knitr::include_graphics("images/ASimpleNN-Code.png") -->
+<!-- ``` -->
+
+<!-- ::: -->
+
+<!-- :::: -->
+
+## A keras cheat sheet
+
+```{r, fig.align='left', out.width="100%"}
+knitr::include_graphics("images/kerasCheatSheet1.png")
+```
+[Available at rstudio github repo](https://github.com/rstudio/cheatsheets/blob/main/keras.pdf)
+
+
+# A toy example
+
+## The MNIST dataset
+
+- A popular dataset or handwritten numbers.
+
+```{r eval=FALSE, echo=TRUE}
+library(keras)
+mnist <- dataset_mnist()
+```
+
+- Made of features (images) and target values (labels)
+- Divided into a *training* and *test* set.
+
+```{r eval=FALSE,echo=TRUE}
+x_train <- mnist$train$x; y_train <- mnist$train$y
+x_test <- mnist$test$x; y_test <- mnist$test$y
+```
+
+
+```{r eval=FALSE,echo=TRUE}
+(mnistDims <- dim(x_train))
+img_rows <- mnistDims[2];  img_cols <- mnistDims[3]
+```
+
+
+## Data pre-processing (1): Reshaping
+
+- These images are not in the the requires shape, as the number of channels is missing. 
+- This can be corrected using the `array_reshape()` function. 
+
+```{r eval=FALSE,echo=TRUE}
+x_train <- array_reshape(x_train, c(nrow(x_train), img_rows, img_cols, 1))
+x_test <- array_reshape(x_test, c(nrow(x_test), img_rows, img_cols, 1)) 
+
+input_shape <- c(img_rows, img_cols, 1)
+
+dim(x_train)
+```
+
+## Data pre-processing (2): Other transforms
+
+- Data is first normalized (to values in [0,1])
+
+```{r eval=FALSE,echo=TRUE}
+x_train <- x_train / 255
+x_test <- x_test / 255
+```
+
+- Labels are one-hot-encoded using the `to_categorical()` function.
+
+```{r eval=FALSE,echo=TRUE}
+num_classes = 10
+y_train <- to_categorical(y_train, num_classes)
+y_test <- to_categorical(y_test, num_classes)
+```
+
+## Modeling (1): Definition
+
+```{r eval=FALSE,echo=TRUE, highlight=c(2,3,4)}
+model <- keras_model_sequential() %>%
+  layer_conv_2d(filters = 16,
+                kernel_size = c(3,3),
+                activation = 'relu',
+                input_shape = input_shape) %>% 
+  layer_max_pooling_2d(pool_size = c(2, 2)) %>% 
+  layer_dropout(rate = 0.25) %>% 
+  layer_flatten() %>% 
+  layer_dense(units = 10,
+              activation = 'relu') %>% 
+  layer_dropout(rate = 0.5) %>% 
+  layer_dense(units = num_classes,
+              activation = 'softmax')
+
+```
+
+## Modeling (1): Model Summary
+
+```{r eval=FALSE,echo=TRUE}
+model %>% summary()
+```
+
+## Modeling (2): Compilation
+
+- **Categorical cross-entropy** as loss function. 
+- **Adadelta** optimizes the gradient descent.
+- **Accuracy** serves as metric.
+
+```{r eval=FALSE,echo=TRUE}
+model %>% compile(
+  loss = loss_categorical_crossentropy,
+  optimizer = optimizer_adadelta(),
+  metrics = c('accuracy')
+)
+```
+
+## Model training{.smaller}
+
+- A mini-batch[^1] size of 128  should allow the tensors to fit into the memory of most "normal" machines. 
+- The model will run over 12  epochs, 
+- With a validation split set at 0.2
+
+
+```{r eval=FALSE,echo=TRUE}
+batch_size <- 128
+epochs <- 12
+
+model %>% fit(
+  x_train, y_train,
+  batch_size = batch_size,
+  epochs = epochs,
+  validation_split = 0.2
+)
+```
+
+[^1]:
+- A **batch** is a collection of training examples processed together, 
+- A **minibatch** is a smaller subset of a batch used for memory efficiency
+- An **epoch** is a complete pass of the entire training dataset during model training. 
+
+## Model evaluation
+
+- Use test data to evaluate the model.
+
+
+```{r eval=FALSE,evaluateModel, echo=TRUE}
+model %>% evaluate(x_test, y_test)
+predictions <- model %>% predict(x_test) # Not shown
+```
+
+# References and Resources
+
+## Resources (1) {.smaller}
+
+### Courses
+
+- [An introduction to Deep Learning. Alex Amini. MIT](http://introtodeeplearning.com/)
+- [Coursera: Deep Learning Specialization. Andrew Ng](https://www.coursera.org/specializations/deep-learning)
+
+### Books
+
+- [Neural networks and Deep Learning](http://neuralnetworksanddeeplearning.com/)
+- [Deep learning with R, 2nd edition. F. Chollet](https://livebook.manning.com/book/deep-learning-with-r-second-edition)
+
+## Resources (2) {.smaller}
+
+### Workshops
+
+- [Deep learning with R *Summer course*](https://bios691-deep-learning-r.netlify.app/)
+- [Deep learning with keras and Tensorflow in R (Rstudio conf. 2020)](https://github.com/rstudio-conf-2020/dl-keras-tf)
+
+
+### Documents
+
+- [Introduction to Convolutional Neural Networks (CNN)](https://www.analyticsvidhya.com/blog/2021/05/convolutional-neural-networks-cnn/)
+- [Convolutional Neural Networks in R](https://www.r-bloggers.com/2018/07/convolutional-neural-networks-in-r/)
+
+
