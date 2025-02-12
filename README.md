@@ -35,8 +35,12 @@ In this page you will find links to the html/pdf version of the slides and other
 - [Introduction: Statistics, Machine Learning, Statistical Learning and Data Science](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/C0-Intro2StatLearn-PD-AS.pdf)
 - [Overview of Supervised Learning](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/C1-SupervisedLearning-PD_AS.pdf)
 - [Rlabs](https://github.com/ASPteaching/Introduction2StatisticalLearning/tree/main/labs/intro2StatLearn)
+  - Regression with KNN
+  - Classification with KNN
 
-- [Complement: Introduction to biomarkers and diagnostic tests]()
+- Complements
+  - [Introduction to biomarkers and diagnostic tests](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/From%20Biomarker%20to%20Diagnostic%20Tests.pdf)
+  - [Building and validating biomarkers](https://github.com/uebvhir/Pindoles/raw/master/2019_02_28_Busqueu_fama_Estrategies_modelitzacio.pdf)
 
 ## Decision Trees
 
