@@ -1,0 +1,43 @@
+---
+title: "Simulating a mixture of normals"
+subtitle: "Introduction to statistical Learning"
+author: "Pedro Delicado"
+output:
+  html_document:
+---
+
+> Reproducing the exemple in Section 2.3.3 of  
+> "The Elements of Statistical Learning" 
+> (Hastie, Tinshirani and Friedman, 2009)
+
+First we generated 10 means $m_k$ from a bivariate Gaussian distribution $N((1, 0)^T , {\bf I})$ and labeled this class `BLUE` (0). Similarly, 10 more were drawn from $N((0, 1)^T , {\bf I})$ and labeled class `ORANGE` (1). 
+
+```{r,fig.asp=1}
+set.seed(321)
+classes <- c(rep('BLUE',10), rep('ORANGE',10))
+cte <- c(rep(1,10), rep(0,20), rep(1,10))
+mk <- matrix(rnorm(20*2) + cte,
+             ncol=2, byrow = FALSE) 
+plot(mk[,1],mk[,2],col=classes,pch=19, asp=1)
+```
+
+Then for each class we generated 100 observations as follows: for each observation, we picked an $m_k$ at random with probability $1/10$, 
+and then generated a $N(m_k, {\bf I}/5)$, thus leading to a mixture of Gaussian clusters
+for each class. 
+
+```{r,fig.asp=1}
+N <- 100
+smpl.B <- sample(1:10, size=N, replace=TRUE)
+smpl.O <- 10 + sample(1:10, size=N, replace=TRUE)
+xy <- matrix(rnorm(2*N*2)/sqrt(5), ncol=2) + 
+  mk[c(smpl.B,smpl.O),]
+class.xy <- c(rep('BLUE',N), rep('ORANGE',N))
+plot(xy[,1],xy[,2], col=class.xy,asp=1)
+points(mk[,1],mk[,2],col=classes,pch=19)
+```
+
+```{r}
+df.xy <- data.frame(x=xy[,1],y=xy[,2],class=class.xy)
+if (!file.exists("2clas2dim.csv")) 
+  write.table(df.xy,file="2clas2dim.csv",dec=".",sep=";", row.names = FALSE)
+```

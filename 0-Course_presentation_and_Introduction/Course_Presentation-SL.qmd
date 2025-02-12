@@ -1,0 +1,135 @@
+---
+title: "Statistical Learning"
+subtitle: "Course Presentation"
+author: "Alex Sánchez and Pedro Delicado"
+institute: "Universitat de Barcelona and Universitat Politécnica de Catalunya"
+
+format: 
+  beamer:
+    aspectratio: 43
+    navigation: horizontal
+    theme: Madrid
+    colortheme: sidebartab
+    incremental: false
+    slide-level: 2
+    section-titles: false
+    css: "css4CU.css"
+---
+
+# Outline
+
+1.  Course Objectives
+
+2.  Teachers
+
+3.  Sketch of contents
+
+4.  Methodology
+
+5.  Evaluation
+
+6.  References
+
+# Course Objectives
+
+1 - **Understand the Statistical/Machine Learning approach** and how it relates with traditional Statistical Modelling.
+
+2 - **Develop understanding of key Learning methods**, including:
+
+-   Building and tuning models\
+-   Appropriate application of models using relevant software tools\
+-   Interpreting results and recognizing limitations
+
+3 - **Adapt to Rapid Field Advancements**, staying informed about the fast-paced developments in the field and learn to manage and integrate new advancements.
+
+# Teachers (1) Alex Sanchez
+
+![](images/clipboard-165528811.png)
+
+# Teachers (2) Pedro Delicado
+
+[![](images/clipboard-4263258680.png){fig-align="center"}](https://eio.upc.edu/en/homepages/delicado)
+
+# Course Contents
+
+1.  Introduction to Statistical Learning
+
+2.  Tree-based methods
+
+3.  Neural Networks
+
+4.  Penalized regression: Ridge & Lasso
+
+5.  Non parametric regression and Generalized Additive Models
+
+# Contents (1): Trees based methods
+
+![](images/clipboard-3030504378.png)
+
+# Contents (2): Neural Networks
+
+![](images/clipboard-966913152.png)
+
+# Contents (3): Penalized regressions
+
+![](images/clipboard-4081680495.png)
+
+# Contents (4): Non parametrics regression and GAMs
+
+![](images/clipboard-4035686683.png)
+
+# Methodology
+
+- Teaching language is Spanish. Materials in English.
+
+- Main concepts will be presented in class based on slides/blackboard.
+  - Materials in Atenea and/or github
+
+- Practical applications will be demonstrated/followed using notebooks provided in campus.
+  - Will try to use both R and Python
+  - You are expected to be able to re-run and understand them.
+  
+- Exercises for practice will be  provided and their solution will be either discussed in class or provided.
+
+- Student participation is encouraged, either by presenting their work in class and/or contributing to the forum.
+
+# Timing
+
+- Part 1. Alex. From 02/05/2025 till 03/26/2025
+  
+  - Introduction
+  - Tree based methods
+  - Neural networks
+  
+- Part 2. Pedro. From 03/31/2025 till 05/14/2025
+
+  - Penalized regression methods
+  - Non parametric regression
+
+# Evaluation & Grading
+
+- As indicated in the course guide
+
+- Each part of the course: 50%.
+
+- For each part:
+  
+  - A final examen is done with weight of 50%
+  - Remaining 50% is the average of scoring of submitted tasks.
+- In the age of ChatGPT checking individual work is hard so there will also be on-class quizzes and oral verification of submitted work.
+
+# References and resources
+
+- Baumer, B. S., D. T. Kaplan, and N. J. Horton (2017). Modern Data Science with R. CRC Press and [Online](https://mdsr-book.github.io/mdsr3e/)
+
+- Bradley Boehmke & Brandon Greenwell
+Hands-On Machine Learning with R, CRC press and [Online](https://bradleyboehmke.github.io/HOML/)
+
+- Chollet, F. (2023). Deep learning with R . 2nd edition. Manning Publications. ( _There is also a Python version_)
+
+- Hastie, T., Tibshirani, R., & Friedman, J. (2009). The elements of statistical learning (2nd Ed). Springer.
+
+- James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning. Springer. [Web site](https://www.statlearning.com/)
+
+- Goodfellow, I., Bengio, Y., & Courville, A. (2016). Deep learning (Vol. 1). MIT press. Web site
+

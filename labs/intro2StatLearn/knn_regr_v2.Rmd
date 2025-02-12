@@ -1,0 +1,89 @@
+---
+title: "k-NN Regression"
+subtitle: "Introduction to Statistical Learning"
+author: ""
+output:
+  html_document:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, warning =FALSE, message=FALSE)
+```
+
+# Introducción
+
+El método de regresión de \( k \)-vecinos más cercanos (\( k \)-NN) es una técnica de aprendizaje supervisado que estima \( m(t) = E(Y | X = t) \) como:
+
+$$
+\hat{m}(t) = \frac{1}{k} \sum_{i\in N_k(t)} y_i,
+$$
+
+donde \( N_k(t) \) es el vecindario de los \( k \) puntos más cercanos a \( t \) en el conjunto de entrenamiento.
+
+# Carga de Datos
+
+```{r}
+library(MASS)  # Contiene el dataset Boston
+library(RANN)  # Para búsqueda rápida de vecinos más cercanos
+
+# Cargar datos
+data(Boston)
+x <- Boston$lstat
+y <- Boston$medv
+
+# Visualización de datos
+plot(x, y, xlab="x: lstat", ylab="y: medv", col=8, main="Datos de Boston Housing")
+```
+
+# División en Entrenamiento y Prueba
+
+```{r}
+set.seed(123)  # Para reproducibilidad
+n <- length(y)
+train_index <- sample(1:n, size = floor(0.8 * n), replace = FALSE)
+x_train <- x[train_index]
+y_train <- y[train_index]
+x_test <- x[-train_index]
+y_test <- y[-train_index]
+```
+
+# Implementación del Estimador k-NN Optimizado
+
+```{r}
+knn_regr_fast <- function(x, y, t, k) {
+    nn <- nn2(data = as.matrix(x), query = as.matrix(t), k = k)
+    mt <- rowMeans(matrix(y[nn$nn.idx], nrow=length(t), ncol=k))
+    return(mt)
+}
+```
+
+# Evaluación del Modelo
+
+```{r}
+# Valores de k a evaluar
+k_values <- c(5, 15, 50, 150)
+
+# Inicialización de tabla de errores
+errors <- data.frame(k = integer(), RMSE = numeric())
+
+for (k in k_values) {
+    mt_train <- knn_regr_fast(x_train, y_train, x_test, k)
+    
+    # Calcular el error cuadrático medio (RMSE)
+    RMSE <- sqrt(mean((y_test - mt_train)^2))
+    
+    # Guardar resultados
+    errors <- rbind(errors, data.frame(k = k, RMSE = RMSE))
+    
+    # Graficar resultados
+    plot(x_train, y_train, col=8, xlab="x: lstat", ylab="y: medv", 
+         main=paste("k-NN con k=", k))
+    t_seq <- seq(min(x), max(x), length.out=100)
+    mt_seq <- knn_regr_fast(x_train, y_train, t_seq, k)
+    lines(t_seq, mt_seq, col=2, lwd=3)
+}
+
+# Mostrar errores
+print(errors)
+```

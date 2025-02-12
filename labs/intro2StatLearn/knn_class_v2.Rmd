@@ -1,0 +1,168 @@
+---
+title: "k-NN for classification"
+subtitle: "Introduction to statistical Learning"
+author: "Pedro Delicado and Alex Sanchez"
+output:
+  html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction
+
+The **k-nearest neighbors (k-NN) classifier** is a non-parametric method used for classification tasks. Given a new observation \( s \), the method assigns it the most frequent class among its \( k \) nearest neighbors in the training set.
+
+Mathematically, the probability estimate of belonging to class 1 at point \( s \) is:
+
+$$
+\hat{P}_1(s) = \frac{1}{k} \sum_{i \in N_k(s)} I(y_i = 1)
+$$
+
+where:
+- \( N_k(s) \) represents the set of \( k \) nearest neighbors of \( s \),
+- \( I(y_i = 1) \) is an indicator function that equals 1 if the observation belongs to class 1 and 0 otherwise.
+
+The predicted class is given by:
+
+$$
+\hat{y}(s) = \arg\max_{c} \hat{P}_c(s)
+$$
+
+where \( \hat{P}_c(s) \) is the estimated probability of class \( c \).
+
+
+In this document we illustrate how the boundaries of the classifer are affected by the tuning parameter $k$.
+
+
+# Loading Data
+
+
+We use a simulated dataset consisting of two-dimensional observations (features `x` and `y`) along with their class labels (BLUE / ORANGE).
+
+```{r}
+df.xy <- read.table(file="2clas2dim.csv", dec=".", sep=";", header = TRUE)
+dim(df.xy)
+df.xy[sample(1:nrow(df.xy),10),]
+```
+Now let's see how Knn works for one point
+
+```{r}
+k <- 40
+s <- 0
+t <- 0
+st <- c(s,t)
+
+# Compute distances between (s,t) and all data points
+d_st_xy <- as.matrix(dist(rbind(st, df.xy[,1:2])))[1, -1]
+
+# Identify the k-th smallest distance
+d_st_xy_k <- sort(d_st_xy, partial=k)[k]
+
+# Identify the indices of the k nearest neighbors
+N_st_k <- unname(which(d_st_xy <= d_st_xy_k))
+
+# Compute probability estimate of class 'ORANGE' at (s,t)
+(pr_1_k_st <- sum(df.xy[N_st_k,3] == 'ORANGE') / k)
+```
+
+This code:
+1. Defines a test point \( (s,t) = (0,0) \).
+2. Computes distances to all training points.
+3. Selects the \( k \) nearest neighbors.
+4. Estimates the probability of class 'ORANGE' at \( (s,t) \).
+
+# Visualization of k-NN Neighborhood
+
+```{r, fig.asp=1}
+plot(df.xy[,1:2], col=df.xy$class, pch=1 + 18 * ((1:200) %in% N_st_k), asp=1)
+points(s, t, pch="*", col=3, cex=3)
+```
+
+This plot:
+
+- Displays the dataset with colors representing different classes.
+- Highlights the selected neighbors of the test point \( (s,t) \).
+
+# Generalizing the k-NN Classifier
+
+The process can be encapsulated in a function.
+
+```{r}
+knn.class <- function(st, xy, group, k=3) {
+  d_st_xy <- as.matrix(dist(rbind(st, xy)))[1, -1]
+  d_st_xy_k <- sort(d_st_xy, partial=k)[k]
+  N_st_k <- unname(which(d_st_xy <= d_st_xy_k))
+  return(sum(group[N_st_k] == 1) / k)  # Probability of class 1
+}
+```
+
+This function:
+- Computes distances between a test point `st` and all training points `xy`.
+- Identifies the \( k \) nearest neighbors.
+- Estimates the probability of the test point belonging to class 1.
+
+# Using the k-NN Classifier
+
+```{r}
+st <- c(0,0)
+group <- as.numeric(df.xy[,3] == 'ORANGE')
+knn.class(st=st, xy=df.xy[,1:2], group=group, k=40)
+```
+
+This code predicts the class probability for \( (0,0) \).
+
+# Creating a Probability Map
+
+```{r}
+s <- t <- seq(-3.5, 3.5, by=.1)
+ns <- length(s)
+nt <- length(t)
+hat_p <- matrix(0, nrow=ns, ncol=nt)
+
+k <- 50
+
+for (i in 1:ns) {
+  for (j in 1:nt) {
+    hat_p[i, j] <- knn.class(st=c(s[i], t[j]), xy=df.xy[,1:2], group=group, k=k)
+  }
+}
+```
+
+This block:
+- Defines a grid of test points in the feature space.
+- Computes class probabilities for each grid point using k-NN.
+
+# Decision Boundary Visualization
+
+```{r, fig.asp=1}
+plot(df.xy[,1], df.xy[,2], col=df.xy[,3], asp=1)
+contour(s, t, hat_p, levels=.5, lwd=2, add=TRUE)
+```
+
+This plot:
+- Shows the decision boundary where the class probability is 0.5.
+
+# Comparison with Logistic Regression
+
+```{r, fig.asp=1}
+# Fit logistic regression model
+glm.class <- glm(group ~ x + y, data=df.xy, family=binomial)
+b012 <- coefficients(glm.class)
+
+# Create a new plot to ensure abline() has a base plot
+plot(df.xy[,1], df.xy[,2], col=df.xy[,3], asp=1, main="Logistic Regression Decision Boundary")
+
+# Add decision boundary line
+abline(a = -b012[1]/b012[3], b = -b012[2]/b012[3], lwd=2, col=6)
+
+```
+
+This fits a logistic regression model and plots its decision boundary for comparison.
+
+# K-NN classifier is also a flexible classifier
+
+ We observe that:
+- **k-NN produces a flexible decision boundary**, adapting to the local structure of the data.
+- **Larger \( k \) values create smoother boundaries**, reducing variance.
+- **Logistic regression assumes a linear boundary**, which may not be suitable for non-linear patterns.
+

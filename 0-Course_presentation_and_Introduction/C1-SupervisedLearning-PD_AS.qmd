@@ -1,0 +1,634 @@
+---
+title: "Statistical Learning"
+subtitle: "Chapter 1. Overview of Supervised learning"
+author: "Pedro Delicado and Alex Sanchez"
+institute: "UPC & UB"
+format: 
+  beamer:
+    aspectratio: 43
+    navigation: horizontal
+    # theme: AnnArbor
+    # colortheme: lily
+    theme: Madrid
+    colortheme: default
+    incremental: false
+    slide-level: 2
+    section-titles: false
+    css: "css4CU.css"
+    includes:
+      in-header: "myheader.tex"
+bibliography: "StatisticalLearning.bib"
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+## Outline
+
+1.  Supervised and Unsupervised learning
+
+2.  Statistical Decision Theory
+
+3.  Regression Problems
+
+4.  Classification problems
+
+# Supervised and unsupervised learning
+
+## Supervised Learning (the prediction problem)
+
+-   Let $(X, Y)$ be a r.v. with support
+    $\mathcal{X} \times \mathcal{Y} \subseteq \mathbb{R}^{p} \times \mathbb{R}$.
+
+-   General supervised learning or prediction problem:
+
+    -   Training sample:
+        $S=\left\{\left(\boldsymbol{x}_{1}, y_{1}\right), \ldots,\left(\boldsymbol{x}_{n}, y_{n}\right)\right\}$,
+        i.i.d. from $(\boldsymbol{X}, Y)$.
+
+    -   The goal is to define a function (possibly depending on the
+        sample) $h_{S}: \mathcal{X} \mapsto \mathcal{Y}$ such that for a
+        new independent observation $(\boldsymbol{x}_{n+1}, y_{n+1})$ ,
+        from which we only know $\boldsymbol{x}_{n+1}$, it happens that:
+        $$
+        \hat{y}_{n+1}=h_{S}\left(x_{n+1}\right) \text { is close to } y_{n+1} \text { (in some sense). }
+        $$
+
+-   Function $h_{S}$ is called generically a *prediction function*. (or
+    classification function or regression function, depending on the
+    case).
+
+## Classification and Regression problems
+
+The prediction function $h_{S}$ is said to describe a *classification*
+or a *regression* problem depending on the case.
+
+-   If $\mathcal{Y} \subseteq \mathbb{R}$ (or $\mathcal{Y}$ an interval)
+    we have a standard *regression problem*.
+
+    -   Example: *Relating Salary and demographic variables*
+
+-   If $\mathcal{Y}=\{0,1\}$ (or, also, $\mathcal{Y}=\{-1,1\}$ ) we have
+    a problem of *binary classification* or discrimination.
+
+    -   Example: *Predicting if a COVID patient will require (or not)
+        ICU*
+
+-   If $\mathcal{Y}=\{1, \ldots, K\}$ (or
+    $\left.\mathcal{Y}=\left\{\boldsymbol{y} \in\{0,1\}^{K}: \sum_{k=1}^{K} y_{k}=1\right\}\right)$
+    we face a of $K$ classes classification problem.
+
+    -   Example: *Classifying a tumor into one of many types*
+
+## Supervised learning
+
+-   Probabilistic model for supervised learning
+
+    -   Response variable $Y$.
+
+    -   Explanatory variables (features)
+        $\boldsymbol{X}=\left(X_{1}, \ldots, X_{p}\right)$.
+
+    -   Data
+        $\left(\boldsymbol{x}_{i}=\left(x_{i 1}, \ldots, x_{i p}\right), y_{i}\right), i=1, \ldots, n$
+        i.i.d. from the random variable $$
+        \left(\boldsymbol{X}=\left(X_{1}, \ldots, X_{p}\right), Y\right) \sim \operatorname{Pr}(\boldsymbol{X}, Y)
+        $$
+
+-   $\operatorname{Pr}(\boldsymbol{X}, \boldsymbol{Y})$ denotes the
+    joint distribution of $\boldsymbol{X}$ and $Y$.
+
+    -   When this joint distribution is continuous,
+        $\operatorname{Pr}(\boldsymbol{X}, Y)$ is the joint probability
+        density function.
+
+------------------------------------------------------------------------
+
+-   Main interest is *predicting* $Y$ from $\boldsymbol{X}$.
+
+-   Given the probabilistic model it can be re-stated as *learning the
+    conditional distribution*
+    $\operatorname{Pr}(Y \mid \boldsymbol{X})$.
+
+-   In practice we focus on *learning a conditional location parameter*:
+    $$
+    \mu(\boldsymbol{x})=\underset{\mu}{\operatorname{argmin}} \mathbb{E}(L(Y, \mu) \mid \boldsymbol{X}=\boldsymbol{x}),
+    $$ where $L(y, \hat{y})$, loss function, measures the error of
+    predicting $y$ with $\hat{y}$.
+
+-   For quadratic loss, $L(y, \hat{y})=(y-\hat{y})^{2}, \mu(x)$ is the
+    regression function: $$
+    \mu(\boldsymbol{x})=\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x})
+    $$
+
+## Unsupervised learning
+
+-   It aims at learning relationships and structure from the observed
+    data.
+
+-   Probabilistic model:
+
+    -   Variables of interest:
+        $\boldsymbol{X}=\left(X_{1}, \ldots, X_{p}\right)$.
+    -   Data
+        $\boldsymbol{x}_{i}=\left(x_{i 1}, \ldots, x_{i p}\right), i=1, \ldots, n$
+        i.i.d. from the random variable $$
+        \boldsymbol{X}=\left(X_{1}, \ldots, X_{p}\right) \sim \operatorname{Pr}(\boldsymbol{X}) .
+        $$
+
+-   $\operatorname{Pr}(\boldsymbol{X})$ denotes the probability
+    distribution of $\boldsymbol{X}$.
+
+    -   If $X$ is continuous, $\operatorname{Pr}(\boldsymbol{X})$ is the
+        probability density function of $\boldsymbol{X}$.
+
+-   Main interest: To infer properties of
+    $\operatorname{Pr}(\boldsymbol{X})$.
+
+# Specific problems in unsupervised learning:
+
+-   Estimating directly the density function
+    $\operatorname{Pr}(\boldsymbol{x})$ :
+
+    -   Density estimation (histogram, kernel densities, Gaussian MM)
+
+-   Detecting homogeneous subpopulations $C_{1}, \ldots, C_{k}$ s.t.:
+    $\operatorname{Pr}(x)=\sum_{j=1}^{k}\alpha_{j} \operatorname{Pr}\left(x \mid C_{j}\right)$,
+    $\alpha_{j} \geq 0$, $\sum_{j} \alpha_{j}=1.$
+
+    -   Clustering (hierarchical clustering, $k$-means, ...)
+
+-   Finding low-dimensional hyper-planes or hyper-surfaces (manifolds)
+    in $\mathbb{R}^{p}$ around which the probability
+    $\operatorname{Pr}(\boldsymbol{x})$ is concentrated.
+
+    -   Dimensionality reduction (PCA, MDS, Manifold learning ...)
+
+-   Proposing generative probabilistic models for $\boldsymbol{X}$,
+    depending on low-dimensional unobservable random variables
+    $\boldsymbol{F}$.
+
+    -   Extraction of latent variables (Factor Analysis, ...)
+
+# Statistical Decision Theory
+
+## Statistical Decision Theory
+
+-   The *prediction problem* can be written as a *decision problem*
+    which can be casted in the setting of *Statistical Decision Theory*.
+
+-   Let $(\boldsymbol{X}, Y)$ be a r.v. with support
+    $\mathcal{X} \times \mathcal{Y} \subseteq \mathbb{R}^{p} \times \mathbb{R}$.
+
+-   Prediction problem: To look for a prediction function
+    $h: \mathcal{X} \mapsto \mathcal{Y}$ such that $h(\boldsymbol{X})$
+    is close to $Y$ in some sense.
+
+-   The (lack of) closeness between $h(\boldsymbol{X})$ and $Y$ is
+    usually measured by a loss function $L(Y, h(\boldsymbol{X}))$.
+
+    -   For instance, the squared error loss is
+        $L(Y, h(\boldsymbol{X}))=(Y-h(\boldsymbol{X}))^{2}$.
+    -   $L(Y, h(X))$ is a r.v., with expected value
+        $\operatorname{EL}(h)=\mathbb{E}(L(Y, h(X)))$, called expected
+        loss, that only depends on $h$.
+
+-   Decision problem: To find the prediction function
+    $h: \mathcal{X} \mapsto \mathcal{Y}$ that minimizes the expected
+    loss.
+
+## Bayes rule
+
+-   Denote by
+    $\operatorname{Pr}_{(\boldsymbol{X}, \boldsymbol{Y})}(\boldsymbol{x}, \boldsymbol{y})$
+    the joint probability distribution of
+    $(\boldsymbol{X}, \boldsymbol{Y})$.
+
+-   Observe that, for any $h: \mathcal{X} \mapsto \mathcal{Y}$ a lower
+    bound for $\mathrm{EL}(h)$ can be set as follows: $$
+    \begin{aligned}
+    \mathrm{EL}(h) &= \mathbb{E}(L(Y, h(\boldsymbol{X}))) \\
+    &= \int_{\mathcal{X} \times \mathcal{Y}} L(y, h(\boldsymbol{x})) \, d \operatorname{Pr}_{(\boldsymbol{X}, \boldsymbol{Y})}(\boldsymbol{x}, \boldsymbol{y}) \\
+    &= \int_{\mathcal{X}} \left(\int_{\mathcal{Y}} L(y, h(\boldsymbol{x})) \, d \operatorname{Pr}_{\boldsymbol{Y} \mid \boldsymbol{X}=\boldsymbol{x}}(\boldsymbol{y}) \right) d \operatorname{Pr}_{\boldsymbol{X}}(\boldsymbol{x}) \\
+    &= \int_{\mathcal{X}} \mathbb{E}(L(Y, h(\boldsymbol{x})) \mid \boldsymbol{X}=\boldsymbol{x}) \, d \operatorname{Pr}_{\boldsymbol{X}}(\boldsymbol{x}) \\
+    &\geq \int_{\mathcal{X}} \min _{y \in \mathcal{Y}} \mathbb{E}(L(Y, y) \mid \boldsymbol{X}=\boldsymbol{x}) \, d \operatorname{Pr}_{\boldsymbol{X}}(\boldsymbol{x}) \\
+    &= \mathrm{EL}\left(h_{B}\right).
+    \end{aligned}
+    $$
+
+------------------------------------------------------------------------
+
+-   From the previous bound:
+    $\mathrm{EL}(h) \geq \mathrm{EL}\left(h_{B}\right),$ it follows
+    that, given a loss function $L(y, h(\boldsymbol{x}))$ no prediction
+    function can be better than the Bayes rule, or equivalently, that
+-   The optimal prediction function is the Bayes rule or Bayes
+    classifier defined as: $$
+    h_{B}(\boldsymbol{x})=\arg \min _{y \in \mathcal{Y}} \mathbb{E}(L(Y, y) \mid \boldsymbol{X}=\boldsymbol{x}) .
+    $$
+
+# The regression problem
+
+## The regression problem
+
+-   Let $(\boldsymbol{X}, Y)$ be a $(p+1)$-dimensional random variable,
+    with $Y \in \mathbb{R}$.
+
+-   The regression problem: To predict $Y$ from known values of
+    $\boldsymbol{X}$.
+
+-   The most common (and convenient) approach is to adopt as loss
+    function is the *squared error loss:*
+    $L(Y, h(\boldsymbol{X}))=(Y-h(\boldsymbol{X}))^{2}$ .
+
+-   Expected loss known as *Prediction Mean Squared Error, (PMSE)*: $$
+    \operatorname{PMSE}(h)=\mathbb{E}\left((Y-h(\boldsymbol{X}))^{2}\right) .
+    $$
+
+-   The Bayes rule in this case is $$
+    h_{B}(\boldsymbol{x})=\arg \min _{y \in \mathcal{Y}} \mathbb{E}\left((Y-y)^{2} \mid \boldsymbol{X}=\boldsymbol{x}\right) .
+    $$
+
+------------------------------------------------------------------------
+
+-   Observe that, for any $y \in \mathcal{Y}$ one can decompose the
+    conditional expectation of the squared deviation between $Y$ and
+    $yh$ given $X=x$,
+    $\mathbb{E}\left((Y-y)^{2} \mid \boldsymbol{X}=\boldsymbol{x}\right)$
+    in such a way that:
+
+$$
+\begin{aligned}
+& \mathbb{E}\left((Y-y)^{2} \mid \boldsymbol{X}=\boldsymbol{x}\right) = \\
+ & = \mathbb{E}\left(((Y-\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x}))+(\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x})-\boldsymbol{y}))^{2} \mid \boldsymbol{X}=\boldsymbol{x}\right) \\
+& = \mathbb{E}\left((Y-\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x}))^{2} \mid \boldsymbol{X}=\boldsymbol{x}\right)+\underbrace{(\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x})-\boldsymbol{y}))^{2}}_{\geq 0} \\
+& +2(\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x})-y) \mathbb{E}(Y-\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x}) \mid \boldsymbol{X}=\boldsymbol{x}) \\
+& \geq \mathbb{E}\left((Y-\underbrace{\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x})}_{h_B(x)})^{2} \mid \boldsymbol{X}=\boldsymbol{x}\right)
+\end{aligned}
+$$
+
+------------------------------------------------------------------------
+
+## Optimal predictor in regression
+
+-   From the previous development it yields that, for regression
+    problems, the Bayes rule is the conditional expectation of $Y$ given
+    $\boldsymbol{X}=\boldsymbol{x}$,
+
+$$
+h_{B}(x)=\mathbb{E}(Y \mid X=x),
+$$
+
+-   It is also known as regression function of $Y$ over $x$ and is
+    usually denoted by
+
+$$
+m(\boldsymbol{x})=\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x}) .
+$$
+
+## Parametric regression
+
+-   Parametric regression models assume that $m(x)$ is known except for
+    a finite number of unknown parameters,
+
+$$
+m(x) \equiv m(x ; \theta), \theta \in \Theta \subseteq \mathbb{R}^{q},
+$$
+
+-   For instance, the multiple linear regression model postulates that
+    $m(\boldsymbol{x})=\beta_{0}+\boldsymbol{x}^{\boldsymbol{\top}} \boldsymbol{\beta}_{1}$,
+    with unknown parameters
+    $\beta_{0} \in \mathbb{R}, \boldsymbol{\beta}_{1} \in \mathbb{R}^{\boldsymbol{p}}$.
+
+-   A training sample,
+    $S=\left\{\left(x_{1}, y_{1}\right), \ldots,\left(x_{n}, y_{n}\right)\right\}$,
+    i.i.d. from $(\boldsymbol{X}, Y)$, is used to estimate the parameter
+    $\theta$.
+
+-   In this case
+    $h_{S}(\boldsymbol{x})=m(\boldsymbol{x} ; \hat{\theta})$, where
+    $\hat{\theta}=\hat{\theta}(S)$ is the estimation of $\theta$ from
+    sample $S$.
+
+## Least squares estimation
+
+-   A usual way to estimate $\theta$ in parametric models is by least
+    squares: $$
+    \hat{\theta}=\arg \min _{\theta \in \Theta} \sum_{i=1}^{n}\left(y_{i}-m\left(\boldsymbol{x}_{i} ; \theta\right)\right)^{2}
+    $$
+
+-   The regression function $m(\boldsymbol{x})$ is linear in
+    $\boldsymbol{x}$.
+
+-   It can be shown that, independently of the distributions,
+    $\hat{\theta}$ is the Best Linear Unbiased Estimator (BLUE) of
+    $\theta$.
+
+-   Assuming joint normality for $X$ and $Y$ the LS-estimator is
+    equivalent to the maximum likelihood estimator of $\theta$
+
+-   In this case, the model is $Y=m(\boldsymbol{X})+\varepsilon$, where
+    $\varepsilon$ is an additive noise normally distributed with zero
+    mean and independent from $\boldsymbol{X}$, also normally
+    distributed.
+
+## Least squares estimation and prediction errors
+
+-   The LS estimator $\hat{\theta}$ minimizes the prediction error, RSS,
+    in the training sample.
+
+-   That is, the Residual Sum of Squares,\
+    $$
+    \operatorname{RSS}(\theta)=\sum_{i=1}^{n}\left(y_{i}-m\left(\boldsymbol{x}_{i} ; \theta\right)\right)^{2},
+    $$ takes its minimum value when $\theta=\hat \theta$ $$
+      \overline{\mathrm{err}}=\operatorname{RSS}(\hat{\theta})=\sum_{i=1}^{n}\left(y_{i}-m\left(x_{i} ; \hat{\theta}\right)\right)^{2}
+    $$
+
+## Different types of prediction error
+
+-   $\operatorname{RSS}(\theta)$ is the *prediction error* a theoretical
+    quantity, based on the training sample, that needs to be estimated.
+
+-   $\overline{\text{err}}$, known as the *training error* or the
+    *apparent error*, is an approximation to
+    $\operatorname{RSS}(\theta)$.
+
+-   We are interested in the error associated when predicting a new
+    observation, that is the Prediction Mean Squared Error (PMSE) $$
+      \operatorname{PMSE}(\theta)=\mathbb{E}\left(\left(Y_{n+1}-m\left(\boldsymbol{x}_{i} ; \theta\right)\right)^{2}\right),
+    $$
+
+-   $\overline{\text { err }}$ is an optimistic estimation of the in an
+    observation of $\left(\boldsymbol{X}_{n+1}, Y_{n+1}\right)$
+    independent from the training sample,
+
+## $\overline{\text { err }}$ and PMSE are not the same
+
+-   In some cases such as in linear regression
+    $\overline{\operatorname{err}}$ is a good approximation to
+    $\min _{\theta \in \mathbb{R}^{q}} \operatorname{PMSE}(\theta)$
+
+-   But, when the parametric family
+    $m(\boldsymbol{x} ; \theta), \theta \in \Theta \subseteq \mathbb{R}^{q}$,
+    is too flexible: $$
+    \overline{\operatorname{err}}<\operatorname{PMSE}(\hat{\theta}) \neq \min _{\theta \in \mathbb{R}^{q}} \operatorname{PMSE}(\theta)
+    $$
+
+-   This is the case in non-parametric regression and in many machine
+    learning algorithms. (Example: $k$-nearest neighbors regression,
+    where the tuning parameter is $k$ ).
+
+-   We will talk later in the course about cross-validation and tuning
+    parameters.
+
+## k nearest-neighbors regression
+
+-   K-NN is a flexible approach to regression or classification that,
+    instead of relying on a *global model* based on all observations
+    models each observation locally based on its *nearest neighbors*.
+
+-   The $k$ nearest-neighbor estimator of
+    $m(\boldsymbol{t})=E(Y \mid \boldsymbol{X}=\boldsymbol{t})$ is: $$
+      \hat{m}(\boldsymbol{t})=\frac{1}{\left|N_{k}(\boldsymbol{t})\right|} \sum_{i \in N_{k}(\boldsymbol{t})} y_{i},
+    $$ where $N_{k}(\boldsymbol{t})$ is the neighborhood of
+    $\boldsymbol{t}$ defined by the $k$ closest points
+    $\boldsymbol{x}_{i}$ in the training sample.
+
+-   Closeness is defined according to a previously chosen distance
+    measure $d(\boldsymbol{t}, \boldsymbol{x})$, for instance, the
+    Euclidean distance.
+
+## K-NN is flexible or way too flexible
+
+-   K-NN regression is is a great real-world example of how model
+    flexibility impacts training error vs. prediction error:
+
+    -   When $k$=1 the model memorizes training data, leading to zero
+        training error.
+
+    -   However, for a new test observation, predictions are **highly
+        unstable** (high variance):
+        $\operatorname{PMSE}(\hat{\theta}) \gg \overline{\operatorname{err}}$.
+
+    -   As $k$ increases, the model becomes less flexible, reducing
+        variance but increasing bias.
+
+    -   The optimal $k$ balances both, minimizing PMSE
+
+-   **Conclusion:** Overly flexible models, like small $k$ in $k$-NN,
+    cause **training error to be misleading**.
+
+## Practice session
+
+-   The R notebook `knn_regr.Rmd` illustrates the advantages and
+    drawbacks of K-NN regression using R.
+
+-   Run along it and experiment with different settings.
+
+# The classification problem
+
+## The classification problem
+
+-   Let $(\boldsymbol{X}, Y)$ be a r.v. with support
+    $\mathcal{X} \times \mathcal{Y} \subseteq \mathbb{R}^{p} \times\{1, \ldots, K\}$.
+
+-   We want to predict $Y$ from observed values of $\boldsymbol{X}$.
+
+-   The loss function in this case can be represented by a $K \times K$
+    matrix $\boldsymbol{L}$, that will be zero on the diagonal and
+    nonnegative elsewhere.
+
+    -   The element $(j, k)$ of $\boldsymbol{L}$ is $L(j, k)$ : the
+        price paid for classifying in class $k$ an observation belonging
+        to class $j$.
+
+## The zero-one loss function
+
+-   A common loss function for classification is the zero-one loss
+    function is used, where *all misclassifications are charged a single
+    unit*.
+-   With the 0-1 loss function the Bayes rule is $$
+    \begin{aligned}
+    h_{B}(\boldsymbol{x}) &= \arg \min _{y \in \mathcal{Y}} \mathbb{E}\left(L_{0-1}(Y, y) \mid \boldsymbol{X}=\boldsymbol{x}\right) \\
+    &= \arg \min _{k \in\{1, \ldots, K\}} \sum_{j=1}^{K} L_{0-1}(j, k) \operatorname{Pr}(Y=j \mid \boldsymbol{X}=\boldsymbol{x}) \\
+    &= \arg \min _{k \in\{1, \ldots, K\}}(1-\operatorname{Pr}(Y=k \mid \boldsymbol{X}=\boldsymbol{x})) \\
+    &= \arg \max _{k \in\{1, \ldots, K\}} \operatorname{Pr}(Y=k \mid \boldsymbol{X}=\boldsymbol{x}).
+    \end{aligned}
+    $$
+-   In this context the Bayes rule is known as the Bayes classifier, and
+    says that we classify to the most probable class, conditional to the
+    observed value $\boldsymbol{x}$ of $\boldsymbol{X}$.
+
+## The problem of binary classification
+
+-   In the binary classification problem: $\mathcal{Y}=\{0,1\}$. Then
+    $(Y \mid \boldsymbol{X}=\boldsymbol{x}) \sim \operatorname{Bernoulli}(p=p(\boldsymbol{x})=\operatorname{Pr}(Y=1 \mid \boldsymbol{X}=\boldsymbol{x})=\mathbb{E}(Y \mid \boldsymbol{X}=\boldsymbol{x}))$.
+
+-   The Bayes classifier is $$
+    h_{B}(x)=\left\{\begin{array}{lll}
+    1 & \text { if } & p(x) \geq 1 / 2 \\
+    0 & \text { if } & p(x)<1 / 2
+    \end{array}\right.
+    $$
+
+-   As $p(x)$ is unknown, we use a training sample to estimate it.
+
+-   Let $\left(x_{1}, y_{1}\right), \ldots,\left(x_{n}, y_{n}\right)$ be
+    $n$ independent realizations of $(X, Y)$.
+
+-   Given an estimation $\hat{p}(\boldsymbol{x})$ of the regression
+    function $p(\boldsymbol{x})$, the estimated version of the Bayes
+    classifier is $$
+    h_{S}\left(x_{n+1}\right)=\left\{\begin{array}{lll}
+    1 & \text { if } & \hat{p}\left(x_{n+1}\right) \geq 1 / 2 \\
+    0 & \text { if } & \hat{p}\left(x_{n+1}\right)<1 / 2
+    \end{array}\right.
+    $$
+
+-   In practice, cut points different from $1 / 2$ can be used.
+
+## Parametric estimation in binary classification
+
+-   In parametric modeling it is assumed that
+    $p(\boldsymbol{x})=\operatorname{Pr}(Y=1 \mid \boldsymbol{X}=\boldsymbol{x})$
+    is known except for a finite number of unknown parameters, $$
+    p(x) \equiv p(x ; \theta), \theta \in \Theta \subseteq \mathbb{R}^{q} .
+    $$
+
+-   The likelihood and log-likelihood are,  respectively: 
+$$
+\begin{aligned}
+    L(\theta)=& \prod_{i=1}^{n} \operatorname{Pr}\left(Y_{i}=y_{i} \mid \boldsymbol{X}_{i}=\boldsymbol{x}_{i}\right)=\prod_{i=1}^{n} p\left(\boldsymbol{x}_{i} ; \theta\right)^{y_{i}}\left(1-p\left(\boldsymbol{x}_{i} ; \theta\right)\right)^{1-y_{i}}, \\
+\ell(\theta)= & \log L(\theta)=\sum_{i=1}^{n}\left(y_{i} \log p\left(\boldsymbol{x}_{i} ; \theta\right)+\left(1-y_{i}\right) \log \left(1-p\left(\boldsymbol{x}_{i} ; \theta\right)\right)\right) .
+\end{aligned}
+$$
+-   Let $\hat{\theta}=\arg \max _{\theta \in \Theta} \ell(\theta)$ be
+    the maximum likelihood estimator of $\theta$.
+
+-   Then $\hat{p}(\boldsymbol{x})=p(\boldsymbol{x} ; \hat{\theta})$ is
+    used to define the classification rule.
+
+## Other optimization criteria for binary classification
+
+-   Maximum likelihood is not the only possibility for estimating
+    $\theta$ in $p(x ; \theta)$.
+-   Alternatives:
+    -   Minimization of the misclassification error: $$
+        \hat{\theta}_{\text {Miss }}=\arg \min _{\theta \in \Theta} \sum_{i=1}^{n}\left(y_{i}-\mathbb{I}\left\{p\left(\boldsymbol{x}_{i} ; \theta\right) \geq 0.5\right\}\right)^{2} .
+        $$
+    -   Least squares estimation:
+        $\hat{\theta}_{L S}=\arg \min _{\theta \in \Theta} \sum_{i=1}^{n}\left(y_{i}-p\left(\boldsymbol{x}_{i} ; \theta\right)\right)^{2}$.
+    -   Least absolute deviation:
+        $\hat{\theta}_{L A D}=\arg \min _{\theta \in \Theta} \sum_{i=1}^{n}\left|y_{i}-p\left(\boldsymbol{x}_{i} ; \theta\right)\right|$.
+    -   Penalized version of these criteria, when the statistical model
+        $p(\boldsymbol{x} ; \theta), \theta \in \mathbb{R}^{q}$, is too flexible. 
+
+## k-Nearest Neighbors (k-NN) for classification
+
+**k-Nearest Neighbors (k-NN) is a simple and effective classification method.**
+
+It relies on the idea that similar instances should belong to the same
+class.
+
+-   Given a training set ($\mathcal{T}$) with labeled instances $(x_i, y_i)$,
+
+-   To classify a new instance $x$, we:
+
+    1.  Find the $k$ closest points $x_i$ to $x$.
+    
+    2.  Take the *majority vote$ of their corresponding labels $y_i$.
+
+The decision boundary of k-NN is **nonlinear** and **flexible**, adapting to local patterns in the data.
+
+
+## k-NN Classification Model
+
+The prediction for a new point (x) is given by:
+
+$$ 
+\widehat{Y}(x) = \frac{1}{k} \sum_{x_i \in N_k(x)} y_i 
+$$
+
+where: 
+
+- $N_k(x)$ is the set of the $k$ nearest neighbors of $x$. 
+- $y_i$ are the corresponding labels (0 or 1 in binary classification).
+- Closeness is typically measured using **Euclidean distance**.
+
+For classification: 
+
+- If $\hat{Y}(x) > 0.5$, classify as **Class 1**.
+
+- Otherwise, classify as **Class 0**.
+
+
+## Decision Boundaries - Linear Regression vs. k-NN
+
+```{r, fig.align='center', out.width="50%"}
+knitr::include_graphics("images/clipboard-1291773372.png")
+```
+
+-   Linear regression fits a straight line decision boundary: ( $x^T \hat{\beta} = 0.5$ ).
+-   Misclassifications occur because it assumes a **linear separation**.
+-   It does not capture **local structures** in the data.
+
+
+## k-NN Decision Boundaries
+
+```{r, fig.align='center', out.width="50%"}
+knitr::include_graphics("images/clipboard-3280795389.png")
+```
+
+
+-   Uses a **majority vote** among the 15 closest neighbors.
+-   The decision boundary is much more **flexible** than linear
+    regression.
+-   Adapts to **local clusters** of data.
+
+
+## k-NN with k=1
+
+```{r, fig.align='center', out.width="50%"}
+knitr::include_graphics("images/clipboard-2454506001.png")
+```
+
+-   1-NN assigns the label of the **single closest**     training point.
+-   Each point belongs to the nearest neighbor’s class: **Voronoi tessellation**.
+-   Decision boundary is **highly irregular** and sensitive to  noise.
+
+## Choosing k in k-NN
+
+- The parameter $k$ in K-NN reflects its flexibility
+  -  $k$=1 leads to **overfitting**, that is, perfect accuracy on training but poor  generalization.
+
+  -   Larger $k$ smooths the decision boundary but might **lose fine details**.
+
+- **Trade-offs:** 
+
+  - Small (k) : **low bias, high variance**. 
+  
+  - Large (k) : **high bias, low variance**.
+  
+  -   **Optimal k** is chosen via  cross-validation (later in the course) that aims at balancing the former error measures.
+
+## Summary
+
+-   k-NN is **flexible** and works well for complex decision boundaries.
+-   It is **non-parametric** and **data-driven**.
+-   The choice of (k) is critical for **generalization**.
+-   Compared to linear regression, k-NN adapts better to **nonlinear     class distributions**.
+
+## $k$-nn classification, in R
+
+Follow the Rmd files
+
+`SimMixtNorm.Rmd` and `knn_class.Rmd`
+
+## Evaluating a binary classification rule
+
+```{r, fig.align='center', out.width="100%"}
+knitr::include_graphics("images/clipboard-603852654.png")
+```
+
+Source:
+<https://en.wikipedia.org/wiki/Template:Diagnostic_testing_diagram>
