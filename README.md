@@ -2,13 +2,15 @@
 
 # Introduction 
 
-This github repository is intended to provide materials (slides, scripts datasets etc) for the 2nd part of the Statistical Learning course at the [UPC-UB MSc in Statistics and Operations Research (MESIO)](https://mesioupcub.masters.upc.edu/en).
+This github repository is intended to provide materials 
+(slides, scripts datasets etc) for part of the _Statistical Learning_ 
+course at the [UPC-UB MSc in Statistics and Operations Research (MESIO)](https://mesioupcub.masters.upc.edu/en).
 
-A previous version of this repository can be found at <https://github.com/ASPteaching/introstatlearning>, but I have decided to re-create it because the repository had become to heavy due to caches and git savings that I don't know how to clean.
+This part of the course has an introduction and two blocks, each with two parts.
 
-The (second part of the course) has two blocks, each with two parts.
+0. Introduction
 
-1.  Tree based methods
+1. Tree based methods
 
     1.1 Decision trees
 
@@ -24,14 +26,21 @@ The (second part of the course) has two blocks, each with two parts.
 
 All class materials are available from the repository [https://aspteaching.github.io/Introduction2StatisticalLearning/](https://aspteaching.github.io/Introduction2StatisticalLearning/).
 
-In this page you will find links to the html version of the slides and other documents, as well as to datasets or references and resources documents
+In this page you will find links to the html/pdf version of the slides and other documents, as well as to datasets or references and resources documents
 
--   [Course presentation](https://aspteaching.github.io/Introduction2StatisticalLearning/StatisticalLearning.PartII.html)
+- [Course presentation](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/Course_Presentation-SL.pdf)
+
+## Introduction to Statistical Learning
+
+- [Introduction: Statistics, Machine Learning, Statistical Learning and Data Science](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/C0-Intro2StatLearn-PD-AS.pdf)
+- [Overview of Supervised Learning](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/C1-SupervisedLearning-PD_AS.pdf)
+- [Rlabs](https://github.com/ASPteaching/Introduction2StatisticalLearning/tree/main/labs/intro2StatLearn)
+
+- [Complement: Introduction to biomarkers and diagnostic tests]()
 
 ## Decision Trees
 
 Decision trees are a type of non-parametric classifiers which have been Very successful because of their interpretability, flexibility and a very decent accuracy.
-
 
 -   [Slides](https://aspteaching.github.io/Introduction2StatisticalLearning/1.1-DecisionTrees-Slides.html)
 -   [Notes](https://aspteaching.github.io/Introduction2StatisticalLearning/1.1-DecisionTrees.html)
