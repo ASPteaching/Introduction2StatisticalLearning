@@ -3,24 +3,20 @@ title: "Tree based methods"
 #subtitle: 'From classification and regression trees to ensemble'
 author: "Alex Sanchez, Ferran Reverter and Esteban Vegas"
 institute: "Genetics Microbiology and Statistics Department. University of Barcelona"
-format:
-  revealjs: 
-    incremental: false  
-    # transition: slide
-    # background-transition: fade
-    # transition-speed: slow
-    scrollable: true
-    menu:
-      side: left
-      width: half
-      numbers: true
-    slide-number: c/t
-    show-slide-number: all
-    progress: true
+format: 
+  beamer:
+    aspectratio: 43
+    navigation: horizontal
+    # theme: AnnArbor
+    # colortheme: lily
+    theme: Frankfurt
+    colortheme: default
+    incremental: false
+    slide-level: 2
+    section-titles: false
     css: "css4CU.css"
-    theme: sky
-    embed-resources: false
-#    suppress-bibliography: true
+    includes:
+      in-header: "myheader.tex"
 bibliography: "StatisticalLearning.bib"
 editor_options: 
   chunk_output_type: console
@@ -739,7 +735,6 @@ R(T)=\sum_{t \in \tilde{T}} R(t)
 $$
 
 
-
 ## Example 2: Individual prediction
 
 Consider individuals 521 and 562
@@ -771,8 +766,6 @@ mean(predicted.classes == PimaIndiansDiabetes2$diabetes)
     the best possible tree*.
 
 -   In order to answer this question we must study tree construction in more detail.
-
-
 
 
 # Obtaining best trees

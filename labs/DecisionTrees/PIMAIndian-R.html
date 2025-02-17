@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2025-02-17">
 
-<title>Decision Trees Lab 0</title>
+<title>Decision Trees Lab</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,16 +58,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="PIMAIndian_files/libs/clipboard/clipboard.min.js"></script>
-<script src="PIMAIndian_files/libs/quarto-html/quarto.js"></script>
-<script src="PIMAIndian_files/libs/quarto-html/popper.min.js"></script>
-<script src="PIMAIndian_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="PIMAIndian_files/libs/quarto-html/anchor.min.js"></script>
-<link href="PIMAIndian_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="PIMAIndian_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="PIMAIndian_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="PIMAIndian_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="PIMAIndian_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="PIMAIndian-R_files/libs/clipboard/clipboard.min.js"></script>
+<script src="PIMAIndian-R_files/libs/quarto-html/quarto.js"></script>
+<script src="PIMAIndian-R_files/libs/quarto-html/popper.min.js"></script>
+<script src="PIMAIndian-R_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="PIMAIndian-R_files/libs/quarto-html/anchor.min.js"></script>
+<link href="PIMAIndian-R_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="PIMAIndian-R_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="PIMAIndian-R_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="PIMAIndian-R_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="PIMAIndian-R_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -80,20 +80,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#introductory-example" id="toc-introductory-example" class="nav-link active" data-scroll-target="#introductory-example">Introductory example</a>
+  <li><a href="#pima-indians-diabetes-dataset" id="toc-pima-indians-diabetes-dataset" class="nav-link active" data-scroll-target="#pima-indians-diabetes-dataset"><strong>Pima Indians Diabetes Dataset</strong></a>
   <ul class="collapse">
-  <li><a href="#the-pima-indians-dataset" id="toc-the-pima-indians-dataset" class="nav-link" data-scroll-target="#the-pima-indians-dataset">The Pima Indians dataset</a></li>
-  <li><a href="#building-a-classification-tree" id="toc-building-a-classification-tree" class="nav-link" data-scroll-target="#building-a-classification-tree">Building a classification tree</a></li>
+  <li><a href="#exploración-de-datos" id="toc-exploración-de-datos" class="nav-link" data-scroll-target="#exploración-de-datos">Exploración de Datos</a></li>
+  </ul></li>
+  <li><a href="#construcción-del-árbol-de-clasificación" id="toc-construcción-del-árbol-de-clasificación" class="nav-link" data-scroll-target="#construcción-del-árbol-de-clasificación"><strong>Construcción del Árbol de Clasificación</strong></a>
+  <ul class="collapse">
+  <li><a href="#división-en-datos-de-entrenamiento-y-prueba" id="toc-división-en-datos-de-entrenamiento-y-prueba" class="nav-link" data-scroll-target="#división-en-datos-de-entrenamiento-y-prueba">División en datos de entrenamiento y prueba</a></li>
+  <li><a href="#entrenamiento-del-modelo" id="toc-entrenamiento-del-modelo" class="nav-link" data-scroll-target="#entrenamiento-del-modelo">Entrenamiento del Modelo</a></li>
+  <li><a href="#visualización-del-árbol" id="toc-visualización-del-árbol" class="nav-link" data-scroll-target="#visualización-del-árbol">Visualización del Árbol</a></li>
+  <li><a href="#evaluación-del-modelo" id="toc-evaluación-del-modelo" class="nav-link" data-scroll-target="#evaluación-del-modelo">Evaluación del Modelo</a></li>
   </ul></li>
   </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="PIMAIndian.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="PIMAIndian-R.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Decision Trees Lab 0</h1>
-<p class="subtitle lead">PIMA indians example</p>
+<h1 class="title">Decision Trees Lab</h1>
+<p class="subtitle lead">PIMA Indians Example</p>
 </div>
 
 
@@ -103,7 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Adapted by EVL, FRC and ASP </p>
+             <p>Adapted by EVL, FRC, and ASP </p>
           </div>
   </div>
     
@@ -122,55 +128,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="introductory-example" class="level1">
-<h1>Introductory example</h1>
-<section id="the-pima-indians-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="the-pima-indians-dataset">The Pima Indians dataset</h2>
-<p>The Pima Indian Diabetes data set (<code>PimaIndiansDiabetes2</code>) is available in the <code>mlbench</code> package.</p>
+<section id="pima-indians-diabetes-dataset" class="level1">
+<h1><strong>Pima Indians Diabetes Dataset</strong></h1>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"PimaIndiansDiabetes2"</span>, <span class="at">package =</span> <span class="st">"mlbench"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"PimaIndiansDiabetes2"</span>, <span class="at">package =</span> <span class="st">"mlbench"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar valores NA si los hay</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>PimaIndiansDiabetes2 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(PimaIndiansDiabetes2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>The data contains 768 individuals (female) and 9 clinical variables for predicting the probability of individuals in being diabete-positive or negative:</p>
-<ul>
-<li>pregnant: number of times pregnant</li>
-<li>glucose: plasma glucose concentration</li>
-<li>pressure: diastolic blood pressure (mm Hg)</li>
-<li>triceps: triceps skin fold thickness (mm)</li>
-<li>insulin: 2-Hour serum insulin (mu U/ml)</li>
-<li>mass: body mass index (weight in kg/(height in m)^2)</li>
-<li>pedigree: diabetes pedigree function</li>
-<li>age: age (years)</li>
-<li>diabetes: class variable</li>
-</ul>
+<section id="exploración-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="exploración-de-datos">Exploración de Datos</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(PimaIndiansDiabetes2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 768
+<pre><code>Rows: 392
 Columns: 9
-$ pregnant &lt;dbl&gt; 6, 1, 8, 1, 0, 5, 3, 10, 2, 8, 4, 10, 10, 1, 5, 7, 0, 7, 1, 1…
-$ glucose  &lt;dbl&gt; 148, 85, 183, 89, 137, 116, 78, 115, 197, 125, 110, 168, 139,…
-$ pressure &lt;dbl&gt; 72, 66, 64, 66, 40, 74, 50, NA, 70, 96, 92, 74, 80, 60, 72, N…
-$ triceps  &lt;dbl&gt; 35, 29, NA, 23, 35, NA, 32, NA, 45, NA, NA, NA, NA, 23, 19, N…
-$ insulin  &lt;dbl&gt; NA, NA, NA, 94, 168, NA, 88, NA, 543, NA, NA, NA, NA, 846, 17…
-$ mass     &lt;dbl&gt; 33.6, 26.6, 23.3, 28.1, 43.1, 25.6, 31.0, 35.3, 30.5, NA, 37.…
-$ pedigree &lt;dbl&gt; 0.627, 0.351, 0.672, 0.167, 2.288, 0.201, 0.248, 0.134, 0.158…
-$ age      &lt;dbl&gt; 50, 31, 32, 21, 33, 30, 26, 29, 53, 54, 30, 34, 57, 59, 51, 3…
-$ diabetes &lt;fct&gt; pos, neg, pos, neg, pos, neg, pos, neg, pos, pos, neg, pos, n…</code></pre>
+$ pregnant &lt;dbl&gt; 1, 0, 3, 2, 1, 5, 0, 1, 1, 3, 11, 10, 1, 13, 3, 3, 4, 4, 3, 9…
+$ glucose  &lt;dbl&gt; 89, 137, 78, 197, 189, 166, 118, 103, 115, 126, 143, 125, 97,…
+$ pressure &lt;dbl&gt; 66, 40, 50, 70, 60, 72, 84, 30, 70, 88, 94, 70, 66, 82, 76, 5…
+$ triceps  &lt;dbl&gt; 23, 35, 32, 45, 23, 19, 47, 38, 30, 41, 33, 26, 15, 19, 36, 1…
+$ insulin  &lt;dbl&gt; 94, 168, 88, 543, 846, 175, 230, 83, 96, 235, 146, 115, 140, …
+$ mass     &lt;dbl&gt; 28.1, 43.1, 31.0, 30.5, 30.1, 25.8, 45.8, 43.3, 34.6, 39.3, 3…
+$ pedigree &lt;dbl&gt; 0.167, 2.288, 0.248, 0.158, 0.398, 0.587, 0.551, 0.183, 0.529…
+$ age      &lt;dbl&gt; 21, 33, 26, 53, 59, 51, 31, 33, 32, 27, 51, 41, 22, 57, 28, 2…
+$ diabetes &lt;fct&gt; neg, pos, pos, pos, pos, pos, pos, neg, pos, neg, pos, pos, n…</code></pre>
 </div>
-</div>
-<p>A typical classification/prediction problem is to build a model that can distinguish and predict diabetes using some or all the variables in the dataset.</p>
-<p>A quick exploration can be done wirh the <code>skimr</code> package:</p>
-<div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(PimaIndiansDiabetes2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(PimaIndiansDiabetes2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -182,7 +172,7 @@ $ diabetes &lt;fct&gt; pos, neg, pos, neg, pos, neg, pos, neg, pos, pos, neg, po
 </tr>
 <tr class="even">
 <td style="text-align: left;">Number of rows</td>
-<td style="text-align: left;">768</td>
+<td style="text-align: left;">392</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
@@ -241,7 +231,7 @@ $ diabetes &lt;fct&gt; pos, neg, pos, neg, pos, neg, pos, neg, pos, pos, neg, po
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: right;">2</td>
-<td style="text-align: left;">neg: 500, pos: 268</td>
+<td style="text-align: left;">neg: 262, pos: 130</td>
 </tr>
 </tbody>
 </table>
@@ -279,241 +269,176 @@ $ diabetes &lt;fct&gt; pos, neg, pos, neg, pos, neg, pos, neg, pos, pos, neg, po
 <tr class="odd">
 <td style="text-align: left;">pregnant</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.85</td>
-<td style="text-align: right;">3.37</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.30</td>
+<td style="text-align: right;">3.21</td>
 <td style="text-align: right;">0.00</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.00</td>
-<td style="text-align: right;">6.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">5.00</td>
 <td style="text-align: right;">17.00</td>
-<td style="text-align: left;">▇▃▂▁▁</td>
+<td style="text-align: left;">▇▂▂▁▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">glucose</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0.99</td>
-<td style="text-align: right;">121.69</td>
-<td style="text-align: right;">30.54</td>
-<td style="text-align: right;">44.00</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">122.63</td>
+<td style="text-align: right;">30.86</td>
+<td style="text-align: right;">56.00</td>
 <td style="text-align: right;">99.00</td>
-<td style="text-align: right;">117.00</td>
-<td style="text-align: right;">141.00</td>
-<td style="text-align: right;">199.00</td>
-<td style="text-align: left;">▁▇▇▃▂</td>
+<td style="text-align: right;">119.00</td>
+<td style="text-align: right;">143.00</td>
+<td style="text-align: right;">198.00</td>
+<td style="text-align: left;">▂▇▇▃▂</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">pressure</td>
-<td style="text-align: right;">35</td>
-<td style="text-align: right;">0.95</td>
-<td style="text-align: right;">72.41</td>
-<td style="text-align: right;">12.38</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">70.66</td>
+<td style="text-align: right;">12.50</td>
 <td style="text-align: right;">24.00</td>
-<td style="text-align: right;">64.00</td>
-<td style="text-align: right;">72.00</td>
-<td style="text-align: right;">80.00</td>
-<td style="text-align: right;">122.00</td>
-<td style="text-align: left;">▁▃▇▂▁</td>
+<td style="text-align: right;">62.00</td>
+<td style="text-align: right;">70.00</td>
+<td style="text-align: right;">78.00</td>
+<td style="text-align: right;">110.00</td>
+<td style="text-align: left;">▁▂▇▆▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">triceps</td>
-<td style="text-align: right;">227</td>
-<td style="text-align: right;">0.70</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">29.15</td>
-<td style="text-align: right;">10.48</td>
+<td style="text-align: right;">10.52</td>
 <td style="text-align: right;">7.00</td>
-<td style="text-align: right;">22.00</td>
+<td style="text-align: right;">21.00</td>
 <td style="text-align: right;">29.00</td>
-<td style="text-align: right;">36.00</td>
-<td style="text-align: right;">99.00</td>
-<td style="text-align: left;">▆▇▁▁▁</td>
+<td style="text-align: right;">37.00</td>
+<td style="text-align: right;">63.00</td>
+<td style="text-align: left;">▅▇▇▃▁</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">insulin</td>
-<td style="text-align: right;">374</td>
-<td style="text-align: right;">0.51</td>
-<td style="text-align: right;">155.55</td>
-<td style="text-align: right;">118.78</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">156.06</td>
+<td style="text-align: right;">118.84</td>
 <td style="text-align: right;">14.00</td>
-<td style="text-align: right;">76.25</td>
-<td style="text-align: right;">125.00</td>
+<td style="text-align: right;">76.75</td>
+<td style="text-align: right;">125.50</td>
 <td style="text-align: right;">190.00</td>
 <td style="text-align: right;">846.00</td>
 <td style="text-align: left;">▇▂▁▁▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mass</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">0.99</td>
-<td style="text-align: right;">32.46</td>
-<td style="text-align: right;">6.92</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">33.09</td>
+<td style="text-align: right;">7.03</td>
 <td style="text-align: right;">18.20</td>
-<td style="text-align: right;">27.50</td>
-<td style="text-align: right;">32.30</td>
-<td style="text-align: right;">36.60</td>
+<td style="text-align: right;">28.40</td>
+<td style="text-align: right;">33.20</td>
+<td style="text-align: right;">37.10</td>
 <td style="text-align: right;">67.10</td>
-<td style="text-align: left;">▅▇▃▁▁</td>
+<td style="text-align: left;">▃▇▃▁▁</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">pedigree</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">0.47</td>
-<td style="text-align: right;">0.33</td>
-<td style="text-align: right;">0.08</td>
-<td style="text-align: right;">0.24</td>
-<td style="text-align: right;">0.37</td>
-<td style="text-align: right;">0.63</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.69</td>
 <td style="text-align: right;">2.42</td>
 <td style="text-align: left;">▇▃▁▁▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">age</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">33.24</td>
-<td style="text-align: right;">11.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">30.86</td>
+<td style="text-align: right;">10.20</td>
 <td style="text-align: right;">21.00</td>
-<td style="text-align: right;">24.00</td>
-<td style="text-align: right;">29.00</td>
-<td style="text-align: right;">41.00</td>
+<td style="text-align: right;">23.00</td>
+<td style="text-align: right;">27.00</td>
+<td style="text-align: right;">36.00</td>
 <td style="text-align: right;">81.00</td>
-<td style="text-align: left;">▇▃▁▁▁</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
 </tr>
 </tbody>
 </table>
 </div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabla de frecuencias para la variable objetivo</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(PimaIndiansDiabetes2<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+neg pos 
+262 130 </code></pre>
+</div>
 </div>
 </section>
-<section id="building-a-classification-tree" class="level2">
-<h2 class="anchored" data-anchor-id="building-a-classification-tree">Building a classification tree</h2>
-<p>Start building a simple tree with default parameters</p>
+</section>
+<section id="construcción-del-árbol-de-clasificación" class="level1">
+<h1><strong>Construcción del Árbol de Clasificación</strong></h1>
+<section id="división-en-datos-de-entrenamiento-y-prueba" class="level2">
+<h2 class="anchored" data-anchor-id="división-en-datos-de-entrenamiento-y-prueba">División en datos de entrenamiento y prueba</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span>., <span class="at">data =</span> PimaIndiansDiabetes2)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># par(xpd = NA) # otherwise on some devices the text is clipped</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(PimaIndiansDiabetes2, <span class="at">prop =</span> <span class="fl">0.8</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>train.data <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>test.data <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>This builds a model consisting of a series of nested decision rules.</p>
+</section>
+<section id="entrenamiento-del-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="entrenamiento-del-modelo">Entrenamiento del Modelo</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span> ., <span class="at">data =</span> train.data, <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">cp =</span> <span class="fl">0.01</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>n= 768 
-
-node), split, n, loss, yval, (yprob)
-      * denotes terminal node
-
-  1) root 768 268 neg (0.65104167 0.34895833)  
-    2) glucose&lt; 127.5 485  94 neg (0.80618557 0.19381443)  
-      4) age&lt; 28.5 271  23 neg (0.91512915 0.08487085) *
-      5) age&gt;=28.5 214  71 neg (0.66822430 0.33177570)  
-       10) insulin&lt; 142.5 164  48 neg (0.70731707 0.29268293)  
-         20) glucose&lt; 96.5 51   4 neg (0.92156863 0.07843137) *
-         21) glucose&gt;=96.5 113  44 neg (0.61061947 0.38938053)  
-           42) mass&lt; 26.35 19   0 neg (1.00000000 0.00000000) *
-           43) mass&gt;=26.35 94  44 neg (0.53191489 0.46808511)  
-             86) pregnant&lt; 5.5 49  15 neg (0.69387755 0.30612245)  
-              172) age&lt; 34.5 25   2 neg (0.92000000 0.08000000) *
-              173) age&gt;=34.5 24  11 pos (0.45833333 0.54166667)  
-                346) pressure&gt;=77 10   2 neg (0.80000000 0.20000000) *
-                347) pressure&lt; 77 14   3 pos (0.21428571 0.78571429) *
-             87) pregnant&gt;=5.5 45  16 pos (0.35555556 0.64444444) *
-       11) insulin&gt;=142.5 50  23 neg (0.54000000 0.46000000)  
-         22) age&gt;=56.5 12   1 neg (0.91666667 0.08333333) *
-         23) age&lt; 56.5 38  16 pos (0.42105263 0.57894737)  
-           46) age&gt;=33.5 29  14 neg (0.51724138 0.48275862)  
-             92) triceps&gt;=27 22   8 neg (0.63636364 0.36363636) *
-             93) triceps&lt; 27 7   1 pos (0.14285714 0.85714286) *
-           47) age&lt; 33.5 9   1 pos (0.11111111 0.88888889) *
-    3) glucose&gt;=127.5 283 109 pos (0.38515901 0.61484099)  
-      6) mass&lt; 29.95 75  24 neg (0.68000000 0.32000000) *
-      7) mass&gt;=29.95 208  58 pos (0.27884615 0.72115385)  
-       14) glucose&lt; 157.5 116  46 pos (0.39655172 0.60344828)  
-         28) age&lt; 30.5 50  23 neg (0.54000000 0.46000000)  
-           56) pressure&gt;=73 29  10 neg (0.65517241 0.34482759)  
-            112) mass&lt; 41.8 20   4 neg (0.80000000 0.20000000) *
-            113) mass&gt;=41.8 9   3 pos (0.33333333 0.66666667) *
-           57) pressure&lt; 73 21   8 pos (0.38095238 0.61904762) *
-         29) age&gt;=30.5 66  19 pos (0.28787879 0.71212121) *
-       15) glucose&gt;=157.5 92  12 pos (0.13043478 0.86956522) *</code></pre>
 </div>
-</div>
-<p>The model can be visualized using a tree:</p>
+</section>
+<section id="visualización-del-árbol" class="level2">
+<h2 class="anchored" data-anchor-id="visualización-del-árbol">Visualización del Árbol</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(model1, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">cex=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(model, <span class="at">cex =</span> <span class="fl">0.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="PIMAIndian_files/figure-html/PIMAPlot1-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="PIMAIndian-R_files/figure-html/plot_tree-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>A nicer plot can be obtained using the <code>rpart.plot</code> function from the <code>rpart.plot</code> package. This function allows for multiple tunings, but the default values may already yield a nice informative plot.</p>
+</section>
+<section id="evaluación-del-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="evaluación-del-modelo">Evaluación del Modelo</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(model1, <span class="at">cex=</span>.<span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="PIMAIndian_files/figure-html/PIMAPlotNice1-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">detach</span>(package<span class="sc">:</span>rpart.plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p>If we believed the model was ready for use we could use it to predict diabetes for new subject.</p>
-<p><strong>Imagine we kow nothing about overfitting</strong>. We may want to check the accuracy of the model on the dataset we have used to build it.</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>predicted.classes<span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, PimaIndiansDiabetes2, <span class="st">"class"</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(predicted.classes <span class="sc">==</span> PimaIndiansDiabetes2<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicción en test</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>test.pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, test.data, <span class="at">type =</span> <span class="st">"class"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">&lt;-</span> <span class="fu">mean</span>(test.pred <span class="sc">==</span> test.data<span class="sc">$</span>diabetes)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Test Accuracy:"</span>, <span class="fu">round</span>(accuracy, <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8294271</code></pre>
+<pre><code>[1] "Test Accuracy: 0.772"</code></pre>
 </div>
 </div>
-<p>A better strategy is to use train dataset to build the model and a test dataset to check how it works.</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ssize <span class="ot">&lt;-</span> <span class="fu">nrow</span>(PimaIndiansDiabetes2)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>propTrain <span class="ot">&lt;-</span> <span class="fl">0.8</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>training.indices <span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>ssize, <span class="fu">floor</span>(ssize<span class="sc">*</span>propTrain))</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>train.data  <span class="ot">&lt;-</span> PimaIndiansDiabetes2[training.indices, ]</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>test.data <span class="ot">&lt;-</span> PimaIndiansDiabetes2[<span class="sc">-</span>training.indices, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p>Now we build the model on the train data and check its accuracy on the test data.</p>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span>., <span class="at">data =</span> train.data)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>predicted.classes.test<span class="ot">&lt;-</span> <span class="fu">predict</span>(model2, test.data, <span class="st">"class"</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(predicted.classes.test <span class="sc">==</span> test.data<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.7272727</code></pre>
-</div>
-</div>
-<p>The accuracy is good, but smaller, as expected.</p>
 </section>
 </section>
 

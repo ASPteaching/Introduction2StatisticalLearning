@@ -8,7 +8,7 @@
 <link href="1.1-DecisionTrees-Slides_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="1.1-DecisionTrees-Slides_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="1.1-DecisionTrees-Slides_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.554">
+  <meta name="generator" content="quarto-1.5.47">
 
   <meta name="author" content="Alex Sanchez, Ferran Reverter and Esteban Vegas">
   <title>Tree based methods</title>
@@ -42,7 +42,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -70,7 +70,7 @@
     code span.at { color: #657422; } /* Attribute */
     code span.bn { color: #ad0000; } /* BaseN */
     code span.bu { } /* BuiltIn */
-    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
     code span.ch { color: #20794d; } /* Char */
     code span.cn { color: #8f5902; } /* Constant */
     code span.co { color: #5e5e5e; } /* Comment */
@@ -84,7 +84,7 @@
     code span.fu { color: #4758ab; } /* Function */
     code span.im { color: #00769e; } /* Import */
     code span.in { color: #5e5e5e; } /* Information */
-    code span.kw { color: #003b4f; } /* Keyword */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
     code span.op { color: #5e5e5e; } /* Operator */
     code span.ot { color: #003b4f; } /* Other */
     code span.pp { color: #ad0000; } /* Preprocessor */
@@ -446,81 +446,61 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </div>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </section>
-<section id="so-what-is-a-decision-tree" class="slide level2">
-<h2>So, what is a decision tree?</h2>
+<section id="introducing-decision-trees" class="slide level2">
+<h2>Introducing decision trees</h2>
 <ul>
 <li><p>A decision tree is a graphical representation of a series of decisions and their potential outcomes.</p></li>
 <li><p>It is obtained by recursively <em>stratifying</em> or <em>segmenting</em> the <em>feature space</em> into a number of simple regions.</p></li>
 <li><p>Each region (decision) corresponds to a <em>node</em> in the tree, and each potential outcome to a <em>branch</em>.</p></li>
 <li><p>The tree structure can be used to guide decision-making based on data.</p></li>
 </ul>
+</section>
+<section id="types-of-decision-trees" class="slide level2">
+<h2>Types of decision trees</h2>
+<ul>
+<li><p>Decision trees are simple yet reliable predictors that can be use for both classification or prediction</p>
+<ul>
+<li><p><strong>Classification Trees</strong> are <em>classifiers</em>, used when the response variable is categorical</p></li>
+<li><p><strong>Regression Trees</strong>, are <em>regression models</em> used to predict the values of a numerical response variable.</p></li>
+</ul></li>
+</ul>
 <!-- ## A first look at pros and cons   (CREC QUE NO CAL)(-->
 <!-- -   Trees provide an simple approach to classification and prediction for both categorical or numerical outcomes. -->
 <!-- -   The results are intuitive and easy to explain and interpret. -->
 <!-- -   They are, however, not very accurate, but -->
 <!-- -   Aggregation of multiple trees built on the same data can result on dramatic improvements in prediction accuracy, at the expense of some loss of interpretation. -->
+<!-- ## What do we need to learn? -->
+<!-- -   We need **context**:  -->
+<!--     -   When is it appropriate to rely on decision trees? -->
+<!--     -   When would other approaches be preferable? -->
+<!--     -   What type of decision trees can be used? -->
+<!-- -   We need to know how to **build good trees** -->
+<!--     -   How do we *construct* a tree? -->
+<!--     -   How do we *optimize* the tree? -->
+<!--     -   How do we *evaluate* it? -->
+<!-- ## More about context -->
+<!-- -   Decision trees are non parametric, data guided predictors, well suited in many situations such as: -->
+<!--     -   Non-linear relationships. -->
+<!--     -   High-dimensional data. -->
+<!--     -   Interaction between variables exist. -->
+<!--     -   Mixed data types. -->
+<!-- -   They are not so appropriate for complex datasets, or complex problems, that require expert knowledge. -->
+<!-- - [See here some examples of each situation!](https://g.co/gemini/share/781b7d88e03a) -->
 </section>
-<section id="what-do-we-need-to-learn" class="slide level2">
-<h2>What do we need to learn?</h2>
-<ul>
-<li><p>We need <strong>context</strong>:</p>
-<ul>
-<li><p>When is it appropriate to rely on decision trees?</p></li>
-<li><p>When would other approaches be preferable?</p></li>
-<li><p>What type of decision trees can be used?</p></li>
-</ul></li>
-<li><p>We need to know how to <strong>build good trees</strong></p>
-<ul>
-<li>How do we <em>construct</em> a tree?</li>
-<li>How do we <em>optimize</em> the tree?</li>
-<li>How do we <em>evaluate</em> it?</li>
-</ul></li>
-</ul>
-</section>
-<section id="more-about-context" class="slide level2">
-<h2>More about context</h2>
-<ul>
-<li><p>Decision trees are non parametric, data guided predictors, well suited in many situations such as:</p>
-<ul>
-<li>Non-linear relationships.</li>
-<li>High-dimensional data.</li>
-<li>Interaction between variables exist.</li>
-<li>Mixed data types.</li>
-</ul></li>
-<li><p>They are not so appropriate for complex datasets, or complex problems, that require expert knowledge.</p></li>
-<li><p><a href="https://g.co/gemini/share/781b7d88e03a">See here some examples of each situation!</a></p></li>
-</ul>
-</section>
-<section id="types-of-decision-trees" class="slide level2">
-<h2>Types of decision trees</h2>
-<ul>
-<li><p><strong>Classification Trees</strong> are built when the response variable is categorical.</p>
-<ul>
-<li>They aim to <em>classify a new observation</em> based on the values of the predictor variables.</li>
-</ul></li>
-<li><p><strong>Regression Trees</strong> are used when the response variable is numerical.</p>
-<ul>
-<li>They aim to <em>predict the value</em> of a continuous response variable based on the values of the predictor variables.</li>
-</ul></li>
-</ul>
-</section>
-<section id="tree-building-with-r" class="slide level2 smaller">
+<section id="tree-building-with-r" class="slide level2">
 <h2>Tree building with R</h2>
 <p><br></p>
-<div class="font90">
-<table>
+<div class="font70">
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th><strong>Package</strong></th>
 <th><strong>Algorithm</strong></th>
 <th><strong>Dataset size</strong></th>
 <th><strong>Missing data handling</strong></th>
-<th><strong>Ensemble methods</strong></th>
 <th><strong>Visual repr</strong></th>
-<th><strong>User interface</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -529,290 +509,78 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <td>RPART</td>
 <td>Medium to large</td>
 <td>Poor</td>
-<td>No</td>
 <td>Yes</td>
-<td>Simple</td>
 </tr>
 <tr class="even">
 <td><a href="https://topepo.github.io/caret/"><strong><code>caret</code></strong></a></td>
 <td>Various</td>
 <td>Various</td>
 <td>Depends on algorithm</td>
-<td>Yes</td>
 <td>Depends on algorithm</td>
-<td>Complex</td>
 </tr>
 <tr class="odd">
 <td><a href="https://cran.r-project.org/web/packages/tree/index.html"><strong><code>tree</code></strong></a></td>
 <td>CART</td>
 <td>Small to medium</td>
 <td>Poor</td>
-<td>No</td>
 <td>Yes</td>
-<td>Simple</td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-<section id="tree-building-with-python" class="slide level2">
+<section id="tree-building-with-python" class="slide level2 smaller">
 <h2>Tree building with Python</h2>
-<div class="font50">
-<table>
-<colgroup>
-<col style="width: 12%">
-<col style="width: 14%">
-<col style="width: 11%">
-<col style="width: 17%">
-<col style="width: 14%">
-<col style="width: 17%">
-<col style="width: 12%">
-</colgroup>
+<div class="font70">
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th><strong>Package</strong></th>
 <th><strong>Algorithm</strong></th>
 <th><strong>Dataset size</strong></th>
 <th><strong>Missing data handling</strong></th>
-<th><strong>Ensemble methods</strong></th>
 <th><strong>Visual repr</strong></th>
-<th><strong>User interface</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong><code>scikit-learn</code></strong></td>
-<td>CART (DecisionTreeClassifier)</td>
-<td>Small to large</td>
-<td>Can handle NaN</td>
-<td>Yes</td>
-<td>Yes (using Graphviz)</td>
-<td>Simple</td>
+<td><a href="https://scikit-learn.org/stable/modules/tree.html"><strong><code>scikit-learn</code></strong></a></td>
+<td>CART, ID3, C4.5</td>
+<td>Small to medium</td>
+<td>Poor (requires preprocessing)</td>
+<td>Yes (<code>plot_tree()</code>)</td>
 </tr>
 <tr class="even">
-<td><strong><code>dtreeviz</code></strong></td>
-<td>CART (DecisionTree)</td>
-<td>Small to large</td>
-<td>Can handle NaN</td>
-<td>No</td>
-<td>Yes</td>
-<td>Simple</td>
+<td><a href="https://xgboost.readthedocs.io/en/latest/"><strong><code>xgboost</code></strong></a></td>
+<td>Gradient Boosted Trees</td>
+<td>Medium to large</td>
+<td>Good (handles missing values natively)</td>
+<td>Limited (requires external tools)</td>
 </tr>
 <tr class="odd">
-<td><strong><code>xgboost</code></strong></td>
-<td>Gradient Boosting</td>
-<td>Medium to large</td>
-<td>Requires imputation</td>
-<td>Yes</td>
-<td>No</td>
-<td>Complex</td>
+<td><a href="https://lightgbm.readthedocs.io/en/latest/"><strong><code>lightgbm</code></strong></a></td>
+<td>Gradient-based One-Side Sampling (GOSS)</td>
+<td>Large</td>
+<td>Good (handles missing values natively)</td>
+<td>Limited (requires external tools)</td>
 </tr>
 <tr class="even">
-<td><strong><code>lightgbm</code></strong></td>
-<td>Gradient Boosting</td>
-<td>Medium to large</td>
-<td>Requires imputation</td>
-<td>Yes</td>
-<td>No</td>
-<td>Complex</td>
+<td><a href="https://catboost.ai/"><strong><code>catboost</code></strong></a></td>
+<td>Oblivious Decision Trees</td>
+<td>Large</td>
+<td>Excellent (handles categorical and missing values natively)</td>
+<td>Limited (built-in tools available)</td>
+</tr>
+<tr class="odd">
+<td><a href="https://pypi.org/project/pydotplus/"><strong><code>pydotplus</code></strong></a></td>
+<td>Visualization tool</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Yes (graph-based visualization)</td>
 </tr>
 </tbody>
 </table>
 </div>
-</section>
-<section id="starting-with-an-example" class="slide level2">
-<h2>Starting with an example</h2>
-<ul>
-<li>The Pima Indian Diabetes dataset contains 768 individuals (female) and 9 clinical variables.</li>
-</ul>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 768
-Columns: 9
-$ pregnant &lt;dbl&gt; 6, 1, 8, 1, 0, 5, 3, 10, 2, 8, 4, 10, 10, 1, 5, 7, 0, 7, 1, 1…
-$ glucose  &lt;dbl&gt; 148, 85, 183, 89, 137, 116, 78, 115, 197, 125, 110, 168, 139,…
-$ pressure &lt;dbl&gt; 72, 66, 64, 66, 40, 74, 50, NA, 70, 96, 92, 74, 80, 60, 72, N…
-$ triceps  &lt;dbl&gt; 35, 29, NA, 23, 35, NA, 32, NA, 45, NA, NA, NA, NA, 23, 19, N…
-$ insulin  &lt;dbl&gt; NA, NA, NA, 94, 168, NA, 88, NA, 543, NA, NA, NA, NA, 846, 17…
-$ mass     &lt;dbl&gt; 33.6, 26.6, 23.3, 28.1, 43.1, 25.6, 31.0, 35.3, 30.5, NA, 37.…
-$ pedigree &lt;dbl&gt; 0.627, 0.351, 0.672, 0.167, 2.288, 0.201, 0.248, 0.134, 0.158…
-$ age      &lt;dbl&gt; 50, 31, 32, 21, 33, 30, 26, 29, 53, 54, 30, 34, 57, 59, 51, 3…
-$ diabetes &lt;fct&gt; pos, neg, pos, neg, pos, neg, pos, neg, pos, pos, neg, pos, n…</code></pre>
-</div>
-</div>
-</section>
-<section id="looking-at-the-data" class="slide level2">
-<h2>Looking at the data</h2>
-<ul>
-<li>These Variables are known to be related with cardiovascular diseases.</li>
-<li>It seems intuitive to use these variables to decide if a person is affected by diabetes</li>
-</ul>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>             p0      p25      p50       p75   p100  hist
-diabetes     NA       NA       NA        NA     NA  &lt;NA&gt;
-pregnant  0.000  1.00000   3.0000   6.00000  17.00 ▇▃▂▁▁
-glucose  44.000 99.00000 117.0000 141.00000 199.00 ▁▇▇▃▂
-pressure 24.000 64.00000  72.0000  80.00000 122.00 ▁▃▇▂▁
-triceps   7.000 22.00000  29.0000  36.00000  99.00 ▆▇▁▁▁
-insulin  14.000 76.25000 125.0000 190.00000 846.00 ▇▂▁▁▁
-mass     18.200 27.50000  32.3000  36.60000  67.10 ▅▇▃▁▁
-pedigree  0.078  0.24375   0.3725   0.62625   2.42 ▇▃▁▁▁
-age      21.000 24.00000  29.0000  41.00000  81.00 ▇▃▁▁▁</code></pre>
-</div>
-</div>
-</section>
-<section id="predicting-diabetes-onset" class="slide level2">
-<h2>Predicting Diabetes onset</h2>
-<ul>
-<li><p>We wish to predict the probability of individuals in being diabete-positive or negative.</p>
-<ul>
-<li>We start building a tree with all the variables</li>
-</ul></li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">library</span>(rpart)</span>
-<span id="cb3-2"><a href=""></a>model1 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span>., <span class="at">data =</span> PimaIndiansDiabetes2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>A simple visualization illustrates how it proceeds</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">plot</span>(model1)</span>
-<span id="cb4-2"><a href=""></a><span class="fu">text</span>(model1, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">cex=</span><span class="fl">0.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="viewing-the-tree-as-text" class="slide level2">
-<h2>Viewing the tree as text</h2>
-<div class="font40">
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>n= 768 
-
-node), split, n, loss, yval, (yprob)
-      * denotes terminal node
-
-  1) root 768 268 neg (0.65104167 0.34895833)  
-    2) glucose&lt; 127.5 485  94 neg (0.80618557 0.19381443)  
-      4) age&lt; 28.5 271  23 neg (0.91512915 0.08487085) *
-      5) age&gt;=28.5 214  71 neg (0.66822430 0.33177570)  
-       10) insulin&lt; 142.5 164  48 neg (0.70731707 0.29268293)  
-         20) glucose&lt; 96.5 51   4 neg (0.92156863 0.07843137) *
-         21) glucose&gt;=96.5 113  44 neg (0.61061947 0.38938053)  
-           42) mass&lt; 26.35 19   0 neg (1.00000000 0.00000000) *
-           43) mass&gt;=26.35 94  44 neg (0.53191489 0.46808511)  
-             86) pregnant&lt; 5.5 49  15 neg (0.69387755 0.30612245)  
-              172) age&lt; 34.5 25   2 neg (0.92000000 0.08000000) *
-              173) age&gt;=34.5 24  11 pos (0.45833333 0.54166667)  
-                346) pressure&gt;=77 10   2 neg (0.80000000 0.20000000) *
-                347) pressure&lt; 77 14   3 pos (0.21428571 0.78571429) *
-             87) pregnant&gt;=5.5 45  16 pos (0.35555556 0.64444444) *
-       11) insulin&gt;=142.5 50  23 neg (0.54000000 0.46000000)  
-         22) age&gt;=56.5 12   1 neg (0.91666667 0.08333333) *
-         23) age&lt; 56.5 38  16 pos (0.42105263 0.57894737)  
-           46) age&gt;=33.5 29  14 neg (0.51724138 0.48275862)  
-             92) triceps&gt;=27 22   8 neg (0.63636364 0.36363636) *
-             93) triceps&lt; 27 7   1 pos (0.14285714 0.85714286) *
-           47) age&lt; 33.5 9   1 pos (0.11111111 0.88888889) *
-    3) glucose&gt;=127.5 283 109 pos (0.38515901 0.61484099)  
-      6) mass&lt; 29.95 75  24 neg (0.68000000 0.32000000) *
-      7) mass&gt;=29.95 208  58 pos (0.27884615 0.72115385)  
-       14) glucose&lt; 157.5 116  46 pos (0.39655172 0.60344828)  
-         28) age&lt; 30.5 50  23 neg (0.54000000 0.46000000)  
-           56) pressure&gt;=73 29  10 neg (0.65517241 0.34482759)  
-            112) mass&lt; 41.8 20   4 neg (0.80000000 0.20000000) *
-            113) mass&gt;=41.8 9   3 pos (0.33333333 0.66666667) *
-           57) pressure&lt; 73 21   8 pos (0.38095238 0.61904762) *
-         29) age&gt;=30.5 66  19 pos (0.28787879 0.71212121) *
-       15) glucose&gt;=157.5 92  12 pos (0.13043478 0.86956522) *</code></pre>
-</div>
-</div>
-</div>
-<div class="small">
-<ul>
-<li>This representation shows the variables and split values that have been selected by the algorithm.</li>
-<li>It can be used to classify (new) individuals following the decisions (splits) from top to bottom.</li>
-</ul>
-</div>
-</section>
-<section id="plotting-the-tree-1" class="slide level2">
-<h2>Plotting the tree (1)</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-7-1.png" style="height:10cm" width="960"></p>
-<figcaption>Even without domain expertise the model seems <em>reasonable</em></figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="plotting-the-tree-nicer" class="slide level2">
-<h2>Plotting the tree (Nicer)</h2>
-
-<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch quarto-figure-center"><p class="caption">The tree plotted with the <code>rpart.plot</code> package.</p><div class="small">
-<p>Each node shows: (1) the predicted class (‘neg’ or ‘pos’), (2) the predicted probability, (3) the percentage of observations in the node.</p>
-</div>
-</section>
-<section id="individual-prediction" class="slide level2">
-<h2>Individual prediction</h2>
-<p>Consider individuals 521 and 562</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>    pregnant glucose pressure triceps insulin mass pedigree age diabetes
-521        2      68       70      32      66 25.0    0.187  25      neg
-562        0     198       66      32     274 41.3    0.502  28      pos</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>521 562 
-neg pos 
-Levels: neg pos</code></pre>
-</div>
-</div>
-<ul>
-<li><p>If we follow individuals 521 and 562 along the tree, we reach the same prediction.</p></li>
-<li><p>The tree provides not only a classification but also an explanation.</p></li>
-</ul>
-</section>
-<section id="how-accurate-is-the-model" class="slide level2">
-<h2>How accurate is the model?</h2>
-<ul>
-<li>It is straightforward to obtain a simple performance measure.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>predicted.classes<span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, PimaIndiansDiabetes2, <span class="st">"class"</span>)</span>
-<span id="cb8-2"><a href=""></a><span class="fu">mean</span>(predicted.classes <span class="sc">==</span> PimaIndiansDiabetes2<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8294271</code></pre>
-</div>
-</div>
-<ul>
-<li><p>The question becomes harder when we go back and ask if <em>we obtained the best possible tree</em>.</p></li>
-<li><p>In order to answer this question we must study tree construction in more detail.</p></li>
-</ul>
-<!-- ## Always use train/test sets! -->
-<!-- -   A better strategy is to use train dataset to build the model and a test dataset to check how it works. -->
-<!-- ```{r echo=TRUE} -->
-<!-- set.seed(123) -->
-<!-- ssize <- nrow(PimaIndiansDiabetes2) -->
-<!-- propTrain <- 0.8 -->
-<!-- training.indices <-sample(1:ssize, floor(ssize*propTrain)) -->
-<!-- train.data  <- PimaIndiansDiabetes2[training.indices, ] -->
-<!-- test.data <- PimaIndiansDiabetes2[-training.indices, ] -->
-<!-- ``` -->
-<!-- ## Build on train, Estimate on test -->
-<!-- -   First, build the model on the train data  -->
-<!-- ```{r echo=TRUE} -->
-<!-- model2 <- rpart(diabetes ~., data = train.data) -->
-<!-- ``` -->
-<!-- - Then check its accuracy on the test data. -->
-<!-- ```{r echo=TRUE} -->
-<!-- predicted.classes.test<- predict(model2, test.data, "class") -->
-<!-- mean(predicted.classes.test == test.data$diabetes) -->
-<!-- ``` -->
 </section></section>
 <section>
 <section id="building-classification-trees" class="title-slide slide level1 center">
@@ -831,24 +599,9 @@ Levels: neg pos</code></pre>
 <li><p>How to <em>evaluate</em> it?</p></li>
 </ul></li>
 </ul>
-<!-- -   Building the tree requires deciding: -->
-<!--     -   how to partition ("split") the space, -->
-<!--     -   Which *impurity* measures to use, -->
-<!--     -   When to stop splitting -->
-<!-- -   Evaluation is similar to other classifiers. -->
-<!-- -   Optimization involves deciding: -->
-<!--     -   How to *prune* the tree, -->
-<!--     -   Which features are most important. -->
-<!-- ## Some notation first -->
-<!-- -   $\mathbb X$: Space of variables, or *feature space* -->
-<!--     -   Usually $\mathbb{X} \subseteq \mathbb{R}^p$ -->
-<!--     -   But it can contain numerical/categorical variables. -->
-<!-- -   $X\in \mathbb{X}$: Input vector: $X_1, X_2, ..., X_p$. -->
-<!-- -   Tree-structured classifiers are constructed by repeated splits of the space X into smaller and smaller subsets, beginning with X itself. -->
-<!--     -   That is by *recursive splitting* -->
 </section>
-<section id="trees-are-supervised-learners" class="slide level2">
-<h2>TREES ARE SUPERVISED LEARNERS</h2>
+<section id="decision-trees-are-supervised-learners" class="slide level2">
+<h2>Decision Trees are <em>Supervised Learners</em></h2>
 <ul>
 <li><p>Classification / Regression: <em>Supervised Learning</em> tasks:</p></li>
 <li><p>There is a <em>learning set</em> <span class="math inline">\(\mathcal{L}=\{(\mathbf{X_i,Y_i})\}_{i=1}^n\)</span></p></li>
@@ -859,8 +612,8 @@ Levels: neg pos</code></pre>
 </ul></li>
 </ul>
 </section>
-<section id="trees-and-decision-trees" class="slide level2 scrollable">
-<h2>TREES AND DECISION TREES</h2>
+<section id="trees-vs-decision-trees" class="slide level2 scrollable">
+<h2>Trees vs Decision Trees</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="font80">
@@ -873,25 +626,50 @@ Levels: neg pos</code></pre>
 </ol>
 </div>
 </div><div class="column" style="width:50%;">
-<p><img data-src="images/1.1-DecisionTrees-Slides_insertimage_1.png" alt="Plot title."> <img data-src="images/1.1-DecisionTrees-Slides_insertimage_2.png" alt="Plot title."></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/1.1-DecisionTrees-Slides_insertimage_1.png" class="quarto-figure quarto-figure-center" style="width:45.0%"></p>
+</figure>
 </div>
 </div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/1.1-DecisionTrees-Slides_insertimage_2.png" class="quarto-figure quarto-figure-center" style="width:45.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
 </section>
 <section id="additional-notation" class="slide level2">
 <h2>Additional notation</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<div class="font70">
 <ul>
-<li><p>A node is denoted by <span class="math inline">\(t\)</span>.</p>
-<ul>
-<li>The left and right child nodes are denoted by <span class="math inline">\(t_{L}\)</span> and <span class="math inline">\(t_{R}\)</span> respectively.</li>
-</ul></li>
+<li><p>A node is denoted by <span class="math inline">\(t\)</span>.</p></li>
+<li><p>The left and right child nodes are denoted by <span class="math inline">\(t_{L}\)</span> and <span class="math inline">\(t_{R}\)</span></p></li>
 <li><p>The collection of all nodes in the tree is denoted <span class="math inline">\(T\)</span></p></li>
 <li><p>The collection of all the leaf nodes is denoted <span class="math inline">\(\tilde{T}\)</span></p></li>
-<li><p>A split will be denoted by <span class="math inline">\(s\)</span>.</p>
-<ul>
-<li>The set of all splits is denoted by <span class="math inline">\(S\)</span>.</li>
-</ul></li>
+<li><p>A split will be denoted by <span class="math inline">\(s\)</span>.</p></li>
+<li><p>The set of all splits is denoted by <span class="math inline">\(S\)</span>.</p></li>
 </ul>
-<!-- ## Summary of terminology -->
+</div>
+</div><div class="column" style="width:60%;">
+<p><br></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/clipboard-58173806.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
 </section>
 <section id="building-a-tree" class="slide level2">
 <h2>Building a tree</h2>
@@ -912,9 +690,9 @@ Levels: neg pos</code></pre>
 <ul>
 <li>Every node of interest corresponds to one region in the original space.</li>
 <li>Two child nodes occupy two different regions.</li>
-<li>Together, yield same region as that of the parent node.</li>
+<li>Together, they yield same region as that of the parent node.</li>
 </ul></li>
-<li><p>In the end, every leaf node is assigned with a class and a test point is assigned with the class of the leaf node it lands in.</p></li>
+<li><p>In the end, every leaf node is assigned with a class (or value) and a test point is assigned with the class (or value) of the leaf node it lands in.</p></li>
 </ul>
 </section>
 <section id="the-tree-represents-the-splitting" class="slide level2">
@@ -967,21 +745,23 @@ Levels: neg pos</code></pre>
 <li><p>So we aim at combining splits to find a better rule.</p></li>
 </ul>
 </section>
-<section id="construction-of-a-tree" class="slide level2 scrollable">
-<h2>Construction of a tree</h2>
+<section id="building-a-decision-tree" class="slide level2 scrollable">
+<h2>Building a decision tree</h2>
 <p>Tree building involves the following three elements:</p>
 <ol type="1">
 <li><p>The selection of the splits, i.e., how do we decide which node (region) to split and how to split it?</p>
 <ul>
-<li>How to select from the pool of candidate splits?</li>
-<li>What are appropriate <em>goodness of split</em> criteria?</li>
+<li><p>How to select from the pool of candidate splits?</p></li>
+<li><p>What are appropriate <em>goodness of split</em> criteria?</p></li>
+<li><p>when to declare a node terminal and <em>stop splitting</em>?</p></li>
 </ul></li>
-<li><p>If we know how to make splits (‘grow’ the tree), how do we decide when to declare a node terminal and <em>stop splitting</em>?</p></li>
-<li><p>How do we assign each terminal node to a class?</p></li>
+<li><p>How to assign each terminal node to a class</p></li>
+<li><p>How to ensure the Tree is the <em>best possible</em> we can build.</p></li>
 </ol>
 </section>
 <section id="tb-1.1---split-selection" class="slide level2">
 <h2>TB 1.1 - Split selection</h2>
+<div class="font80">
 <ul>
 <li><p>To build a Tree, questions have to be generated that induce splits based on the value of a single variable.</p></li>
 <li><p>Ordered variable <span class="math inline">\(X_j\)</span>:</p>
@@ -993,20 +773,17 @@ Levels: neg pos</code></pre>
 <ul>
 <li>Is <span class="math inline">\(X_j \in A\)</span>?, where <span class="math inline">\(A \subseteq M\)</span> .</li>
 </ul></li>
-<li><p>The pool of candidate splits for all <span class="math inline">\(p\)</span> variables is formed by combining all the generated questions.</p></li>
+<li><p>The pool of <em>candidate splits</em> for all <span class="math inline">\(p\)</span> variables is formed by combining all the generated questions.</p></li>
+<li><p>With the pool of candidate splits, next step is to decide <em>which one to use</em> when constructing the decision tree.</p></li>
 </ul>
-<!-- - Once we have the pool of candidate splits, the next step is to decide which one to use when constructing the decision tree. -->
+</div>
 </section>
-<section id="tb-1.21---goodness-of-split" class="slide level2">
-<h2>TB 1.21 - Goodness of Split</h2>
+<section id="tb-1.2.1---goodness-of-split" class="slide level2">
+<h2>TB 1.2.1 - Goodness of Split</h2>
 <ul>
-<li><p>The way we choose the split, is <em>to measure every split by a ‘goodness of split’ measure</em>, which depends on:</p>
-<ul>
-<li>the split question as well as</li>
-<li>the node to split.</li>
-</ul></li>
-<li><p>Goodness of split is measured by <em>impurity functions</em>.</p></li>
-<li><p>Intuitively, when we split the points we want the region corresponding to each leaf node to be “pure”, that is, most points in this region come from the same class, that is, one class dominates.</p></li>
+<li><p>Intuitively, when we split the points we want the region corresponding to each leaf node to be “pure”.</p></li>
+<li><p>That is, we aim at regions where most points belong to the same class.</p></li>
+<li><p>With this goal in mind we select splits by measuring their “goodness of split” using some of the available <em>Impurity fuctions</em> introduced later.</p></li>
 </ul>
 </section>
 <section id="tb-1.2.2---good-splits-vs-bad-splits" class="slide level2">
@@ -1024,8 +801,7 @@ Levels: neg pos</code></pre>
 </div>
 </div>
 <p><em>Purity</em> not increased</p>
-</div>
-</div><div class="fragment">
+</div></div><div class="fragment">
 <div class="column" style="width:50%;">
 <div class="cell">
 <div class="cell-output-display">
@@ -1037,50 +813,47 @@ Levels: neg pos</code></pre>
 </div>
 </div>
 <p><em>Purity</em> increased</p>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="tb-1.2.3---measuring-homogeneity" class="slide level2">
 <h2>TB 1.2.3 - Measuring homogeneity</h2>
 <ul>
-<li><p>In order to measure homogeneity,or as called here, <em>purity</em>, of splits we introduce</p>
+<li><p>In order to measure homogeneity,or as called here, <em>purity</em>, of splits we rely on different <em>Impurity functions</em></p></li>
+<li><p>These functions allow us to quantify the extent of <em>homogeneity</em> for a region containing data points from possibly different classes.</p>
 <ul>
-<li>Impurity functions</li>
-<li>Impurity measures</li>
+<li><p>A region will be more pure or more homogeneous the less variable is the set of points it contains.</p></li>
+<li><p>In the image in TB 1.2.2 regions on the right of the image are homogeneous that is <em>purer</em> than the heterogeneous regions on the left.</p></li>
 </ul></li>
-<li><p>Used to measure the extent of <em>purity</em> for a region containing data points from possibly different classes.</p></li>
 </ul>
 </section>
 <section id="tb-1.2.4---impurity-functions" class="slide level2 scrollable">
 <h2>TB 1.2.4 - Impurity functions</h2>
-<div class="font80">
+<div class="font70">
 <p>An <strong>impurity function</strong> is a function <span class="math inline">\(\Phi\)</span> defined on the set of all <span class="math inline">\(K\)</span>-tuples of numbers <span class="math inline">\(\mathbf{p}= \left(p_{1}, \cdots, p_{K}\right)\)</span> s.t. <span class="math inline">\(p_{j} \geq 0, \,  \sum_{j=1}^K p_{j}=1\)</span>, <span class="math display">\[
 \Phi: \left(p_{1}, \cdots, p_{K}\right) \rightarrow [0,1]
 \]</span></p>
 <p>with the properties:</p>
 <ol type="1">
-<li><span class="math inline">\(\Phi\)</span> achieves maximum only for the uniform distribution, that is all the <span class="math inline">\(p_{j}\)</span> are equal.</li>
-<li><span class="math inline">\(\Phi\)</span> achieves minimum only at the points <span class="math inline">\((1,0, \ldots, 0)\)</span>,<span class="math inline">\((0,1,0, \ldots, 0)\)</span>, <span class="math inline">\(\ldots,(0,0, \ldots, 0,1)\)</span>, i.e., when the probability of being in a certain class is 1 and 0 for all the other classes.</li>
+<li><span class="math inline">\(\Phi\)</span> is maximum only for the uniform distribution, that is all the <span class="math inline">\(p_{j}\)</span> are equal.</li>
+<li><span class="math inline">\(\Phi\)</span> is minimum only at points <span class="math inline">\((1,0, \ldots, 0)\)</span>,<span class="math inline">\((0,1,0, \ldots, 0)\)</span>, <span class="math inline">\(\ldots,(0,0, \ldots, 0,1)\)</span>, i.e., when the probability of being in a certain class is 1 and 0 for all the other classes.</li>
 <li><span class="math inline">\(\Phi\)</span> is a symmetric function of <span class="math inline">\(p_{1}, \cdots, p_{K}\)</span>, i.e., if we permute <span class="math inline">\(p_{j}\)</span>, <span class="math inline">\(\Phi\)</span> remains constant.</li>
 </ol>
 </div>
 </section>
 <section id="tb-1.2.5---some-impurity-functions" class="slide level2">
 <h2>TB 1.2.5 - Some Impurity Functions</h2>
-<ul>
-<li>The functions below are commonly used to measure impurity.</li>
-</ul>
+<p>The functions below are commonly used to measure impurity.</p>
 <!-- - Let $t$ be a node and $p(k|t)$ the conditional probability of observing class $k$ at that node. The node information function $i(t)$ may be defined as: -->
 <div class="font80">
 <ul>
-<li><p><span class="math inline">\(\Phi_E (\mathbf{p}) = -\sum_{j=1}^K p_j\log (p_j)\)</span> (<strong>Entropy</strong>).</p></li>
-<li><p><span class="math inline">\(\Phi_G (\mathbf{p}) = 1-\sum_{j=1}^K p_j^2\)</span>. (<strong>Gini Index</strong>).</p></li>
-<li><p><span class="math inline">\(\Phi_M (\mathbf{p}) = \sum_{i=1}^K p_j(1-p_j)\)</span> (<strong>Misclassification rate</strong>).</p></li>
+<li><p><strong>Entropy</strong>: <span class="math inline">\(\Phi_E (\mathbf{p}) = -\sum_{j=1}^K p_j\log (p_j)\)</span> .</p></li>
+<li><p><strong>Gini Index</strong>: <span class="math inline">\(\Phi_G (\mathbf{p}) = 1-\sum_{j=1}^K p_j^2\)</span>.</p></li>
+<li><p><strong>Misclassification rate</strong>: <span class="math inline">\(\Phi_M (\mathbf{p}) = \sum_{i=1}^K p_j(1-p_j)\)</span>.</p></li>
 </ul>
 </div>
 <ul>
-<li>In practice, for classification trees only the first two are recommended.</li>
+<li>In practice, only the first two are recommended because misclassification rate is not sensitive enough to differences in class probabilies.</li>
 </ul>
 </section>
 <section id="tb-1.2.5-impurity-functions-behavior" class="slide level2">
@@ -1088,18 +861,21 @@ Levels: neg pos</code></pre>
 <center>
 <img data-src="images/impurity.jpg" style="width:65.0%">
 </center>
-<div class="tiny">
-<p>Node impurity functions for the two-class case. - The entropy function (rescaled) is the red curve, the Gini index is the green curve, and the resubstitution estimate of the misclassification rate is the blue curve.</p>
+<div class="small">
+<p>Node impurity functions for the two-class case. The entropy function (rescaled) is the red curve, the Gini index is the green curve, and the resubstitution estimate of the misclassification rate is the blue curve.</p>
 </div>
 </section>
-<section id="tb-1.2.6---impurity-for-a-split" class="slide level2">
-<h2>TB 1.2.6 - Impurity for a split</h2>
+<section id="tb-1.2.6---impurity-measure-of-a-split" class="slide level2">
+<h2>TB 1.2.6 - Impurity measure of a split</h2>
 <ul>
-<li>Given an impurity function <span class="math inline">\(\Phi\)</span>, a node <span class="math inline">\(t\)</span>, and given <span class="math inline">\(p(j \mid t)\)</span>, the estimated posterior probability of class <span class="math inline">\(j\)</span> given node <span class="math inline">\(t\)</span>, the <em>impurity measure of <span class="math inline">\(t\)</span></em>, <span class="math inline">\(i(t)\)</span>, is defined as:</li>
+<li>Given an impurity function <span class="math inline">\(\Phi\)</span>, a node <span class="math inline">\(t\)</span>, and given <span class="math inline">\(p(j \mid t)\)</span>, the estimated posterior probability of class <span class="math inline">\(j\)</span> given node <span class="math inline">\(t\)</span>, the <em>impurity measure of</em> <span class="math inline">\(t\)</span>, <span class="math inline">\(i(t)\)</span>, is:</li>
 </ul>
 <p><span class="math display">\[
-i(t)=\phi(p(1 \mid t), p(2 \mid t), \ldots, p(K \mid t))
-\]</span> - That is, the <em>impurity measure</em> of a split (or a node) is the impurity function when computed on probabilities associated (conditional) with a node.</p>
+i(t)=\phi\left (p(1 \mid t), p(2 \mid t), \ldots, p(K \mid t)\right)
+\]</span></p>
+<ul>
+<li>That is, the <em>impurity measure</em> of a split (or a node) is the impurity function computed on probabilities associated (conditional) with a node.</li>
+</ul>
 </section>
 <section id="tb-1.2.7---goodness-of-a-split" class="slide level2">
 <h2>TB 1.2.7 - Goodness of a split</h2>
@@ -1118,7 +894,7 @@ i(t)=\phi(p(1 \mid t), p(2 \mid t), \ldots, p(K \mid t))
 <ul>
 <li><p>The impurity, <span class="math inline">\(i(t)\)</span>, of a node is based solely on the estimated posterior probabilities of the classes</p>
 <ul>
-<li>That is, <em>it doesn’t account for the size of <span class="math inline">\(t\)</span></em>.</li>
+<li>That is, <em>it doesn’t account for the size of</em> <span class="math inline">\(t\)</span>.</li>
 </ul></li>
 <li><p>This is done by the <em>impurity score</em> of <span class="math inline">\(t\)</span>, defined as <span class="math inline">\(I(t)=i(t)\cdot p(t)\)</span>, a <em>weighted impurity measure</em> of node <span class="math inline">\(t\)</span> that takes into account:</p>
 <ul>
@@ -1144,7 +920,7 @@ i(t)=\phi(p(1 \mid t), p(2 \mid t), \ldots, p(K \mid t))
 <li>The entropy of a node, <span class="math inline">\(t\)</span>, that is split in <span class="math inline">\(n\)</span> child nodes <span class="math inline">\(t_1\)</span>, <span class="math inline">\(t_2\)</span>, …, <span class="math inline">\(t_n\)</span>, is:</li>
 </ul>
 <p><span class="math display">\[
-H(t)=-\sum_{i=1}^{n} P\left(t_{i}\right) \log _{2} P\left(t_{i}\right)
+\Phi_E (\mathbf{p}) = H(\mathbf{t})=-\sum_{i=1}^{n} \underbrace{P\left(t_{i}\right)}_{p_i} \log _{2} P\left(t_{i}\right)
 \]</span></p>
 </section>
 <section id="tb-1.2.11---goodness-of-split-based-on-entropy" class="slide level2">
@@ -1170,14 +946,14 @@ H(t)=-\sum_{i=1}^{n} P\left(t_{i}\right) \log _{2} P\left(t_{i}\right)
 \end{aligned}
 \]</span></p>
 </section>
-<section id="example" class="slide level2 smaller">
-<h2>Example</h2>
+<section id="example-1-pears-vs-apples" class="slide level2 smaller">
+<h2>Example 1: Pears vs Apples</h2>
 <div class="columns">
 <div class="column" style="width:40%;">
 <p>Consider the problem of designing an algorithm to automatically differentiate between apples and pears (class labels) given only their width and height measurements (features).</p>
 </div><div class="column" style="width:60%;">
 <div class="font80">
-<table>
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th><strong>Width</strong></th>
@@ -1249,17 +1025,137 @@ H(t)=-\sum_{i=1}^{n} P\left(t_{i}\right) \log _{2} P\left(t_{i}\right)
 </tbody>
 </table>
 </div>
+</div></div>
+</section>
+<section id="example-1.-entropy-calculation" class="slide level2">
+<h2>Example 1. Entropy Calculation</h2>
+
+<img data-src="images/Example2-EntropyCalculation.png" style="width:100.0%" class="r-stretch"></section>
+<section id="example-1.-information-gain" class="slide level2">
+<h2>Example 1. Information Gain</h2>
+
+<img data-src="images/Example2-IGCalculation.png" style="width:100.0%" class="r-stretch"></section>
+<section id="tb.-1.3.1---when-to-stop-growing" class="slide level2">
+<h2>TB. 1.3.1 - When to stop growing</h2>
+<ul>
+<li><p>Maximizing information gain is one possible criteria to choose among splits.</p></li>
+<li><p>In order to avoid excessive complexity it is usually decided to stop splitting when <em>information gain does not compensate for increase in complexity</em>.</p></li>
+</ul>
+</section>
+<section id="tb-1.3.2-stop-splitting-criteria" class="slide level2">
+<h2>TB 1.3.2 Stop splitting criteria</h2>
+<ul>
+<li>In practice, stop splitting is decided when: <span class="math display">\[
+\max _{s \in S} \Delta I(s, t)&lt;\beta,
+\]</span>where:
+<ul>
+<li><span class="math inline">\(\Delta I\)</span> represents the information gain associated with an optimal split <span class="math inline">\(s\)</span> and a node <span class="math inline">\(t\)</span>,</li>
+<li>and <span class="math inline">\(\beta\)</span> is a pre-determined threshold.</li>
+</ul></li>
+</ul>
+</section>
+<section id="tb-1.-summary" class="slide level2">
+<h2>TB 1. Summary</h2>
+<div class="font80">
+<ul>
+<li><p>Decision trees are built by iteratively partitioning data into smaller regions based on feature values.</p></li>
+<li><p>Splits are aimed at producing purer nodes, that contains mostly data from one class.</p></li>
+<li><p>Homogeneity is measured by impurity functions such as <em>Entropy</em>, <em>Gini Index</em> or <em>Misclassification rate</em></p></li>
+<li><p>The best split is chosen from candidate splits as the one that maximizes impurity reduction for example through <em>Information Gain</em></p></li>
+<li><p>Tree growth continues until impurity reduction is minimal, or a predefined depth or node size threshold is reached.</p></li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="example-2-predicting-diabetes-onset" class="title-slide slide level1 center">
+<h1>Example 2 Predicting Diabetes Onset</h1>
+
+</section>
+<section id="example-2.-the-pima-database" class="slide level2">
+<h2>Example 2. The PIMA database</h2>
+<ul>
+<li>The Pima Indian Diabetes dataset contains 768 individuals (female) and 9 clinical variables.</li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 768
+Columns: 9
+$ pregnant &lt;dbl&gt; 6, 1, 8, 1, 0, 5, 3, 10, 2, 8, 4, 10, 10, 1, 5, 7, 0, 7, 1, 1…
+$ glucose  &lt;dbl&gt; 148, 85, 183, 89, 137, 116, 78, 115, 197, 125, 110, 168, 139,…
+$ pressure &lt;dbl&gt; 72, 66, 64, 66, 40, 74, 50, NA, 70, 96, 92, 74, 80, 60, 72, N…
+$ triceps  &lt;dbl&gt; 35, 29, NA, 23, 35, NA, 32, NA, 45, NA, NA, NA, NA, 23, 19, N…
+$ insulin  &lt;dbl&gt; NA, NA, NA, 94, 168, NA, 88, NA, 543, NA, NA, NA, NA, 846, 17…
+$ mass     &lt;dbl&gt; 33.6, 26.6, 23.3, 28.1, 43.1, 25.6, 31.0, 35.3, 30.5, NA, 37.…
+$ pedigree &lt;dbl&gt; 0.627, 0.351, 0.672, 0.167, 2.288, 0.201, 0.248, 0.134, 0.158…
+$ age      &lt;dbl&gt; 50, 31, 32, 21, 33, 30, 26, 29, 53, 54, 30, 34, 57, 59, 51, 3…
+$ diabetes &lt;fct&gt; pos, neg, pos, neg, pos, neg, pos, neg, pos, pos, neg, pos, n…</code></pre>
 </div>
 </div>
 </section>
-<section id="example.-entropy-calculation" class="slide level2">
-<h2>Example. Entropy Calculation</h2>
+<section id="example-2.-looking-at-the-data" class="slide level2">
+<h2>Example 2. Looking at the data</h2>
+<ul>
+<li>These Variables are known to be related with cardiovascular diseases.</li>
+<li>It seems intuitive to use these variables to decide if a person is affected by diabetes</li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>             p0      p25      p50       p75   p100  hist
+diabetes     NA       NA       NA        NA     NA  &lt;NA&gt;
+pregnant  0.000  1.00000   3.0000   6.00000  17.00 ▇▃▂▁▁
+glucose  44.000 99.00000 117.0000 141.00000 199.00 ▁▇▇▃▂
+pressure 24.000 64.00000  72.0000  80.00000 122.00 ▁▃▇▂▁
+triceps   7.000 22.00000  29.0000  36.00000  99.00 ▆▇▁▁▁
+insulin  14.000 76.25000 125.0000 190.00000 846.00 ▇▂▁▁▁
+mass     18.200 27.50000  32.3000  36.60000  67.10 ▅▇▃▁▁
+pedigree  0.078  0.24375   0.3725   0.62625   2.42 ▇▃▁▁▁
+age      21.000 24.00000  29.0000  41.00000  81.00 ▇▃▁▁▁</code></pre>
+</div>
+</div>
+</section>
+<section id="ex.-2.-building-a-classification-tree" class="slide level2">
+<h2>Ex. 2. Building a classification tree</h2>
+<ul>
+<li><p>We wish to predict the probability of individuals in being diabete-positive or negative.</p>
+<ul>
+<li>We start building a tree with all the variables</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">library</span>(rpart)</span>
+<span id="cb3-2"><a href=""></a>model1 <span class="ot">&lt;-</span> <span class="fu">rpart</span>(diabetes <span class="sc">~</span>., <span class="at">data =</span> PimaIndiansDiabetes2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<!-- ## Viewing the tree as text -->
+<!-- ::: font40 -->
+<!-- ```{r} -->
+<!-- model1 -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: small -->
+<!-- -   This representation shows the variables and split values that have been selected by the algorithm. -->
+<!-- -   It can be used to classify (new) individuals following the decisions (splits) from top to bottom. -->
+<!-- ::: -->
+</section>
+<section id="ex.2.-plotting-the-tree-1" class="slide level2">
+<h2>Ex.2. Plotting the tree (1)</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-15-1.png" style="height:10cm" width="960"></p>
+<figcaption>Even without domain expertise the model seems <em>reasonable</em></figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ex.-2.-plotting-the-tree-nicer" class="slide level2">
+<h2>Ex. 2. Plotting the tree (Nicer)</h2>
 
-<img data-src="images/Example2-EntropyCalculation.png" style="width:100.0%" class="r-stretch"></section>
-<section id="example.-information-gain" class="slide level2">
-<h2>Example. Information Gain</h2>
-
-<img data-src="images/Example2-IGCalculation.png" style="width:100.0%" class="r-stretch"></section></section>
+<img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch quarto-figure-center"><p class="caption">The tree plotted with the <code>rpart.plot</code> package.</p><div class="small">
+<p>Each node shows: (1) the predicted class (‘neg’ or ‘pos’), (2) the predicted probability, (3) the percentage of observations in the node.</p>
+</div>
+</section></section>
 <section>
 <section id="prediction-with-trees" class="title-slide slide level1 center">
 <h1>Prediction with Trees</h1>
@@ -1295,7 +1191,7 @@ H(t)=-\sum_{i=1}^{n} P\left(t_{i}\right) \log _{2} P\left(t_{i}\right)
 <ul>
 <li><p>Let’s assume we have built a tree and have the classes assigned for the leaf nodes.</p></li>
 <li><p>Goal: estimate <em>the classification error rate</em> for this tree.</p></li>
-<li><p>We use the <em>resubstitution estimate <span class="math inline">\(r(t)\)</span> for the probability of misclassification, given that a case falls into node <span class="math inline">\(t\)</span></em>. This is:</p></li>
+<li><p>We use the <em>resubstitution estimate</em> <span class="math inline">\(r(t)\)</span> for the probability of misclassification, given that a case falls into node <span class="math inline">\(t\)</span>. This is:</p></li>
 </ul>
 <p><span class="math display">\[
 r(t)=1-\max _{j} p(j \mid t)=1-p(\kappa(t) \mid t)
@@ -1310,41 +1206,64 @@ r(t)=1-\max _{j} p(j \mid t)=1-p(\kappa(t) \mid t)
 <p><span class="math display">\[
 R(T)=\sum_{t \in \tilde{T}} R(t)
 \]</span></p>
+</section>
+<section id="example-2-individual-prediction" class="slide level2">
+<h2>Example 2: Individual prediction</h2>
+<p>Consider individuals 521 and 562</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>    pregnant glucose pressure triceps insulin mass pedigree age diabetes
+521        2      68       70      32      66 25.0    0.187  25      neg
+562        0     198       66      32     274 41.3    0.502  28      pos</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>521 562 
+neg pos 
+Levels: neg pos</code></pre>
+</div>
+</div>
+<ul>
+<li><p>If we follow individuals 521 and 562 along the tree, we reach the same prediction.</p></li>
+<li><p>The tree provides not only a classification but also an explanation.</p></li>
+</ul>
+</section>
+<section id="example-2-how-accurate-is-the-model" class="slide level2">
+<h2>Example 2: How accurate is the model?</h2>
+<ul>
+<li>It is straightforward to obtain a simple performance measure.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>predicted.classes<span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, PimaIndiansDiabetes2, <span class="st">"class"</span>)</span>
+<span id="cb6-2"><a href=""></a><span class="fu">mean</span>(predicted.classes <span class="sc">==</span> PimaIndiansDiabetes2<span class="sc">$</span>diabetes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8294271</code></pre>
+</div>
+</div>
+</section>
+<section id="example-2-is-the-tree-optimal" class="slide level2">
+<h2>Example 2: Is the Tree optimal?</h2>
+<ul>
+<li><p>The question becomes harder when we go back and ask if <em>we obtained the best possible tree</em>.</p></li>
+<li><p>In order to answer this question we must study tree construction in more detail.</p></li>
+</ul>
 </section></section>
 <section>
 <section id="obtaining-best-trees" class="title-slide slide level1 center">
 <h1>Obtaining best trees</h1>
 
 </section>
-<section id="tb.-3.1---when-to-stop-growing" class="slide level2">
-<h2>TB. 3.1 - When to stop growing</h2>
-<ul>
-<li><p>Maximizing information gain is one possible criteria to choose among splits.</p></li>
-<li><p>In order to avoid excessive complexity it is usually decided to stop splitting when <em>information gain does not compensate for increase in complexity</em>.</p></li>
-</ul>
-</section>
-<section id="tb-3.2-stop-splitting-criteria" class="slide level2">
-<h2>TB 3.2 Stop splitting criteria</h2>
-<ul>
-<li>In practice, stop splitting is decided when: <span class="math display">\[
-\max _{s \in S} \Delta I(s, t)&lt;\beta,
-\]</span>where:
-<ul>
-<li><span class="math inline">\(\Delta I\)</span> represents the information gain associated with an optimal split <span class="math inline">\(s\)</span> and a node <span class="math inline">\(t\)</span>,</li>
-<li>and <span class="math inline">\(\beta\)</span> is a pre-determined threshold.</li>
-</ul></li>
-</ul>
-</section>
-<section id="tb-3.3-optimizing-the-tree" class="slide level2">
-<h2>TB 3.3 Optimizing the Tree</h2>
+<section id="tb-3.1-optimizing-the-tree" class="slide level2">
+<h2>TB 3.1 Optimizing the Tree</h2>
 <ul>
 <li><p>Trees obtained by looking for optimal splits tend to overfit: good for the data in the tree, but generalize badly and tend to fail more in predictions.</p></li>
 <li><p>In order to reduce complexity and overfitting,<br> while keeping the tree as good as possible, tree <em>pruning</em> may be applied.</p></li>
 <li><p>Pruning works <em>removing branches that are unlikely to improve the accuracy</em> of the model on new data.</p></li>
 </ul>
 </section>
-<section id="tb-3.4-pruning-methods" class="slide level2">
-<h2>TB 3.4 Pruning methods</h2>
+<section id="tb-3.2-pruning-methods" class="slide level2">
+<h2>TB 3.2 Pruning methods</h2>
 <ul>
 <li>There are different pruning methods, but the most common one is the <em>cost-complexity</em> pruning algorithm, also known as the <em>weakest link pruning</em>.</li>
 <li>The algorithm works by adding a penalty term to the misclassification rate of the terminal nodes:</li>
@@ -1353,8 +1272,8 @@ R(T)=\sum_{t \in \tilde{T}} R(t)
 R_\alpha(T) =R(T)+\alpha|T|
 \]</span> where <span class="math inline">\(\alpha\)</span> is the parameter that controls the trade-off between tree complexity and accuracy.</p>
 </section>
-<section id="tb-3.5-cost-complexity-pruning" class="slide level2">
-<h2>TB 3.5 Cost complexity pruning</h2>
+<section id="tb-3.3-cost-complexity-pruning" class="slide level2">
+<h2>TB 3.3 Cost complexity pruning</h2>
 <ul>
 <li><p>Start by building a large tree that overfits the data.</p></li>
 <li><p>Then, use cross-validation to estimate the optimal value of alpha that minimizes the generalization error.</p></li>
@@ -1383,7 +1302,7 @@ R_\alpha(T) =R(T)+\alpha|T|
 <section id="classification-vs-regression-trees" class="slide level2">
 <h2>Classification vs Regression Trees</h2>
 <div class="font50">
-<table>
+<table class="caption-top">
 <colgroup>
 <col style="width: 25%">
 <col style="width: 37%">
@@ -1415,7 +1334,7 @@ R_\alpha(T) =R(T)+\alpha|T|
 <tr class="even">
 <td style="text-align: left;">Leaf node prediction</td>
 <td style="text-align: left;">Mean or median of the target variable in that region</td>
-<td style="text-align: left;">Mode or majority class of the target variable ...</td>
+<td style="text-align: left;">Mode or majority class of the target variable …</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Examples of use cases</td>
@@ -1448,12 +1367,12 @@ R_\alpha(T) =R(T)+\alpha|T|
 <section id="non-linear-relationships" class="slide level2 smaller">
 <h2>Non linear relationships!</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>aq <span class="ot">&lt;-</span> datasets<span class="sc">::</span>airquality</span>
-<span id="cb10-2"><a href=""></a>color <span class="ot">&lt;-</span> <span class="fu">adjustcolor</span>(<span class="st">"forestgreen"</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>)</span>
-<span id="cb10-3"><a href=""></a>ps <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, ...) {  <span class="co"># custom panel function</span></span>
-<span id="cb10-4"><a href=""></a>  <span class="fu">panel.smooth</span>(x, y, <span class="at">col =</span> color, <span class="at">col.smooth =</span> <span class="st">"black"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
-<span id="cb10-5"><a href=""></a>}</span>
-<span id="cb10-6"><a href=""></a><span class="fu">pairs</span>(aq, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">upper.panel =</span> ps, <span class="at">col =</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>aq <span class="ot">&lt;-</span> datasets<span class="sc">::</span>airquality</span>
+<span id="cb8-2"><a href=""></a>color <span class="ot">&lt;-</span> <span class="fu">adjustcolor</span>(<span class="st">"forestgreen"</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>)</span>
+<span id="cb8-3"><a href=""></a>ps <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, ...) {  <span class="co"># custom panel function</span></span>
+<span id="cb8-4"><a href=""></a>  <span class="fu">panel.smooth</span>(x, y, <span class="at">col =</span> color, <span class="at">col.smooth =</span> <span class="st">"black"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb8-5"><a href=""></a>}</span>
+<span id="cb8-6"><a href=""></a><span class="fu">pairs</span>(aq, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">upper.panel =</span> ps, <span class="at">col =</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 <img data-src="1.1-DecisionTrees-Slides_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
@@ -1510,19 +1429,18 @@ R_1(j, s)=\left\{X \mid X_j&lt;s\right\} \text { and } R_2(j, s)=\left\{X \mid X
 </div>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="example-a-regression-tree" class="slide level2">
 <h2>Example: A regression tree</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb11-2"><a href=""></a>train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(aq), <span class="at">size =</span> <span class="fu">nrow</span>(aq)<span class="sc">*</span><span class="fl">0.7</span>)</span>
-<span id="cb11-3"><a href=""></a>aq_train <span class="ot">&lt;-</span> aq[train,]</span>
-<span id="cb11-4"><a href=""></a>aq_test  <span class="ot">&lt;-</span> aq[<span class="sc">-</span>train,]</span>
-<span id="cb11-5"><a href=""></a>aq_regresion <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">tree</span>(<span class="at">formula =</span> Ozone <span class="sc">~</span> ., </span>
-<span id="cb11-6"><a href=""></a>                           <span class="at">data =</span> aq_train, <span class="at">split =</span> <span class="st">"deviance"</span>)</span>
-<span id="cb11-7"><a href=""></a><span class="fu">summary</span>(aq_regresion)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb9-2"><a href=""></a>train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(aq), <span class="at">size =</span> <span class="fu">nrow</span>(aq)<span class="sc">*</span><span class="fl">0.7</span>)</span>
+<span id="cb9-3"><a href=""></a>aq_train <span class="ot">&lt;-</span> aq[train,]</span>
+<span id="cb9-4"><a href=""></a>aq_test  <span class="ot">&lt;-</span> aq[<span class="sc">-</span>train,]</span>
+<span id="cb9-5"><a href=""></a>aq_regresion <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">tree</span>(<span class="at">formula =</span> Ozone <span class="sc">~</span> ., </span>
+<span id="cb9-6"><a href=""></a>                           <span class="at">data =</span> aq_train, <span class="at">split =</span> <span class="st">"deviance"</span>)</span>
+<span id="cb9-7"><a href=""></a><span class="fu">summary</span>(aq_regresion)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Regression tree:
@@ -1592,13 +1510,13 @@ Distribution of residuals:
 <section id="example-prune-the-tree" class="slide level2">
 <h2>Example: Prune the tree</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>cv_aq <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">cv.tree</span>(aq_regresion, <span class="at">K =</span> <span class="dv">5</span>)</span>
-<span id="cb13-2"><a href=""></a>optimal_size <span class="ot">&lt;-</span>  <span class="fu">rev</span>(cv_aq<span class="sc">$</span>size)[<span class="fu">which.min</span>(<span class="fu">rev</span>(cv_aq<span class="sc">$</span>dev))]</span>
-<span id="cb13-3"><a href=""></a>aq_final_tree <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">prune.tree</span>(</span>
-<span id="cb13-4"><a href=""></a>                 <span class="at">tree =</span> aq_regresion,</span>
-<span id="cb13-5"><a href=""></a>                 <span class="at">best =</span> optimal_size</span>
-<span id="cb13-6"><a href=""></a>               )</span>
-<span id="cb13-7"><a href=""></a><span class="fu">summary</span>(aq_final_tree)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>cv_aq <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">cv.tree</span>(aq_regresion, <span class="at">K =</span> <span class="dv">5</span>)</span>
+<span id="cb11-2"><a href=""></a>optimal_size <span class="ot">&lt;-</span>  <span class="fu">rev</span>(cv_aq<span class="sc">$</span>size)[<span class="fu">which.min</span>(<span class="fu">rev</span>(cv_aq<span class="sc">$</span>dev))]</span>
+<span id="cb11-3"><a href=""></a>aq_final_tree <span class="ot">&lt;-</span> tree<span class="sc">::</span><span class="fu">prune.tree</span>(</span>
+<span id="cb11-4"><a href=""></a>                 <span class="at">tree =</span> aq_regresion,</span>
+<span id="cb11-5"><a href=""></a>                 <span class="at">best =</span> optimal_size</span>
+<span id="cb11-6"><a href=""></a>               )</span>
+<span id="cb11-7"><a href=""></a><span class="fu">summary</span>(aq_final_tree)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Regression tree:
@@ -1654,7 +1572,7 @@ Distribution of residuals:
 <ul>
 <li><p>Breiman, L., Friedman, J., Stone, C. J., &amp; Olshen, R. A. (1984). Classification and regression trees. CRC press.</p></li>
 <li><p>Brandon M. Greenwell (202) Tree-Based Methods for Statistical Learning in R. 1st Edition. Chapman and Hall/CRC DOI: https://doi.org/10.1201/9781003089032</p></li>
-<li><p>Genuer R., Poggi, J.M. (2020) Random Forests with R. Springer ed.&nbsp;(UseR!)</p></li>
+<li><p>Genuer R., Poggi, J.M. (2020) Random Forests with R. Springer ed. (UseR!)</p></li>
 </ul>
 </section>
 <section id="resources" class="slide level2">
@@ -1989,18 +1907,7 @@ Distribution of residuals:
         }
         return false;
       }
-      const clipboard = new window.ClipboardJS('.code-copy-button', {
-        text: function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
-          for (const childEl of codeEl.children) {
-            if (isCodeAnnotation(childEl)) {
-              childEl.remove();
-            }
-          }
-          return codeEl.innerText;
-        }
-      });
-      clipboard.on('success', function(e) {
+      const onCopySuccess = function(e) {
         // button target
         const button = e.trigger;
         // don't keep focus
@@ -2032,7 +1939,29 @@ Distribution of residuals:
         }, 1000);
         // clear code selection
         e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
       });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        // For code content inside modals, clipBoardJS needs to be initialized with a container option
+        // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
         var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
         var mailtoRegex = new RegExp(/^mailto:/);
           var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -2040,7 +1969,7 @@ Distribution of residuals:
             return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
         // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
         for (var i=0; i<links.length; i++) {
           const link = links[i];
           if (!isInternal(link.href)) {

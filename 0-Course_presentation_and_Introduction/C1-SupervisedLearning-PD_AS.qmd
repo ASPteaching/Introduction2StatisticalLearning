@@ -9,7 +9,7 @@ format:
     navigation: horizontal
     # theme: AnnArbor
     # colortheme: lily
-    theme: Madrid
+    theme: Frankfurt
     colortheme: default
     incremental: false
     slide-level: 2
@@ -145,7 +145,7 @@ or a *regression* problem depending on the case.
 -   Main interest: To infer properties of
     $\operatorname{Pr}(\boldsymbol{X})$.
 
-# Specific problems in unsupervised learning:
+## Specific problems in unsupervised learning:
 
 -   Estimating directly the density function
     $\operatorname{Pr}(\boldsymbol{x})$ :
@@ -626,9 +626,20 @@ Follow the Rmd files
 
 ## Evaluating a binary classification rule
 
-```{r, fig.align='center', out.width="100%"}
-knitr::include_graphics("images/clipboard-603852654.png")
-```
+- The explanation has been removed
 
-Source:
-<https://en.wikipedia.org/wiki/Template:Diagnostic_testing_diagram>
+- Instead you can follow the slides of a talk on Biomarkers where classification performance for bianty classifiers is discussed
+
+  - [Link to the slides](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/From%20Biomarker%20to%20Diagnostic%20Tests.pdf)
+
+<!-- ```{r, fig.align='center', out.width="100%"} -->
+<!-- knitr::include_graphics("images/clipboard-603852654.png") -->
+<!-- ``` -->
+
+<!-- Source: -->
+<!-- <https://en.wikipedia.org/wiki/Template:Diagnostic_testing_diagram> -->
+
+
+# References
+
+## Main references

@@ -52,6 +52,11 @@ if(!require("kableExtra")) install.packages("kableExtra")
 
 The Pima Indian Diabetes data set (`PimaIndiansDiabetes2`) is available in the `mlbench` package.
 
+```{r}
+data("PimaIndiansDiabetes2", package = "mlbench")
+```
+
+
 The data contains 768 individuals (female) and 9 clinical variables for predicting the probability of individuals in being diabete-positive or negative:
 
 -   pregnant: number of times pregnant
@@ -64,13 +69,17 @@ The data contains 768 individuals (female) and 9 clinical variables for predicti
 -   age: age (years)
 -   diabetes: class variable
 
+```{r}
+dplyr::glimpse(PimaIndiansDiabetes2)
+```
+
+
 A typical classification/prediction problem is to build a model that can distinguish and predict diabetes using some or all the variables in the dataset.
 
 A quick exploration can be done wirh the `skimr` package:
 
 ```{r PIMAdescription}
 library(skimr)
-data("PimaIndiansDiabetes2", package = "mlbench")
 skim(PimaIndiansDiabetes2)
 ```
 
@@ -100,6 +109,7 @@ text(model1, digits = 3, cex=0.8)
 A nicer plot can be obtained using the `rpart.plot` function from the `rpart.plot` package. This function allows for multiple tunings, but the default values may already yield a nice informative plot.
 
 ```{r PIMAPlotNice1}
+library(rpart.plot)
 rpart.plot(model1, cex=.7)
 detach(package:rpart.plot)
 ```

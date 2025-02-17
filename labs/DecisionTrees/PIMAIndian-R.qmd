@@ -1,0 +1,83 @@
+---
+title: "Decision Trees Lab"
+subtitle: "PIMA Indians Example"
+authors:
+- Adapted by EVL, FRC, and ASP
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    fig-width: 8
+    fig-height: 6
+  pdf: default
+execute:
+  echo: true
+  message: false
+  warning: false
+bibliography: "../../StatisticalLearning.bib"
+---
+
+```{r setup, include=FALSE}
+# Comprobar e instalar paquetes si es necesario
+packages <- c("pacman", "ISLR", "rsample", "rpart", "rpart.plot", "skimr", "dplyr")
+new.packages <- packages[!(packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+# Cargar paquetes
+dependency <- function(pkg) { if (!requireNamespace(pkg, quietly = TRUE)) install.packages(pkg) }
+lapply(packages, dependency)
+
+pacman::p_load(ISLR, rsample, rpart, rpart.plot, skimr, dplyr)
+```
+
+# **Pima Indians Diabetes Dataset**
+
+```{r load_data}
+data("PimaIndiansDiabetes2", package = "mlbench")
+# Eliminar valores NA si los hay
+PimaIndiansDiabetes2 <- na.omit(PimaIndiansDiabetes2)
+```
+
+## Exploración de Datos
+
+```{r explore_data}
+dplyr::glimpse(PimaIndiansDiabetes2)
+skim(PimaIndiansDiabetes2)
+# Tabla de frecuencias para la variable objetivo
+table(PimaIndiansDiabetes2$diabetes)
+```
+
+# **Construcción del Árbol de Clasificación**
+
+## División en datos de entrenamiento y prueba
+
+```{r split_data}
+set.seed(123)
+split <- initial_split(PimaIndiansDiabetes2, prop = 0.8)
+train.data <- training(split)
+test.data <- testing(split)
+```
+
+## Entrenamiento del Modelo
+
+```{r build_model}
+model <- rpart(diabetes ~ ., data = train.data, control = rpart.control(cp = 0.01))
+```
+
+## Visualización del Árbol
+
+```{r plot_tree}
+rpart.plot(model, cex = 0.7)
+```
+
+## Evaluación del Modelo
+
+```{r evaluate_model}
+# Predicción en test
+test.pred <- predict(model, test.data, type = "class")
+accuracy <- mean(test.pred == test.data$diabetes)
+print(paste("Test Accuracy:", round(accuracy, 3)))
+```
+

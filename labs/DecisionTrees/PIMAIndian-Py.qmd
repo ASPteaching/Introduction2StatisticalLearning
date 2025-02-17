@@ -1,0 +1,97 @@
+---
+title: "Decision Trees Lab"
+subtitle: "PIMA Indians Example"
+authors:
+- Adapted by EVL, FRC, and ASP
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    fig-width: 8
+    fig-height: 6
+  pdf: default
+execute:
+  echo: true
+  message: false
+  warning: false
+bibliography: "../../StatisticalLearning.bib"
+---
+
+```{python setupprep}
+import subprocess
+import sys
+
+def install_and_import(package):
+    try:
+        __import__(package)
+    except ImportError:
+        print(f"Instalando {package}...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        __import__(package)
+```
+
+
+```{python setup}
+# Importar paquetes después de la instalación
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn import tree
+import matplotlib.pyplot as plt
+```
+
+## **Pima Indians Diabetes Dataset**
+
+```{python load_data}
+from sklearn.datasets import fetch_openml
+dataset = fetch_openml(name='diabetes', version=1, as_frame=True)
+df = dataset.data
+df['diabetes'] = dataset.target.astype('category')
+
+# Eliminar valores NA
+df.dropna(inplace=True)
+```
+
+## **Exploración de Datos**
+
+```{python explore_data}
+print(df.info())
+print(df.describe())
+print(df['diabetes'].value_counts())
+```
+
+## **Construcción del Árbol de Clasificación**
+
+### **División en entrenamiento y prueba**
+
+```{python split_data}
+train_data, test_data, train_labels, test_labels = train_test_split(
+    df.drop(columns=['diabetes']), df['diabetes'], test_size=0.2, random_state=123
+)
+```
+
+### **Entrenamiento del Modelo**
+
+```{python build_model}
+model = DecisionTreeClassifier(ccp_alpha=0.01, random_state=123)
+model.fit(train_data, train_labels)
+```
+
+### **Visualización del Árbol**
+
+```{python plot_tree}
+plt.figure(figsize=(12, 6))
+tree.plot_tree(model, filled=True, feature_names=train_data.columns, class_names=model.classes_)
+plt.show()
+```
+
+### **Evaluación del Modelo**
+
+```{python evaluate_model}
+accuracy = model.score(test_data, test_labels)
+print(f"Test Accuracy: {accuracy:.3f}")
+```
+
