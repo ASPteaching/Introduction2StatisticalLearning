@@ -83,7 +83,7 @@ library(skimr)
 skim(PimaIndiansDiabetes2)
 ```
 
-## Building a classification tree
+# Building a classification tree
 
 Start building a simple tree with default parameters
 
@@ -114,9 +114,11 @@ rpart.plot(model1, cex=.7)
 detach(package:rpart.plot)
 ```
 
-If we believed the model was ready for use we could use it to predict diabetes for new subject.
+## Assessing model performance
 
-**Imagine we kow nothing about overfitting**. We may want to check the accuracy of the model on the dataset we have used to build it.
+**Imagine we kow nothing about overfitting**. 
+
+We may want to check the accuracy of the model on the dataset we have used to build it.
 
 ```{r PIMAaccuracy1}
 predicted.classes<- predict(model1, PimaIndiansDiabetes2, "class")
@@ -143,3 +145,20 @@ mean(predicted.classes.test == test.data$diabetes)
 ```
 
 The accuracy is good, but smaller, as expected.
+
+## Making predictions with the model
+
+As an example on how to use the model we want to predict the class of individuals 521 and 562
+
+```{r}
+(aSample<- PimaIndiansDiabetes2[c(521,562),])
+```
+
+```{r}
+predict(model1, aSample, "class")
+```
+
+-   If we follow individuals 521 and 562 along the tree, we reach the same prediction.
+
+-   The tree provides not only a classification but also an explanation.
+

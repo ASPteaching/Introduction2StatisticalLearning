@@ -1174,17 +1174,18 @@ age      21.000 24.00000  29.0000  41.00000  81.00 ▇▃▁▁▁</code></pre>
 </section>
 <section id="tb-2.1---class-assignment-rules" class="slide level2">
 <h2>TB 2.1 - Class Assignment Rules</h2>
+<div class="font90">
 <ul>
 <li>A class assignment rule assigns a class <span class="math inline">\(j=1, \cdots, K\)</span> to every terminal (leaf) node <span class="math inline">\(t \in \tilde{T}\)</span>.</li>
 <li>The class is assigned to node <span class="math inline">\(t\)</span> is denoted by <span class="math inline">\(\kappa(t)\)</span>,
 <ul>
 <li>E.g., if <span class="math inline">\(\kappa(t)=2\)</span>, all the points in node <span class="math inline">\(t\)</span> would be assigned to class 2.</li>
 </ul></li>
-<li>If we use 0-1 loss, the class assignment rule picks the class with maximum posterior probability:</li>
-</ul>
-<p><span class="math display">\[
+<li>If we use 0-1 loss, the class assignment rule picks the class with maximum posterior probability: <span class="math display">\[
 \kappa(t)=\arg \max _{j} p(j \mid t)
-\]</span></p>
+\]</span></li>
+</ul>
+</div>
 </section>
 <section id="tb-2.2.-estimating-the-error-rate-1" class="slide level2">
 <h2>TB 2.2. Estimating the error rate (1)</h2>

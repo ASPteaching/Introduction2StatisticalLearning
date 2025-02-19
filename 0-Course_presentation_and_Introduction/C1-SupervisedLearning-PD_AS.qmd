@@ -174,8 +174,7 @@ or a *regression* problem depending on the case.
 
 ## Statistical Decision Theory
 
--   The *prediction problem* can be written as a *decision problem*
-    which can be casted in the setting of *Statistical Decision Theory*.
+-   The *prediction problem* can be written as a *decision problem*     which can be casted in the setting of *Statistical Decision Theory*.
 
 -   Let $(\boldsymbol{X}, Y)$ be a r.v. with support
     $\mathcal{X} \times \mathcal{Y} \subseteq \mathbb{R}^{p} \times \mathbb{R}$.
@@ -346,21 +345,17 @@ $$
 
 ## Different types of prediction error
 
--   $\operatorname{RSS}(\theta)$ is the *prediction error* a theoretical
-    quantity, based on the training sample, that needs to be estimated.
+-   $\operatorname{RSS}(\theta)$ is the *prediction error* a theoretical quantity, based on the training sample, that needs to be estimated.
 
 -   $\overline{\text{err}}$, known as the *training error* or the
     *apparent error*, is an approximation to
     $\operatorname{RSS}(\theta)$.
 
--   We are interested in the error associated when predicting a new
-    observation, that is the Prediction Mean Squared Error (PMSE) $$
+-   We are interested in the error associated when predicting a new observation, that is the Prediction Mean Squared Error (PMSE) $$
       \operatorname{PMSE}(\theta)=\mathbb{E}\left(\left(Y_{n+1}-m\left(\boldsymbol{x}_{i} ; \theta\right)\right)^{2}\right),
     $$
 
--   $\overline{\text { err }}$ is an optimistic estimation of the in an
-    observation of $\left(\boldsymbol{X}_{n+1}, Y_{n+1}\right)$
-    independent from the training sample,
+-   $\overline{\text { err }}$ is an optimistic estimation of the in an observation of $\left(\boldsymbol{X}_{n+1}, Y_{n+1}\right)$ independent from the training sample,
 
 ## $\overline{\text { err }}$ and PMSE are not the same
 

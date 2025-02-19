@@ -700,17 +700,19 @@ Each node shows: (1) the predicted class ('neg' or 'pos'), (2) the predicted pro
 
 ## TB 2.1 - Class Assignment Rules
 
+::: font90
+
 -   A class assignment rule assigns a class $j=1, \cdots, K$ to every
     terminal (leaf) node $t \in \tilde{T}$.
 -   The class is assigned to node $t$ is denoted by $\kappa(t)$,
     -   E.g., if $\kappa(t)=2$, all the points in node $t$ would be
         assigned to class 2.
--   If we use 0-1 loss, the class assignment rule picks the class with
-    maximum posterior probability:
-
+-   If we use 0-1 loss, the class assignment rule picks the class with     maximum posterior probability:
 $$
 \kappa(t)=\arg \max _{j} p(j \mid t)
 $$
+
+::: 
 
 ## TB 2.2. Estimating the error rate (1)
 
@@ -752,8 +754,7 @@ Consider individuals 521 and 562
 predict(model1, aSample, "class")
 ```
 
--   If we follow individuals 521 and 562 along the tree, we reach the
-    same prediction.
+-   If we follow individuals 521 and 562 along the tree, we reach the same prediction.
 
 -   The tree provides not only a classification but also an explanation.
 
