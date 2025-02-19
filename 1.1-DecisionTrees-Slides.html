@@ -8,7 +8,7 @@
 <link href="1.1-DecisionTrees-Slides_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="1.1-DecisionTrees-Slides_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="1.1-DecisionTrees-Slides_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.5.47">
+  <meta name="generator" content="quarto-1.4.549">
 
   <meta name="author" content="Alex Sanchez, Ferran Reverter and Esteban Vegas">
   <title>Tree based methods</title>
@@ -42,7 +42,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -70,7 +70,7 @@
     code span.at { color: #657422; } /* Attribute */
     code span.bn { color: #ad0000; } /* BaseN */
     code span.bu { } /* BuiltIn */
-    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.cf { color: #003b4f; } /* ControlFlow */
     code span.ch { color: #20794d; } /* Char */
     code span.cn { color: #8f5902; } /* Constant */
     code span.co { color: #5e5e5e; } /* Comment */
@@ -84,7 +84,7 @@
     code span.fu { color: #4758ab; } /* Function */
     code span.im { color: #00769e; } /* Import */
     code span.in { color: #5e5e5e; } /* Information */
-    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.kw { color: #003b4f; } /* Keyword */
     code span.op { color: #5e5e5e; } /* Operator */
     code span.ot { color: #003b4f; } /* Other */
     code span.pp { color: #ad0000; } /* Preprocessor */
@@ -440,13 +440,14 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/decTree4HypertensionNew.png" style="width:80.0%"></p>
+<p><img data-src="images/decTree4HypertensionNew.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
 <figcaption>A doctor may classify patients at high or low cardiovascular risk using some type of decision tree</figcaption>
 </figure>
 </div>
 </div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="introducing-decision-trees" class="slide level2">
 <h2>Introducing decision trees</h2>
@@ -493,7 +494,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <h2>Tree building with R</h2>
 <p><br></p>
 <div class="font70">
-<table class="caption-top">
+<table>
 <thead>
 <tr class="header">
 <th><strong>Package</strong></th>
@@ -532,7 +533,7 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 <section id="tree-building-with-python" class="slide level2 smaller">
 <h2>Tree building with Python</h2>
 <div class="font70">
-<table class="caption-top">
+<table>
 <thead>
 <tr class="header">
 <th><strong>Package</strong></th>
@@ -642,7 +643,8 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </div>
 </div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="additional-notation" class="slide level2">
 <h2>Additional notation</h2>
@@ -669,7 +671,8 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </div>
 </div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="building-a-tree" class="slide level2">
 <h2>Building a tree</h2>
@@ -801,7 +804,8 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </div>
 </div>
 <p><em>Purity</em> not increased</p>
-</div></div><div class="fragment">
+</div>
+</div><div class="fragment">
 <div class="column" style="width:50%;">
 <div class="cell">
 <div class="cell-output-display">
@@ -813,7 +817,8 @@ Alex Sanchez, Ferran Reverter and Esteban Vegas
 </div>
 </div>
 <p><em>Purity</em> increased</p>
-</div></div>
+</div>
+</div>
 </div>
 </section>
 <section id="tb-1.2.3---measuring-homogeneity" class="slide level2">
@@ -953,7 +958,7 @@ i(t)=\phi\left (p(1 \mid t), p(2 \mid t), \ldots, p(K \mid t)\right)
 <p>Consider the problem of designing an algorithm to automatically differentiate between apples and pears (class labels) given only their width and height measurements (features).</p>
 </div><div class="column" style="width:60%;">
 <div class="font80">
-<table class="caption-top">
+<table>
 <thead>
 <tr class="header">
 <th><strong>Width</strong></th>
@@ -1025,7 +1030,8 @@ i(t)=\phi\left (p(1 \mid t), p(2 \mid t), \ldots, p(K \mid t)\right)
 </tbody>
 </table>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="example-1.-entropy-calculation" class="slide level2">
 <h2>Example 1. Entropy Calculation</h2>
@@ -1303,7 +1309,7 @@ R_\alpha(T) =R(T)+\alpha|T|
 <section id="classification-vs-regression-trees" class="slide level2">
 <h2>Classification vs Regression Trees</h2>
 <div class="font50">
-<table class="caption-top">
+<table>
 <colgroup>
 <col style="width: 25%">
 <col style="width: 37%">
@@ -1430,7 +1436,8 @@ R_1(j, s)=\left\{X \mid X_j&lt;s\right\} \text { and } R_2(j, s)=\left\{X \mid X
 </div>
 </div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="example-a-regression-tree" class="slide level2">
 <h2>Example: A regression tree</h2>
@@ -1801,80 +1808,42 @@ Distribution of residuals:
       });
     </script>
     
-
     <script>
-
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
       // slide changes (different for each slide format).
-
       (function () {
-
         // dispatch for htmlwidgets
-
         function fireSlideEnter() {
-
           const event = window.document.createEvent("Event");
-
           event.initEvent("slideenter", true, true);
-
           window.document.dispatchEvent(event);
-
         }
-
-    
 
         function fireSlideChanged(previousSlide, currentSlide) {
-
           fireSlideEnter();
 
-    
-
           // dispatch for shiny
-
           if (window.jQuery) {
-
             if (previousSlide) {
-
               window.jQuery(previousSlide).trigger("hidden");
-
             }
-
             if (currentSlide) {
-
               window.jQuery(currentSlide).trigger("shown");
-
             }
-
           }
-
         }
-
-    
 
         // hookup for slidy
-
         if (window.w3c_slidy) {
-
           window.w3c_slidy.add_observer(function (slide_num) {
-
             // slide_num starts at position 1
-
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
           });
-
         }
 
-    
-
       })();
-
     </script>
-
-    
 
     <script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1908,7 +1877,18 @@ Distribution of residuals:
         }
         return false;
       }
-      const onCopySuccess = function(e) {
+      const clipboard = new window.ClipboardJS('.code-copy-button', {
+        text: function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+      });
+      clipboard.on('success', function(e) {
         // button target
         const button = e.trigger;
         // don't keep focus
@@ -1940,47 +1920,7 @@ Distribution of residuals:
         }, 1000);
         // clear code selection
         e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
-          for (const childEl of codeEl.children) {
-            if (isCodeAnnotation(childEl)) {
-              childEl.remove();
-            }
-          }
-          return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
       });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        // For code content inside modals, clipBoardJS needs to be initialized with a container option
-        // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp('/' + window.location.host + '/');
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-        }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
-            }
-          }
-        }
       function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
         const config = {
           allowHTML: true,
@@ -2017,11 +1957,7 @@ Distribution of residuals:
           try { href = new URL(href).hash; } catch {}
           const id = href.replace(/^#\/?/, "");
           const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
-          }
+          return note.innerHTML;
         });
       }
       const findCites = (el) => {

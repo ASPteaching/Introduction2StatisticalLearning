@@ -111,7 +111,6 @@ rpart.plot(tree.carseats2)
 ```
 
 
-
 The most important indicator of `Sales` appears to be shelving location, since the first branch differentiates `Good` locations from `Bad` and `Medium` locations.
 
 If we just type the name of the tree object,  `R` prints output corresponding to each branch of the tree. `R` displays the split criterion  (e.g. `Price < 92.5`), the number of observations in  that branch, the deviance,  the overall prediction for the branch (`Yes` or `No`),  and the fraction of observations in that branch that take on values of `Yes` and `No`. Branches that lead to terminal nodes are indicated using asterisks.
@@ -124,8 +123,7 @@ tree.carseats
 tree.carseats2
 ```
 
-In order to properly evaluate the performance of a classification tree on these data, we must estimate the test error rather than simply 
-computing the training error. 
+In order to properly evaluate the performance of a classification tree on these data, we must estimate the test error rather than simply computing the training error. 
 
 We split the observations into a training set and a test set, build the tree using the training set, and evaluate its performance on the test data. 
 
@@ -225,7 +223,7 @@ text(tree.boston, pretty = 0, cex=0.7)
 
 The variable `lstat` measures the percentage of individuals with {lower  socioeconomic status}, while the variable `rm` corresponds to the average number of rooms. 
 
-The tree indicates that larger values of `rm`, or lower values of `lstat`, correspond to more expensive houses. For example, the tree predicts a median house price of $$45{,}400$ for homes in census tracts in which `rm >= 7.553`.
+The tree indicates that larger values of `rm`, or lower values of `lstat`, correspond to more expensive houses. For example, the tree predicts a median house price of $45{,}400$ for homes in census tracts in which `rm >= 7.553`.
 
 
 It is worth noting that we could have fit a much bigger tree, by
@@ -258,7 +256,7 @@ mean((yhat - boston.test)^2)
 ```
 
 In other words, the  test set MSE associated with the regression tree is $35.29$.
-The square root of the MSE is therefore around $5.941$, indicating that this model leads to test predictions that are (on average) within approximately $$5{,}941$ of the true median home value for the census tract.
+The square root of the MSE is therefore around $5.941$, indicating that this model leads to test predictions that are (on average) within approximately $5{,}941$ of the true median home value for the census tract.
 
 
 ## Bagging and Random Forests
