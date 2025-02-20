@@ -32,8 +32,9 @@ In this page you will find links to the html/pdf version of the slides and other
 
 ## Introduction to Statistical Learning
 
-- [Introduction: Statistics, Machine Learning, Statistical Learning and Data Science](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/C0-Intro2StatLearn-PD-AS.pdf)
-- [Overview of Supervised Learning](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/C1-SupervisedLearning-PD_AS.pdf)
+- [1.1 Introduction: Statistics, Machine Learning, Statistical Learning and Data Science](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/C0-Intro2StatLearn-PD-AS.pdf)
+- [1.2 Overview of Supervised Learning](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/0-Course_presentation_and_Introduction/C1-SupervisedLearning-PD_AS.pdf)
+- [1.3 Model validation and Resampling](https://github.com/ASPteaching/Introduction2StatisticalLearning/blob/main/1.3-Model_validation_and_Resampling.html)
 - [Rlabs](https://github.com/ASPteaching/Introduction2StatisticalLearning/tree/main/labs/intro2StatLearn)
   - Regression with KNN
   - Classification with KNN
